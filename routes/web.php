@@ -113,20 +113,33 @@ Route::middleware('auth')->group(function () {
 Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
 Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
 Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
-Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
-Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
+
 
 
 Route::get('/tests', [TestController::class, 'index']);
 Route::get('/tests/{id}', [TestController::class, 'show']);
 
 
-// Create the Order (API)
-Route::post('/orders', [OrderController::class, 'CreateOrder']);
 
-// View the Order Summary / Receipt (To print as PDF)
+Route::get('/orders', [OrderController::class, 'getOrders']);
+Route::post('/orders', [OrderController::class, 'CreateOrder']);
+Route::delete('/orders/{id}', [OrderController::class, 'delete']);
 Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
-Route::get('/api/orders', [OrderController::class, 'getOrders']);
 Route::get('/orders/search/{search}', [OrderController::class, 'SearchOrder']);
+
+// ==========================================
+// DASHBOARD STATS ROUTE
+// ==========================================
 Route::post('/dashboard/stats', [OrderController::class, 'Search']);
 
+// ==========================================
+// TEST DIRECTORY ROUTES (Fetched by JS)
+// ==========================================
+Route::get('/tests', [TestController::class, 'index']);
+Route::get('/tests/{id}', [TestController::class, 'show']);
+
+// ==========================================
+// SETTINGS / PROFILE ROUTES (Fetched by JS)
+// ==========================================
+Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
+Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);

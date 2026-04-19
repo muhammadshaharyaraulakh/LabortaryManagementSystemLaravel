@@ -119,7 +119,7 @@
                             class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
                             <i class="ph-duotone ph-shopping-cart text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-orders-today">42</h3>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-orders-today">0</h3>
                         <p class="text-gray-500 font-medium">Orders Created (Today)</p>
                     </div>
 
@@ -129,7 +129,7 @@
                             class="w-12 h-12 rounded-lg bg-green-50 text-green-500 flex items-center justify-center mb-4">
                             <i class="ph-duotone ph-money text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-money-today">Rs. 45,200</h3>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-money-today">Rs. 0</h3>
                         <p class="text-gray-500 font-medium">Money Collected (Today)</p>
                     </div>
 
@@ -138,7 +138,7 @@
                         <div class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
                             <i class="ph-duotone ph-trash text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-deleted-today">3</h3>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-deleted-today">0</h3>
                         <p class="text-gray-500 font-medium">Deleted Orders (Today)</p>
                     </div>
                 </div>
@@ -609,20 +609,17 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ==========================================
-            // 1. GLOBAL SETUP & HEADERS
-            // ==========================================
+
             const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
             const fetchHeaders = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken
             };
 
-            // ==========================================
-            // 2. INITIALIZE MODERN DATE PICKERS
-            // ==========================================
+
             if (typeof flatpickr !== 'undefined') {
                 const dateConfig = {
                     dateFormat: "Y-m-d",
@@ -635,9 +632,58 @@
                 flatpickr("#filterEndDate", dateConfig);
             }
 
-            // ==========================================
-            // 9. MANAGE ORDERS (USER SPECIFIC) & SEARCH
-            // ==========================================
+
+            function displayTemporaryMessage(inputElement, message, isError = true) {
+                if (!inputElement) return;
+                const parent = inputElement.parentElement;
+                const existingMsg = parent.querySelector('.temp-msg');
+                if (existingMsg) existingMsg.remove();
+
+                const msgEl = document.createElement('p');
+                msgEl.className = `temp-msg text-xs mt-1 font-bold animate-fade-in ${isError ? 'text-red-500' : 'text-green-500'}`;
+                msgEl.innerText = message;
+
+                if (isError) inputElement.classList.add('border-red-500');
+                parent.appendChild(msgEl);
+
+                setTimeout(() => {
+                    if (msgEl && msgEl.parentNode) msgEl.remove();
+                    if (isError) inputElement.classList.remove('border-red-500');
+                }, 3000);
+            }
+
+
+            function showTemporaryFormErrors(form, errors) {
+                for (const [key, messages] of Object.entries(errors)) {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input) displayTemporaryMessage(input, messages[0], true);
+                }
+            }
+
+
+            function timeSince(dateString) {
+                const date = new Date(dateString);
+                const seconds = Math.floor((new Date() - date) / 1000);
+
+                let interval = seconds / 31536000;
+                if (interval > 1) return Math.floor(interval) + " years ago";
+
+                interval = seconds / 2592000;
+                if (interval > 1) return Math.floor(interval) + " months ago";
+
+                interval = seconds / 86400;
+                if (interval > 1) return Math.floor(interval) + " days ago";
+
+                interval = seconds / 3600;
+                if (interval > 1) return Math.floor(interval) + " hours ago";
+
+                interval = seconds / 60;
+                if (interval > 1) return Math.floor(interval) + " minutes ago";
+
+                return "Just now";
+            }
+
+
             const manageOrdersTableBody = document.querySelector('#section-manage-orders tbody');
 
             async function fetchUserOrders() {
@@ -646,7 +692,7 @@
                 manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-blue-600"></i><p class="text-sm text-gray-500 mt-2">Loading your orders...</p></td></tr>`;
 
                 try {
-                    const response = await fetch('/api/orders', { headers: fetchHeaders });
+                    const response = await fetch('/orders', { headers: fetchHeaders });
                     const result = await response.json();
 
                     if (result.status === 200) {
@@ -655,10 +701,10 @@
                         manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Failed to load orders.</td></tr>`;
                     }
                 } catch (error) {
-                    console.error('Error fetching orders:', error);
                     manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Network error occurred.</td></tr>`;
                 }
             }
+
 
             function renderManageOrders(orders) {
                 if (!manageOrdersTableBody) return;
@@ -670,25 +716,37 @@
                 }
 
                 orders.forEach(order => {
-                    const dateObj = new Date(order.created_at);
-                    const dateString = dateObj.toLocaleDateString() + ', ' + dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const timeAgoText = timeSince(order.created_at);
+                    const orderDate = new Date(order.created_at);
+                    const now = new Date();
+                    const diffInMs = now - orderDate;
+                    const isLessThanOneHour = diffInMs < (60 * 60 * 1000);
+                    const isDeleted = order.deleted_at !== null;
+
+                    let actionHtml = `<button onclick="window.open('/orders/${order.trackingId}/summary', '_blank')" class="text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer mr-1">View</button>`;
+
+                    if (!isDeleted && isLessThanOneHour) {
+                        actionHtml += `<button data-id="${order.id}" class="btn-delete-order text-red-600 hover:text-red-800 font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer">Delete</button>`;
+                    }
+
+                    const rowClass = isDeleted ? "bg-red-50/40 border-b border-red-100 transition-colors text-red-500 font-medium animate-fade-in" : "bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in";
+                    const textClass = isDeleted ? "line-through opacity-70" : "";
 
                     manageOrdersTableBody.innerHTML += `
-                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
-                    <td class="px-6 py-4 font-bold text-gray-600">${order.trackingId}</td>
-                    <td class="px-6 py-4">${order.name}</td>
-                    <td class="px-6 py-4">${dateString}</td>
-                    <td class="px-6 py-4 text-green-600 font-bold">Rs. ${order.grandTotal}</td>
-                    <td class="px-6 py-4 text-right">
-                        <button onclick="window.open('/orders/${order.trackingId}/summary', '_blank')" class="text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer mr-1">View</button>
-                        <button data-id="${order.id}" class="btn-delete-order text-red-600 hover:text-red-800 font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer">Delete</button>
-                    </td>
-                </tr>
-                `;
+            <tr class="${rowClass}">
+                <td class="px-6 py-4 font-bold ${isDeleted ? 'text-red-400' : 'text-gray-600'} ${textClass}">${order.trackingId}</td>
+                <td class="px-6 py-4 ${textClass}">${order.name}</td>
+                <td class="px-6 py-4 text-blue-500 text-xs font-bold">${timeAgoText}</td>
+                <td class="px-6 py-4 ${isDeleted ? 'text-red-500' : 'text-green-600'} font-bold ${textClass}">Rs. ${order.grandTotal}</td>
+                <td class="px-6 py-4 text-right flex justify-end">
+                    ${actionHtml}
+                </td>
+            </tr>
+            `;
                 });
             }
 
-            // -- SEARCH FUNCTIONALITY --
+
             const searchManageOrdersInput = document.getElementById('searchManageOrdersInput');
             const searchManageOrdersError = document.getElementById('error-searchManageOrders');
             let searchDebounceTimer;
@@ -714,14 +772,13 @@
 
                         try {
                             const response = await fetch(`/orders/search/${encodeURIComponent(query)}`, { headers: fetchHeaders });
-
                             const responseText = await response.text();
+
                             let result;
                             try {
                                 result = JSON.parse(responseText);
                             } catch (parseError) {
-                                console.error("Backend Error HTML:", responseText);
-                                throw new Error("Backend crashed and returned HTML.");
+                                throw new Error("Backend crashed");
                             }
 
                             if (response.ok && result.status === 200) {
@@ -742,20 +799,17 @@
                                 manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500 font-medium">Search failed.</td></tr>`;
                             }
                         } catch (error) {
-                            console.error("CRASH DETAILS:", error);
                             if (searchManageOrdersError) {
-                                searchManageOrdersError.innerText = "Error parsing search result. Check console.";
+                                searchManageOrdersError.innerText = "Error parsing search result.";
                                 searchManageOrdersError.classList.remove('hidden');
                             }
-                            manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500 font-medium">An error occurred displaying the data.</td></tr>`;
+                            manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500 font-medium">An error occurred.</td></tr>`;
                         }
                     }, 500);
                 });
             }
 
-            // ==========================================
-            // 4. DASHBOARD STATS LOGIC (Date-to-Date & TODAY)
-            // ==========================================
+
             const dateFilterForm = document.getElementById('DashboardDateFilterForm');
             const reportEmptyState = document.getElementById('reportEmptyState');
             const reportLoadingState = document.getElementById('reportLoadingState');
@@ -764,6 +818,8 @@
             const resOrders = document.getElementById('res-orders');
             const resMoney = document.getElementById('res-money');
             const resDeleted = document.getElementById('res-deleted');
+            const errorDashboardDate = document.getElementById('error-dashboard-date');
+
 
             async function fetchDashboardTodayStats() {
                 const statOrders = document.getElementById('stat-orders-today');
@@ -789,20 +845,23 @@
                         statDeleted.innerText = result.data.deleted_orders;
                     }
                 } catch (error) {
-                    console.error('Error fetching today stats:', error);
                 }
             }
 
             fetchDashboardTodayStats();
 
+
             if (dateFilterForm) {
                 dateFilterForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    const startDate = document.getElementById('filterStartDate').value;
-                    const endDate = document.getElementById('filterEndDate').value;
+
+                    const startInput = document.getElementById('filterStartDate');
+                    const endInput = document.getElementById('filterEndDate');
+                    const startDate = startInput.value;
+                    const endDate = endInput.value;
 
                     if (new Date(startDate) > new Date(endDate)) {
-                        alert("Start date cannot be greater than End date.");
+                        displayTemporaryMessage(startInput, "Start date cannot be greater than End date.", true);
                         return;
                     }
 
@@ -824,10 +883,11 @@
 
                         const responseText = await response.text();
                         let result;
+
                         try {
                             result = JSON.parse(responseText);
                         } catch (parseError) {
-                            throw new Error("Backend crashed and returned HTML.");
+                            throw new Error("Backend crashed");
                         }
 
                         if (response.ok && result.status === 200) {
@@ -838,18 +898,31 @@
                             reportLoadingState.classList.add('hidden');
                             reportDataState.classList.remove('hidden');
                         } else if (response.status === 422) {
-                            alert("Invalid date format selected.");
+                            displayTemporaryMessage(startInput, "Invalid date format selected.", true);
                             reportLoadingState.classList.add('hidden');
                             reportEmptyState.classList.remove('hidden');
                         } else {
-                            alert(result.message || "Failed to fetch statistics.");
+                            if (errorDashboardDate) {
+                                errorDashboardDate.innerText = result.message || "Failed to fetch statistics.";
+                                errorDashboardDate.classList.remove('hidden');
+                                setTimeout(() => {
+                                    errorDashboardDate.classList.add('hidden');
+                                    errorDashboardDate.innerText = '';
+                                }, 3000);
+                            }
                             reportLoadingState.classList.add('hidden');
                             reportEmptyState.classList.remove('hidden');
                         }
 
                     } catch (error) {
-                        console.error('Error fetching stats:', error);
-                        alert("Network error. Press F12 to check console.");
+                        if (errorDashboardDate) {
+                            errorDashboardDate.innerText = "Network error occurred.";
+                            errorDashboardDate.classList.remove('hidden');
+                            setTimeout(() => {
+                                errorDashboardDate.classList.add('hidden');
+                                errorDashboardDate.innerText = '';
+                            }, 3000);
+                        }
                         reportLoadingState.classList.add('hidden');
                         reportEmptyState.classList.remove('hidden');
                     } finally {
@@ -859,9 +932,7 @@
                 });
             }
 
-            // ==========================================
-            // 3. NAVIGATION & UI LOGIC
-            // ==========================================
+
             const sections = document.querySelectorAll('.content-section');
             const headerTitle = document.getElementById('header-title');
 
@@ -870,32 +941,40 @@
                     sec.classList.add('hidden');
                     sec.classList.remove('block');
                 });
+
                 const targetSection = document.getElementById(targetId);
                 if (targetSection) {
                     targetSection.classList.remove('hidden');
                     targetSection.classList.add('block');
                 }
-                if (title && headerTitle) headerTitle.innerText = title;
+
+                if (title && headerTitle) {
+                    headerTitle.innerText = title;
+                }
 
                 if (targetId === 'section-manage-orders') {
                     if (searchManageOrdersInput) searchManageOrdersInput.value = '';
                     if (searchManageOrdersError) searchManageOrdersError.classList.add('hidden');
                     fetchUserOrders();
                 }
+
                 if (targetId === 'section-dashboard') {
                     fetchDashboardTodayStats();
                 }
             }
 
+
             document.querySelectorAll('#sidebar-nav .nav-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
+
                     document.querySelectorAll('#sidebar-nav .nav-link').forEach(nav => {
                         nav.classList.remove('bg-white/10', 'text-white', 'active-nav');
                         nav.classList.add('text-gray-300');
                         const icon = nav.querySelector('.nav-icon');
                         if (icon) icon.classList.replace('text-white', 'text-gray-400');
                     });
+
                     link.classList.add('bg-white/10', 'text-white', 'active-nav');
                     link.classList.remove('text-gray-300');
                     const activeIcon = link.querySelector('.nav-icon');
@@ -906,23 +985,29 @@
                 });
             });
 
+
             const sidebar = document.getElementById('sidebar');
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
             function toggleSidebar() {
                 sidebar?.classList.toggle('-translate-x-full');
                 sidebarBackdrop?.classList.toggle('hidden');
             }
+
             document.getElementById('open-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             document.getElementById('close-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             sidebarBackdrop?.addEventListener('click', toggleSidebar);
 
+
             const profileBtn = document.getElementById('profile-btn');
             const profileMenu = document.getElementById('profile-menu');
+
             if (profileBtn && profileMenu) {
                 profileBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     profileMenu.classList.toggle('hidden');
                 });
+
                 document.addEventListener('click', (e) => {
                     if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
                         profileMenu.classList.add('hidden');
@@ -930,9 +1015,7 @@
                 });
             }
 
-            // ==========================================
-            // 8. TEST DIRECTORY & API INTEGRATION
-            // ==========================================
+
             let directoryTests = [];
             const testDirectoryTableBody = document.querySelector('#section-tests tbody');
             const searchTestsDir = document.getElementById('searchTestsDir');
@@ -952,10 +1035,10 @@
                         testDirectoryTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">${result.message || 'No tests found.'}</td></tr>`;
                     }
                 } catch (error) {
-                    console.error('Error fetching tests:', error);
-                    testDirectoryTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Failed to load tests. Please check your connection.</td></tr>`;
+                    testDirectoryTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Failed to load tests.</td></tr>`;
                 }
             }
+
 
             function renderDirectoryTests(tests) {
                 if (!testDirectoryTableBody) return;
@@ -973,20 +1056,21 @@
                     const time = test.timeRequired || test.time_required || 'Standard';
 
                     testDirectoryTableBody.innerHTML += `
-                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
-                    <td class="px-6 py-4 text-gray-500">${code}</td>
-                    <td class="px-6 py-4">${name}</td>
-                    <td class="px-6 py-4">Rs. ${price}</td>
-                    <td class="px-6 py-4">${time}</td>
-                    <td class="px-6 py-4 text-right">
-                        <button data-id="${test.id}" class="btn-view-test text-purple-600 hover:text-purple-800 font-bold px-3 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-50 transition-colors cursor-pointer">
-                            View Details
-                        </button>
-                    </td>
-                </tr>
-            `;
+            <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
+                <td class="px-6 py-4 text-gray-500">${code}</td>
+                <td class="px-6 py-4">${name}</td>
+                <td class="px-6 py-4">Rs. ${price}</td>
+                <td class="px-6 py-4">${time}</td>
+                <td class="px-6 py-4 text-right">
+                    <button data-id="${test.id}" class="btn-view-test text-purple-600 hover:text-purple-800 font-bold px-3 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-50 transition-colors cursor-pointer">
+                        View Details
+                    </button>
+                </td>
+            </tr>
+        `;
                 });
             }
+
 
             if (searchTestsDir) {
                 searchTestsDir.addEventListener('input', (e) => {
@@ -999,6 +1083,7 @@
                     renderDirectoryTests(filtered);
                 });
             }
+
 
             async function fetchTestDetails(id) {
                 const modalContent = document.querySelector('#TestDetailsModal .p-6');
@@ -1019,11 +1104,11 @@
                         let requirementsHtml = '';
                         if (test.instructions) {
                             requirementsHtml = `
-                        <div class="bg-orange-50 rounded-lg p-4 border border-orange-100 mb-4">
-                            <span class="text-xs font-bold text-orange-800 uppercase tracking-wider block mb-1">Pre-Test Instructions</span>
-                            <p class="text-sm text-orange-700">${test.instructions}</p>
-                        </div>
-                    `;
+                    <div class="bg-orange-50 rounded-lg p-4 border border-orange-100 mb-4">
+                        <span class="text-xs font-bold text-orange-800 uppercase tracking-wider block mb-1">Pre-Test Instructions</span>
+                        <p class="text-sm text-orange-700">${test.instructions}</p>
+                    </div>
+                `;
                         }
 
                         let parametersHtml = '';
@@ -1033,45 +1118,43 @@
                             ).join('');
 
                             parametersHtml = `
-                        <h5 class="font-bold text-sm text-gray-700 mb-2">Parameters Checked:</h5>
-                        <ul class="text-sm text-gray-600 list-disc list-inside pl-4 space-y-2">
-                            ${paramList}
-                        </ul>
-                    `;
+                    <h5 class="font-bold text-sm text-gray-700 mb-2">Parameters Checked:</h5>
+                    <ul class="text-sm text-gray-600 list-disc list-inside pl-4 space-y-2">
+                        ${paramList}
+                    </ul>
+                `;
                         } else {
                             parametersHtml = `<p class="text-sm text-gray-500 italic">No specific parameters listed for this test.</p>`;
                         }
 
                         modalContent.innerHTML = `
-                    <h4 class="text-xl font-bold text-gray-900 mb-1">${name}</h4>
-                    <p class="text-sm text-gray-500 mb-4">Code: ${code} | Price: Rs. ${test.price}</p>
-                    ${requirementsHtml}
-                    ${parametersHtml}
-                `;
+                <h4 class="text-xl font-bold text-gray-900 mb-1">${name}</h4>
+                <p class="text-sm text-gray-500 mb-4">Code: ${code} | Price: Rs. ${test.price}</p>
+                ${requirementsHtml}
+                ${parametersHtml}
+            `;
                     } else {
                         modalContent.innerHTML = `<div class="py-8 text-center text-red-500 font-bold">${result.message || 'Failed to load test details.'}</div>`;
                     }
                 } catch (error) {
-                    console.error('Error fetching details:', error);
                     modalContent.innerHTML = `<div class="py-8 text-center text-red-500 font-bold">Network error occurred.</div>`;
                 }
             }
 
+
             fetchDirectoryTests();
 
-            // ==========================================
-            // 5. CREATE ORDER (MULTI-TEST CART)
-            // ==========================================
+
             let orderCart = [];
 
             const searchInput = document.getElementById('orderTestSearch');
             const searchResults = document.getElementById('testSearchResults');
             const tableBody = document.getElementById('orderTestsTable');
-
             const discountInput = document.getElementById('calcDiscount');
             const elSubtotal = document.getElementById('calcSubtotal');
             const elTax = document.getElementById('calcTax');
             const elTotal = document.getElementById('calcTotal');
+
 
             if (searchInput) {
                 searchInput.addEventListener('input', function (e) {
@@ -1098,12 +1181,12 @@
                             const item = document.createElement('div');
                             item.className = 'px-4 py-3 hover:bg-green-50 cursor-pointer border-b border-gray-100 last:border-0 flex justify-between items-center transition-colors';
                             item.innerHTML = `
-                        <div>
-                            <p class="text-sm font-bold text-gray-800">${testName}</p>
-                            <p class="text-xs text-gray-500">${testCode}</p>
-                        </div>
-                        <span class="text-sm font-bold text-green-600">Rs. ${testPrice}</span>
-                    `;
+                    <div>
+                        <p class="text-sm font-bold text-gray-800">${testName}</p>
+                        <p class="text-xs text-gray-500">${testCode}</p>
+                    </div>
+                    <span class="text-sm font-bold text-green-600">Rs. ${testPrice}</span>
+                `;
                             item.addEventListener('click', () => {
                                 addTestToCart(test);
                                 searchInput.value = '';
@@ -1124,19 +1207,22 @@
                 });
             }
 
+
             function addTestToCart(test) {
                 if (orderCart.find(t => t.id === test.id)) {
-                    alert('This test is already added to the order.');
+                    displayTemporaryMessage(searchInput, 'This test is already added to the order.', true);
                     return;
                 }
                 orderCart.push(test);
                 renderCart();
             }
 
+
             window.removeTestFromCart = function (testId) {
                 orderCart = orderCart.filter(t => t.id !== testId);
                 renderCart();
             };
+
 
             function renderCart() {
                 if (orderCart.length === 0) {
@@ -1149,21 +1235,22 @@
                         const testPrice = test.price || 0;
 
                         tableBody.innerHTML += `
-                    <tr class="bg-white hover:bg-gray-50 transition-colors animate-fade-in">
-                        <td class="px-4 py-3 text-gray-500 font-medium text-xs">${testCode}</td>
-                        <td class="px-4 py-3 font-bold text-gray-800">${testName}</td>
-                        <td class="px-4 py-3 text-right font-bold text-gray-700">Rs. ${testPrice}</td>
-                        <td class="px-4 py-3 text-center">
-                            <button type="button" onclick="removeTestFromCart(${test.id})" class="text-red-400 hover:text-red-600 transition-colors p-1 cursor-pointer">
-                                <i class="ph-bold ph-trash text-lg"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                <tr class="bg-white hover:bg-gray-50 transition-colors animate-fade-in">
+                    <td class="px-4 py-3 text-gray-500 font-medium text-xs">${testCode}</td>
+                    <td class="px-4 py-3 font-bold text-gray-800">${testName}</td>
+                    <td class="px-4 py-3 text-right font-bold text-gray-700">Rs. ${testPrice}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button type="button" onclick="removeTestFromCart(${test.id})" class="text-red-400 hover:text-red-600 transition-colors p-1 cursor-pointer">
+                            <i class="ph-bold ph-trash text-lg"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
                     });
                 }
                 calculateTotals();
             }
+
 
             function calculateTotals() {
                 let subtotal = orderCart.reduce((sum, test) => sum + (parseFloat(test.price) || 0), 0);
@@ -1179,7 +1266,9 @@
                 if (elTotal) elTotal.innerText = grandTotal.toFixed(2);
             }
 
+
             discountInput?.addEventListener('input', calculateTotals);
+
 
             document.getElementById('CreateOrderForm')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -1220,7 +1309,7 @@
                     try {
                         result = JSON.parse(responseText);
                     } catch (parseError) {
-                        throw new Error("Backend returned HTML instead of JSON.");
+                        throw new Error("Backend crashed");
                     }
 
                     if (response.status === 422) {
@@ -1239,7 +1328,7 @@
                                 setTimeout(() => {
                                     errorEl.classList.add('hidden');
                                     errorEl.innerText = '';
-                                }, 2000);
+                                }, 3000);
                             }
                         }
                     } else if (response.ok && (result.status === 200 || result.status === 'success')) {
@@ -1272,24 +1361,21 @@
                             const submitContainer = btn.parentElement;
                             submitContainer.parentNode.insertBefore(errorMsg, submitContainer);
                         }
-                        errorMsg.innerText = result.message || 'An error occurred while creating the order.';
+                        errorMsg.innerText = result.message || 'An error occurred.';
                         errorMsg.classList.remove('hidden');
                         setTimeout(() => {
                             errorMsg.classList.add('hidden');
-                        }, 2000);
+                        }, 3000);
                     }
 
                 } catch (error) {
-                    console.error(error);
                 } finally {
                     btn.innerHTML = originalHtml;
                     btn.disabled = false;
                 }
             });
 
-            // ==========================================
-            // 6. MODAL LOGIC 
-            // ==========================================
+
             function openModal(modalId) {
                 const backdrop = document.getElementById(modalId);
                 if (!backdrop) return;
@@ -1302,6 +1388,7 @@
                     modalContent.classList.add('scale-100');
                 });
             }
+
 
             function closeModal(modalId) {
                 const backdrop = document.getElementById(modalId);
@@ -1316,7 +1403,8 @@
                 }, 300);
             }
 
-            document.addEventListener('click', (e) => {
+
+            document.addEventListener('click', async (e) => {
                 const viewTestBtn = e.target.closest('.btn-view-test');
                 if (viewTestBtn) {
                     const testId = viewTestBtn.getAttribute('data-id');
@@ -1328,42 +1416,47 @@
                 }
 
                 if (e.target.closest('.btn-view-order')) openModal('OrderPreviewModalBackdrop');
+
                 if (e.target.closest('.close-modal-btn')) {
                     closeModal(e.target.closest('.close-modal-btn').getAttribute('data-modal'));
                 }
+
                 if (e.target.closest('.btn-delete-order')) {
-                    if (confirm("Are you sure you want to delete this order?")) {
-                        e.target.closest('tr').remove();
+                    const deleteBtn = e.target.closest('.btn-delete-order');
+                    const orderId = deleteBtn.getAttribute('data-id');
+                    const row = deleteBtn.closest('tr');
+
+                    const originalHtml = deleteBtn.innerHTML;
+                    deleteBtn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i>`;
+                    deleteBtn.disabled = true;
+
+                    try {
+                        const response = await fetch(`/orders/${orderId}`, {
+                            method: 'DELETE',
+                            headers: fetchHeaders
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && result.status === 200) {
+                            row.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                            setTimeout(() => {
+                                fetchUserOrders();
+                                fetchDashboardTodayStats();
+                            }, 300);
+                        } else {
+                            console.error(result.message || 'Failed to delete order.');
+                            deleteBtn.innerHTML = originalHtml;
+                            deleteBtn.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('Delete Error:', error);
+                        deleteBtn.innerHTML = originalHtml;
+                        deleteBtn.disabled = false;
                     }
                 }
             });
 
-            // ==========================================
-            // 7. SETTINGS PAGE LOGIC
-            // ==========================================
-            function displayTemporaryMessage(inputElement, message, isError = true) {
-                const existingMsg = inputElement.parentElement.querySelector('.temp-msg');
-                if (existingMsg) existingMsg.remove();
-
-                const msgEl = document.createElement('p');
-                msgEl.className = `temp-msg text-xs mt-1 font-bold animate-fade-in ${isError ? 'text-red-500' : 'text-green-500'}`;
-                msgEl.innerText = message;
-
-                if (isError) inputElement.classList.add('border-red-500');
-                inputElement.parentElement.appendChild(msgEl);
-
-                setTimeout(() => {
-                    if (msgEl && msgEl.parentNode) msgEl.remove();
-                    if (isError) inputElement.classList.remove('border-red-500');
-                }, 2000);
-            }
-
-            function showTemporaryFormErrors(form, errors) {
-                for (const [key, messages] of Object.entries(errors)) {
-                    const input = form.querySelector(`[name="${key}"]`);
-                    if (input) displayTemporaryMessage(input, messages[0], true);
-                }
-            }
 
             document.querySelectorAll('.toggle-password').forEach(icon => {
                 icon.addEventListener('click', function () {
@@ -1380,6 +1473,7 @@
                 });
             });
 
+
             if (userId) {
                 document.getElementById('UpdateEmailForm')?.addEventListener('submit', async (e) => {
                     e.preventDefault();
@@ -1390,11 +1484,16 @@
                     btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin mr-1"></i> Saving...`;
                     btn.disabled = true;
 
-                    const formData = new FormData(form);
-                    formData.append('_method', 'PUT');
+                    const payload = {
+                        email: form.querySelector('input[name="email"]').value
+                    };
 
                     try {
-                        const response = await fetch(`/user/${userId}/email`, { method: 'POST', headers: fetchHeaders, body: formData });
+                        const response = await fetch(`/user/${userId}/email`, {
+                            method: 'PUT',
+                            headers: fetchHeaders,
+                            body: JSON.stringify(payload)
+                        });
                         const result = await response.json();
                         const emailInput = form.querySelector('input[name="email"]');
 
@@ -1414,6 +1513,7 @@
                     }
                 });
 
+
                 document.getElementById('UpdatePasswordForm')?.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const form = e.target;
@@ -1423,11 +1523,17 @@
                     btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin mr-1"></i> Updating...`;
                     btn.disabled = true;
 
-                    const formData = new FormData(form);
-                    formData.append('_method', 'PUT');
+                    const payload = {
+                        password: form.querySelector('input[name="password"]').value,
+                        newPassword: form.querySelector('input[name="newPassword"]').value
+                    };
 
                     try {
-                        const response = await fetch(`/user/${userId}/password`, { method: 'POST', headers: fetchHeaders, body: formData });
+                        const response = await fetch(`/user/${userId}/password`, {
+                            method: 'PUT',
+                            headers: fetchHeaders,
+                            body: JSON.stringify(payload)
+                        });
                         const result = await response.json();
 
                         if (response.status === 422) {
@@ -1452,6 +1558,7 @@
                     }
                 });
             }
+
         });
     </script>
 </body>

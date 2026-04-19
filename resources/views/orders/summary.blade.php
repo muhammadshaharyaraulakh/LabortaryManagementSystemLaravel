@@ -1,30 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Receipt - {{ $order->trackingId }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        /* Hides the print button and formats page specifically for PDF saving */
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-
-            body {
-                background-color: white !important;
-            }
-
-            .print-border {
-                border: none !important;
-                box-shadow: none !important;
-            }
-        }
-    </style>
-</head>
+<x-header />
 
 <body class="bg-gray-50 p-6 md:p-12 text-gray-800">
 
@@ -37,7 +11,8 @@
                         class="text-purple-600 font-bold">{{ $order->trackingId }}</span></p>
                 @if($order->fiaReceiptNo)
                     <p class="text-xs text-green-600 font-bold mt-1"><i class="ph-fill ph-check-circle"></i> FIA Synced:
-                        {{ $order->fiaReceiptNo }}</p>
+                        {{ $order->fiaReceiptNo }}
+                    </p>
                 @endif
             </div>
 

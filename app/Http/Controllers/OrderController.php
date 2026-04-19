@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use PHPUnit\Logging\OpenTestReporting\Status;
 
 class OrderController extends Controller
 {
@@ -33,13 +32,14 @@ class OrderController extends Controller
             $tests = Test::whereIn('id', $validated['tests'])->get();
             $subtotal = $tests->sum('price');
             $discount = $validated['discount'] ?? 0;
+
             if ($discount > $subtotal) {
                 DB::rollBack();
                 return response()->json([
                     'status' => 'error',
                     'message' => 'The given data was invalid.',
                     'errors' => [
-                        'discount' => 'Discount cannot be greater than the subtotal amount.'
+                        'discount' => ['Discount cannot be greater than the subtotal amount.']
                     ]
                 ], 422);
             }
@@ -109,19 +109,80 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
     public function showSummary($trackingId)
     {
-        $order = Order::with('tests')->where('trackingId', $trackingId)->firstOrFail();
+        $order = Order::withTrashed()->with('tests')->where('trackingId', $trackingId)->firstOrFail();
 
-        return view('orders.summary', compact('order'));
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Orders Fetched',
+            'orders' => $order
+        ]);
     }
 
+    public function delete($id)
+    {
+        if (empty($id)) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Order ID is required'
+            ], 400);
+        }
+
+        $order = Order::findOrFail($id);
+
+        try {
+            DB::beginTransaction();
+
+            if (app()->environment('local')) {
+                Http::fake([
+                    'api.fia.gov.pk/*' => Http::response([
+                        'status' => 'success',
+                        'message' => 'Receipt voided successfully'
+                    ], 200)
+                ]);
+            }
+
+            $fiaResponse = Http::timeout(10)->post('https://api.fia.gov.pk/tax/void', [
+                'tracking_id' => $order->trackingId,
+                'receipt_number' => $order->fiaReceiptNo,
+                'lab_id' => env('FIA_LAB_KEY', 'TEST_KEY_123'),
+                'reason' => 'Patient cancelled order'
+            ]);
+
+            if (!$fiaResponse->successful()) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Failed to cancel tax receipt with FIA API.'
+                ], 400);
+            }
+
+            $order->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Order deleted and FIA tax receipt cancelled successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 500,
+                'message' => 'Failed to delete order: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function getOrders()
     {
-        $orders = Order::where('userId', Auth::id())
-            ->with('tests')
-            ->whereDate('created_at', Carbon::today())
+
+        $orders = Order::with('tests')
+            ->where('created_at', '>=', Carbon::now()->subHour())
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json([
@@ -129,6 +190,7 @@ class OrderController extends Controller
             'data' => $orders
         ]);
     }
+
     public function SearchOrder(Request $request, $search)
     {
         if (empty($search)) {
@@ -137,10 +199,9 @@ class OrderController extends Controller
                 'message' => 'Search parameter is required'
             ], 400);
         }
-
-        $order = Order::with('tests')
+        $order = Order::withTrashed()
+            ->with('tests')
             ->where('trackingId', $search)
-            ->where('userId', Auth::id())
             ->first();
 
         if (empty($order)) {
@@ -156,6 +217,7 @@ class OrderController extends Controller
             'orders' => [$order]
         ]);
     }
+
     public function Search(Request $request)
     {
         $validation = $request->validate([
@@ -173,7 +235,10 @@ class OrderController extends Controller
         $totalOrders = $orders->count();
         $totalMoney = $orders->sum('grandTotal');
 
-        $deletedOrders = 0;
+        $deletedOrders = Order::onlyTrashed()
+            ->where('userId', Auth::id())
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
 
         return response()->json([
             'status' => 200,
@@ -185,5 +250,4 @@ class OrderController extends Controller
             ]
         ]);
     }
-
 }
