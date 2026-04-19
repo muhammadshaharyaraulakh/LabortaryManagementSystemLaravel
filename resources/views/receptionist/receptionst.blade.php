@@ -72,7 +72,7 @@
     </aside>
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header class="h-20 px-4 md:px-10 flex items-center justify-between z-20 sticky top-0 bg-mainBg">
+        <header class="h-20 px-4 md:px-10 z-20 sticky top-0 bg-mainBg">
             <div class="flex items-center">
                 <button id="open-mobile-sidebar"
                     class="mr-4 text-gray-800 md:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer">
@@ -84,19 +84,6 @@
                 </h1>
             </div>
 
-            <div class="flex items-center space-x-6">
-                <div class="relative hidden sm:flex items-center">
-                    <input type="text" placeholder="Search Patient/Order ID"
-                        class="bg-white border border-gray-200 rounded-full py-1.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200 w-48 lg:w-64 shadow-sm">
-                </div>
-
-                <div class="relative">
-                    <button id="profile-btn"
-                        class="text-gray-700 hover:text-black transition-colors focus:outline-none flex items-center gap-2 cursor-pointer">
-                        <i class="ph-duotone ph-user-circle text-3xl md:text-4xl"></i>
-                    </button>
-                </div>
-            </div>
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">

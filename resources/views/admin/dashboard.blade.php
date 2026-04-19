@@ -253,54 +253,7 @@
                 </div>
             </div>
 
-            <div id="section-department" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
-                            <i class="ph-duotone ph-buildings text-2xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-gray-800">Departments</h2>
-                            <p class="text-sm text-gray-500 font-medium">Manage hospital departments and wards</p>
-                        </div>
-                    </div>
-                    <button id="open-department-modal"
-                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                        <i class="ph ph-plus font-bold text-lg"></i> Add Department
-                    </button>
-                </div>
-                <div id="grid-department" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                </div>
-            </div>
-
-            <div id="section-performance" class="content-section hidden animate-fade-in">
-                <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-12 w-full flex flex-col items-center justify-center min-h-[400px] border border-gray-50">
-                    <i class="ph-duotone ph-trend-up text-[5rem] text-green-400 mb-4"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">Performance Metrics</h2>
-                    <p class="text-gray-500 mt-2">Lab performance and analytical data will appear here.</p>
-                </div>
-            </div>
-
-            <div id="section-tests" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center">
-                            <i class="ph-duotone ph-flask text-2xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-gray-800">Laboratory Tests</h2>
-                            <p class="text-sm text-gray-500 font-medium">Manage available tests and configurations</p>
-                        </div>
-                    </div>
-                    <button id="open-test-modal"
-                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                        <i class="ph ph-plus font-bold text-lg"></i> Add Test
-                    </button>
-                </div>
-                <div id="grid-tests" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                </div>
-            </div>
+            <x-tests />
 
             <div id="section-doctor" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -321,7 +274,25 @@
                 <div id="grid-pathologist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
-
+              <div id="section-department" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-buildings text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Departments</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage hospital departments and wards</p>
+                        </div>
+                    </div>
+                    <button id="open-department-modal"
+                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Department
+                    </button>
+                </div>
+                <div id="grid-department" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
             <div id="section-sample-collector" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
@@ -401,6 +372,14 @@
                     </button>
                 </div>
                 <div id="grid-receptionist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
+            <div id="section-performance" class="content-section hidden animate-fade-in">
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-12 w-full flex flex-col items-center justify-center min-h-[400px] border border-gray-50">
+                    <i class="ph-duotone ph-trend-up text-[5rem] text-green-400 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">Performance Metrics</h2>
+                    <p class="text-gray-500 mt-2">Lab performance and analytical data will appear here.</p>
                 </div>
             </div>
 
@@ -752,7 +731,6 @@
             </div>
         </div>
     </div>
-
     <div id="UpdateDepartmentModalBackdrop"
         class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="UpdateDepartmentModal"
@@ -808,195 +786,6 @@
                 <button id="UpdateDepartmentBtn" type="button"
                     class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Update
                     Department</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="AddTestModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="AddTestModal"
-            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center">
-                        <i class="ph-duotone ph-flask text-xl"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-gray-800">Add Laboratory Test</h3>
-                </div>
-                <button id="CloseAddTestX"
-                    class="text-gray-400 hover:text-gray-800 cursor-pointer p-1 transition-colors">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <form id="AddTestForm" class="space-y-4">
-                    <div>
-                        <label for="addTestName" class="block text-sm font-bold text-gray-700 mb-1">Test Name <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" id="addTestName" name="name" placeholder="e.g. Complete Blood Count"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
-                        <p id="errorAddTestName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="addTestCode" class="block text-sm font-bold text-gray-700 mb-1">Code <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="addTestCode" name="code" placeholder="CBC-01"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorAddTestCode" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                        <div>
-                            <label for="addTestPrice" class="block text-sm font-bold text-gray-700 mb-1">Price <span
-                                    class="text-red-500">*</span></label>
-                            <input type="number" step="0.01" id="addTestPrice" name="price"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorAddTestPrice" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="addTestDepartment" class="block text-sm font-bold text-gray-700 mb-1">Department
-                            <span class="text-red-500">*</span></label>
-                        <select id="addTestDepartment" name="department_id"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 appearance-none transition-colors">
-                        </select>
-                        <p id="errorAddTestDepartment" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="addTestSampleType" class="block text-sm font-bold text-gray-700 mb-1">Sample
-                                Type</label>
-                            <input type="text" id="addTestSampleType" name="sample_type"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorAddTestSampleType" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                        <div>
-                            <label for="addTestResultHours" class="block text-sm font-bold text-gray-700 mb-1">Hours
-                                <span class="text-red-500">*</span></label>
-                            <input type="number" id="addTestResultHours" name="result_hours" value="24"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorAddTestResultHours" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="addTestInstructions"
-                            class="block text-sm font-bold text-gray-700 mb-1">Instructions</label>
-                        <textarea id="addTestInstructions" name="instructions" rows="2"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 resize-none transition-colors"></textarea>
-                        <p id="errorAddTestInstructions" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                    <div class="pt-2">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="addTestIsActive" name="is_active" class="peer sr-only" checked>
-                            <div
-                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-500 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
-                            </div>
-                            <span class="text-sm font-bold text-gray-700">Test is Active</span>
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
-                <button id="CloseAddTestBtn" type="button"
-                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
-                <button id="SaveTestBtn" type="button"
-                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Save
-                    Test</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="UpdateTestModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="UpdateTestModal"
-            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
-                        <i class="ph-duotone ph-pencil-line text-xl"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-gray-800">Update Laboratory Test</h3>
-                </div>
-                <button id="CloseUpdateTestX"
-                    class="text-gray-400 hover:text-gray-800 cursor-pointer p-1 transition-colors">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <form id="UpdateTestForm" class="space-y-4">
-                    <input type="hidden" id="updateTestId" name="id">
-                    <div>
-                        <label for="updateTestName" class="block text-sm font-bold text-gray-700 mb-1">Test Name <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" id="updateTestName" name="name"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
-                        <p id="errorUpdateTestName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="updateTestCode" class="block text-sm font-bold text-gray-700 mb-1">Code <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="updateTestCode" name="code"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorUpdateTestCode" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                        <div>
-                            <label for="updateTestPrice" class="block text-sm font-bold text-gray-700 mb-1">Price <span
-                                    class="text-red-500">*</span></label>
-                            <input type="number" step="0.01" id="updateTestPrice" name="price"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorUpdateTestPrice" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="updateTestDepartment" class="block text-sm font-bold text-gray-700 mb-1">Department
-                            <span class="text-red-500">*</span></label>
-                        <select id="updateTestDepartment" name="department_id"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 appearance-none transition-colors">
-                        </select>
-                        <p id="errorUpdateTestDepartment" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="updateTestSampleType" class="block text-sm font-bold text-gray-700 mb-1">Sample
-                                Type</label>
-                            <input type="text" id="updateTestSampleType" name="sample_type"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorUpdateTestSampleType" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                        <div>
-                            <label for="updateTestResultHours" class="block text-sm font-bold text-gray-700 mb-1">Hours
-                                <span class="text-red-500">*</span></label>
-                            <input type="number" id="updateTestResultHours" name="result_hours"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
-                            <p id="errorUpdateTestResultHours" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="updateTestInstructions"
-                            class="block text-sm font-bold text-gray-700 mb-1">Instructions</label>
-                        <textarea id="updateTestInstructions" name="instructions" rows="2"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 resize-none transition-colors"></textarea>
-                        <p id="errorUpdateTestInstructions" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                    <div class="pt-2">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="updateTestIsActive" name="is_active" class="peer sr-only">
-                            <div
-                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
-                            </div>
-                            <span class="text-sm font-bold text-gray-700">Test is Active</span>
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
-                <button id="CloseUpdateTestBtn" type="button"
-                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
-                <button id="UpdateTestBtn" type="button"
-                    class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Update
-                    Test</button>
             </div>
         </div>
     </div>
@@ -1064,7 +853,6 @@
             </div>
         </div>
     </div>
-
     <div id="EditInventoryModalBackdrop"
         class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="EditInventoryModal"
@@ -1207,4 +995,5 @@
 
 
 </body>
-</body>
+
+</html>

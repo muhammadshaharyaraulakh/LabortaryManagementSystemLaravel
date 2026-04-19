@@ -34,7 +34,7 @@ class TestController extends Controller
 
     public function index()
     {
-        $tests = Test::all();
+        $tests = Test::with('department')->get();
 
         if ($tests->isNotEmpty()) {
             return response()->json([
@@ -228,7 +228,7 @@ class TestController extends Controller
 
     public function show($id)
     {
-        $test = Test::with(['parameters', 'requirements'])->find($id);
+        $test = Test::with(['parameters', 'requirements','department'])->find($id);
 
         if (!$test) {
             return response()->json([
