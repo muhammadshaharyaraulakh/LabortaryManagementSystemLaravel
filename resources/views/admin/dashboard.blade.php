@@ -1,0 +1,1210 @@
+<x-header />
+
+<body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
+
+    <div id="sidebar-backdrop"
+        class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer"></div>
+
+    <aside id="sidebar"
+        class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 md:relative transform -translate-x-full md:translate-x-0">
+        <div class="h-20 flex items-center justify-between px-6 pt-2">
+            <span id="brand-text"
+                class="text-white text-xl font-bold whitespace-nowrap tracking-wide">Administrator</span>
+            <button id="toggle-desktop-sidebar"
+                class="text-gray-300 hover:text-white transition-colors hidden md:block cursor-pointer">
+                <i class="ph ph-caret-double-left text-xl" id="desktop-toggle-icon"></i>
+            </button>
+            <button id="close-mobile-sidebar"
+                class="text-gray-300 hover:text-white transition-colors md:hidden text-2xl cursor-pointer">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1 custom-scrollbar text-sm font-medium" id="sidebar-nav">
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-white bg-white/10 transition-colors group active-nav cursor-pointer"
+                data-target="section-dashboard" data-title="Dashboard">
+                <i
+                    class="ph-duotone ph-squares-four text-2xl w-7 text-center text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Dashboard</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-department" data-title="Departments">
+                <i
+                    class="ph-duotone ph-buildings text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Departments</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-performance" data-title="Performance">
+                <i
+                    class="ph-duotone ph-trend-up text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Performance</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-tests" data-title="Tests">
+                <i
+                    class="ph-duotone ph-flask text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Tests</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-doctor" data-title="Doctor">
+                <i
+                    class="ph-duotone ph-stethoscope text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Pathologist</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-sample-collector" data-title="Sample Collector">
+                <i
+                    class="ph-duotone ph-syringe text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Sample Collector</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-technician" data-title="Technicians">
+                <i
+                    class="ph-duotone ph-desktop text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Technician</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-specialist" data-title="Specialist Doctors">
+                <i
+                    class="ph-duotone ph-clipboard-text text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Specialist Doctor</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-receptionist" data-title="Receptionist">
+                <i
+                    class="ph-duotone ph-headset text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Receptionist</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-stock" data-title="Stock Management">
+                <i
+                    class="ph-duotone ph-package text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Stock Management</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-settings" data-title="Settings">
+                <i
+                    class="ph-duotone ph-gear-six text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Settings</span>
+            </a>
+
+            <div class="pt-4 mt-2 border-t border-gray-700/50">
+                <a href="{{ Route('logout') }}"
+                    class="flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer">
+                    <i
+                        class="ph-duotone ph-sign-out text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors"></i>
+                    <span class="ml-3 nav-text whitespace-nowrap">Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header class="h-20 px-4 md:px-10 flex items-center justify-between z-20 sticky top-0 bg-mainBg">
+            <div class="flex items-center">
+                <button id="open-mobile-sidebar"
+                    class="mr-4 text-gray-800 md:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+                <h1 id="header-title"
+                    class="text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200">
+                    Dashboard
+                </h1>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <div class="relative hidden sm:flex items-center">
+                    <input type="text" placeholder="Search"
+                        class="bg-white border border-gray-200 rounded-full py-1.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200 w-48 lg:w-64 shadow-sm">
+                </div>
+
+                <div class="relative">
+                    <button id="profile-btn"
+                        class="text-gray-700 hover:text-black transition-colors focus:outline-none flex items-center gap-2 cursor-pointer">
+                        <i class="ph-duotone ph-user-circle text-3xl md:text-4xl"></i>
+                    </button>
+
+                    <div id="profile-menu"
+                        class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 hidden z-50 transform origin-top-right dropdown-enter">
+                        <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
+                            <p class="text-sm font-bold text-gray-900">Administrator</p>
+                            <p class="text-xs text-gray-500 font-medium mt-0.5">Shaharyar</p>
+                        </div>
+                        <div class="py-2">
+                            <a href="#"
+                                class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
+                                Profile
+                            </a>
+                            <a href="#"
+                                class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
+                                Settings
+                            </a>
+                            <x-logout />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
+            <div id="section-dashboard" class="content-section block animate-fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full max-w-7xl mx-auto">
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                        <div class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-users text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1">142</h3>
+                        <p class="text-gray-500 font-medium">Total Patients</p>
+                    </div>
+
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-test-tube text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1">120</h3>
+                        <p class="text-gray-500 font-medium">Total Tests</p>
+                    </div>
+
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-green-50 text-green-500 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-trend-up text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1">5,0000</h3>
+                        <p class="text-gray-500 font-medium">+50 this week</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 w-full max-w-7xl mx-auto">
+                    <div
+                        class="lg:col-span-2 bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 w-full">
+                        <div class="relative h-64 w-full">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div
+                        class="lg:col-span-1 bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 w-full flex items-center justify-center relative min-h-[300px]">
+                        <div class="relative h-full w-full max-w-[250px]">
+                            <canvas id="doughnutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-8 w-full max-w-5xl mb-8">
+                    <h2 class="text-xl font-extrabold text-black mb-6">Latest Registered Patients</h2>
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4">Name</th>
+                                    <th scope="col" class="px-6 py-4">Age</th>
+                                    <th scope="col" class="px-6 py-4">Test Type</th>
+                                    <th scope="col" class="px-6 py-4">Phone Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
+                                    <td class="px-6 py-4">Ali Khan</td>
+                                    <td class="px-6 py-4">29</td>
+                                    <td class="px-6 py-4">CBC Test</td>
+                                    <td class="px-6 py-4">+92 321 9876543</td>
+                                </tr>
+                                <tr
+                                    class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
+                                    <td class="px-6 py-4">Sara Ahmed</td>
+                                    <td class="px-6 py-4">34</td>
+                                    <td class="px-6 py-4">Lipid Profile</td>
+                                    <td class="px-6 py-4">+92 333 1122334</td>
+                                </tr>
+                                <tr class="bg-white hover:bg-gray-50 transition-colors text-gray-800 font-medium">
+                                    <td class="px-6 py-4">Hamza Iqbal</td>
+                                    <td class="px-6 py-4">41</td>
+                                    <td class="px-6 py-4">Thyroid Test</td>
+                                    <td class="px-6 py-4">+92 300 4567890</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-department" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-buildings text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Departments</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage hospital departments and wards</p>
+                        </div>
+                    </div>
+                    <button id="open-department-modal"
+                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Department
+                    </button>
+                </div>
+                <div id="grid-department" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+            <div id="section-performance" class="content-section hidden animate-fade-in">
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-12 w-full flex flex-col items-center justify-center min-h-[400px] border border-gray-50">
+                    <i class="ph-duotone ph-trend-up text-[5rem] text-green-400 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">Performance Metrics</h2>
+                    <p class="text-gray-500 mt-2">Lab performance and analytical data will appear here.</p>
+                </div>
+            </div>
+
+            <div id="section-tests" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-flask text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Laboratory Tests</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage available tests and configurations</p>
+                        </div>
+                    </div>
+                    <button id="open-test-modal"
+                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Test
+                    </button>
+                </div>
+                <div id="grid-tests" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+            <div id="section-doctor" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-stethoscope text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Pathologists</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage pathologist profiles and schedules</p>
+                        </div>
+                    </div>
+                    <button data-role="Pathologist"
+                        class="open-user-modal-btn bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Pathologist
+                    </button>
+                </div>
+                <div id="grid-pathologist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+            <div id="section-sample-collector" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-syringe text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Sample Collectors</h2>
+                            <p class="text-sm text-gray-500 font-medium">Track and manage sample collection personnel
+                            </p>
+                        </div>
+                    </div>
+                    <button data-role="SampleCollector"
+                        class="open-user-modal-btn bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Collector
+                    </button>
+                </div>
+                <div id="grid-sample-collector"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+            </div>
+
+            <div id="section-technician" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-desktop text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Technicians</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage machine operators (X-Ray, MRI, ECG)</p>
+                        </div>
+                    </div>
+                    <button data-role="Technician"
+                        class="open-user-modal-btn bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Technician
+                    </button>
+                </div>
+                <div id="grid-technician" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+            <div id="section-specialist" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-clipboard-text text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Specialist Doctors</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage reporting doctors (Radiologists,
+                                Cardiologists)</p>
+                        </div>
+                    </div>
+                    <button data-role="SpecialistDoctor"
+                        class="open-user-modal-btn bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Specialist
+                    </button>
+                </div>
+                <div id="grid-specialist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+            <div id="section-receptionist" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center">
+                            <i class="ph-duotone ph-headset text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Reception Staff</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage front desk operations and personnel</p>
+                        </div>
+                    </div>
+                    <button data-role="Receptionist"
+                        class="open-user-modal-btn bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph ph-plus font-bold text-lg"></i> Add Receptionist
+                    </button>
+                </div>
+                <div id="grid-receptionist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+
+            <div id="section-stock" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-package text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Inventory Management</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage lab stock, view alerts, and track usage
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button id="BtnGlobalHistory"
+                            class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
+                            <i class="ph ph-clock-counter-clockwise text-lg"></i> History
+                        </button>
+                        <button id="BtnOpenAddInventory"
+                            class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                            <i class="ph ph-plus font-bold text-lg"></i> Register Item
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4">
+                        <div class="relative w-full sm:w-96">
+                            <i
+                                class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                            <input type="text" id="inventory-search" placeholder="Search inventory items..."
+                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors text-sm font-medium">
+                        </div>
+                        <button id="BtnFetchAlerts"
+                            class="w-full sm:w-auto bg-red-50 text-red-600 hover:bg-red-100 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                            <i class="ph ph-warning-circle text-lg"></i> Low Stock Alerts
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4">Item Name</th>
+                                    <th scope="col" class="px-6 py-4">Current Stock</th>
+                                    <th scope="col" class="px-6 py-4">Alert Limit</th>
+                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="inventory-pagination"
+                        class="p-4 border-t border-gray-100 flex justify-between items-center text-sm font-medium text-gray-500">
+                    </div>
+                </div>
+            </div>
+            <div id="section-settings" class="content-section hidden animate-fade-in">
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-12 w-full flex flex-col items-center justify-center min-h-[400px] border border-gray-50">
+                    <i class="ph-duotone ph-gear-six text-[5rem] text-gray-400 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">System Settings</h2>
+                    <p class="text-gray-500 mt-2">Configure application preferences and settings.</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <div id="AddUserModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="AddUserModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-user-plus text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Add Staff Member</h3>
+                </div>
+                <button id="CloseAddUserX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="AddUserForm" class="space-y-4" enctype="multipart/form-data">
+
+                    <div class="flex flex-col items-center mb-2">
+                        <div id="addUserImageCircle"
+                            class="w-20 h-20 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden mb-2 relative group cursor-pointer">
+                            <img id="addUserImagePreview" src="#" alt="Preview"
+                                class="w-full h-full object-cover hidden">
+                            <i id="addUserCameraIcon"
+                                class="ph-duotone ph-camera text-2xl text-gray-400 group-hover:text-gray-600 transition-colors absolute"></i>
+                        </div>
+                        <label class="text-sm font-bold text-blue-600 cursor-pointer hover:underline">
+
+                            <input type="file" id="addUserImage" name="image" accept="image/*" class="hidden">
+                        </label>
+                        <p id="errorAddUserImage" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="addUserName" class="block text-sm font-bold text-gray-700 mb-1">Full Name <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="addUserName" name="name" placeholder="John Doe"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <p id="errorAddUserName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+
+                        <div>
+                            <label for="addUserEmail" class="block text-sm font-bold text-gray-700 mb-1">Email <span
+                                    class="text-red-500">*</span></label>
+                            <input type="email" id="addUserEmail" name="email" placeholder="john@example.com"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <p id="errorAddUserEmail" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="addUserPassword" class="block text-sm font-bold text-gray-700 mb-1">Password <span
+                                class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="password" id="addUserPassword" name="password" placeholder="••••••••"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <button type="button" id="addUserPasswordToggle"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                <i id="addUserEyeIcon" class="ph ph-eye text-lg"></i>
+                            </button>
+                        </div>
+                        <p id="errorAddUserPassword" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="addUserRole" class="block text-sm font-bold text-gray-700 mb-1">Role <span
+                                    class="text-red-500">*</span></label>
+                            <select id="addUserRole" name="role"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors appearance-none cursor-pointer">
+                                <option value="" disabled selected>Select Role</option>
+                                <option value="Receptionist">Receptionist</option>
+                                <option value="SampleCollector">Sample Collector</option>
+                                <option value="Pathologist">Pathologist</option>
+                                <option value="Technician">Technician</option>
+                                <option value="SpecialistDoctor">Specialist Doctor</option>
+                            </select>
+                            <p id="errorAddUserRole" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+
+                        <div>
+                            <label for="addUserDepartment" class="block text-sm font-bold text-gray-700 mb-1">Department
+                                <span class="text-gray-400 font-normal">(Optional)</span></label>
+                            <select id="addUserDepartment" name="department_id"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors appearance-none cursor-pointer">
+                            </select>
+                            <p id="errorAddUserDepartment" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseAddUserBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button id="SaveUserBtn" type="button"
+                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                    Save Staff
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="UpdateUserModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="UpdateUserModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+                        <i class="ph-duotone ph-pencil-line text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Update Staff Member</h3>
+                </div>
+                <button id="CloseUpdateUserX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="UpdateUserForm" class="space-y-4" enctype="multipart/form-data">
+                    <input type="hidden" id="updateUserId" name="id">
+
+                    <div class="flex flex-col items-center mb-2">
+                        <div id="updateUserImageCircle"
+                            class="w-20 h-20 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden mb-2 relative group cursor-pointer">
+                            <img id="updateUserImagePreview" src="#" alt="Preview"
+                                class="w-full h-full object-cover hidden">
+                            <i id="updateUserCameraIcon"
+                                class="ph-duotone ph-camera text-2xl text-gray-400 group-hover:text-gray-600 transition-colors absolute"></i>
+                        </div>
+                        <label class="text-sm font-bold text-teal-600 cursor-pointer hover:underline">
+
+                            <input type="file" id="updateUserImage" name="image" accept="image/*" class="hidden">
+                        </label>
+                        <p id="errorUpdateUserImage" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="updateUserName" class="block text-sm font-bold text-gray-700 mb-1">Full Name
+                                <span class="text-red-500">*</span></label>
+                            <input type="text" id="updateUserName" name="name"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <p id="errorUpdateUserName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+
+                        <div>
+                            <label for="updateUserEmail" class="block text-sm font-bold text-gray-700 mb-1">Email <span
+                                    class="text-red-500">*</span></label>
+                            <input type="email" id="updateUserEmail" name="email"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <p id="errorUpdateUserEmail" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="updateUserPassword" class="block text-sm font-bold text-gray-700 mb-1">Password
+                            <span class="text-gray-400 font-normal">(Leave blank to keep)</span></label>
+                        <div class="relative">
+                            <input type="password" id="updateUserPassword" name="password" placeholder="••••••••"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <button type="button" id="updateUserPasswordToggle"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                <i id="updateUserEyeIcon" class="ph ph-eye text-lg"></i>
+                            </button>
+                        </div>
+                        <p id="errorUpdateUserPassword" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="updateUserRole" class="block text-sm font-bold text-gray-700 mb-1">Role <span
+                                    class="text-red-500">*</span></label>
+                            <select id="updateUserRole" name="role"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors appearance-none cursor-pointer">
+                                <option value="" disabled>Select Role</option>
+                                <option value="Receptionist">Receptionist</option>
+                                <option value="SampleCollector">Sample Collector</option>
+                                <option value="Pathologist">Pathologist</option>
+                                <option value="Technician">Technician</option>
+                                <option value="SpecialistDoctor">Specialist Doctor</option>
+                            </select>
+                            <p id="errorUpdateUserRole" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+
+                        <div>
+                            <label for="updateUserDepartment"
+                                class="block text-sm font-bold text-gray-700 mb-1">Department <span
+                                    class="text-gray-400 font-normal">(Optional)</span></label>
+                            <select id="updateUserDepartment" name="department_id"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors appearance-none cursor-pointer">
+                            </select>
+                            <p id="errorUpdateUserDepartment" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseUpdateUserBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button id="UpdateUserBtn" type="button"
+                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                    Update Staff
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="AddDepartmentModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="AddDepartmentModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-buildings text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Add Department</h3>
+                </div>
+                <button id="CloseAddDepartmentX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="AddDepartmentForm" class="space-y-4">
+                    <div>
+                        <label for="addDepartmentName" class="block text-sm font-bold text-gray-700 mb-1">Department
+                            Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="addDepartmentName" name="name"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
+                        <p id="errorAddDepartmentName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="addDepartmentType" class="block text-sm font-bold text-gray-700 mb-1">Type <span
+                                class="text-red-500">*</span></label>
+                        <select id="addDepartmentType" name="type"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>Select Type</option>
+                            <option value="sample_based">Sample Based</option>
+                            <option value="human_based">Human Based</option>
+                        </select>
+                        <p id="errorAddDepartmentType" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="pt-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="addDepartmentIsActive" name="is_active" class="peer sr-only"
+                                checked>
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
+                            </div>
+                            <span class="text-sm font-bold text-gray-700">Department is Active</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseAddDepartmentBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
+                <button id="SaveDepartmentBtn" type="button"
+                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Save
+                    Department</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="UpdateDepartmentModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="UpdateDepartmentModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+                        <i class="ph-duotone ph-pencil-line text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Update Department</h3>
+                </div>
+                <button id="CloseUpdateDepartmentX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="UpdateDepartmentForm" class="space-y-4">
+                    <input type="hidden" id="updateDepartmentId" name="id">
+                    <div>
+                        <label for="updateDepartmentName" class="block text-sm font-bold text-gray-700 mb-1">Department
+                            Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="updateDepartmentName" name="name"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                        <p id="errorUpdateDepartmentName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="updateDepartmentType" class="block text-sm font-bold text-gray-700 mb-1">Type <span
+                                class="text-red-500">*</span></label>
+                        <select id="updateDepartmentType" name="type"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>Select Type</option>
+                            <option value="sample_based">Sample Based</option>
+                            <option value="human_based">Human Based</option>
+                        </select>
+                        <p id="errorUpdateDepartmentType" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="pt-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="updateDepartmentIsActive" name="is_active" class="peer sr-only">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-sidebarBg relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
+                            </div>
+                            <span class="text-sm font-bold text-gray-700">Department is Active</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseUpdateDepartmentBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
+                <button id="UpdateDepartmentBtn" type="button"
+                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Update
+                    Department</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="AddTestModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="AddTestModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-flask text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Add Laboratory Test</h3>
+                </div>
+                <button id="CloseAddTestX"
+                    class="text-gray-400 hover:text-gray-800 cursor-pointer p-1 transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="AddTestForm" class="space-y-4">
+                    <div>
+                        <label for="addTestName" class="block text-sm font-bold text-gray-700 mb-1">Test Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="addTestName" name="name" placeholder="e.g. Complete Blood Count"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
+                        <p id="errorAddTestName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="addTestCode" class="block text-sm font-bold text-gray-700 mb-1">Code <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="addTestCode" name="code" placeholder="CBC-01"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorAddTestCode" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label for="addTestPrice" class="block text-sm font-bold text-gray-700 mb-1">Price <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" step="0.01" id="addTestPrice" name="price"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorAddTestPrice" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="addTestDepartment" class="block text-sm font-bold text-gray-700 mb-1">Department
+                            <span class="text-red-500">*</span></label>
+                        <select id="addTestDepartment" name="department_id"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 appearance-none transition-colors">
+                        </select>
+                        <p id="errorAddTestDepartment" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="addTestSampleType" class="block text-sm font-bold text-gray-700 mb-1">Sample
+                                Type</label>
+                            <input type="text" id="addTestSampleType" name="sample_type"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorAddTestSampleType" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label for="addTestResultHours" class="block text-sm font-bold text-gray-700 mb-1">Hours
+                                <span class="text-red-500">*</span></label>
+                            <input type="number" id="addTestResultHours" name="result_hours" value="24"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorAddTestResultHours" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="addTestInstructions"
+                            class="block text-sm font-bold text-gray-700 mb-1">Instructions</label>
+                        <textarea id="addTestInstructions" name="instructions" rows="2"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 resize-none transition-colors"></textarea>
+                        <p id="errorAddTestInstructions" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="pt-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="addTestIsActive" name="is_active" class="peer sr-only" checked>
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-500 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
+                            </div>
+                            <span class="text-sm font-bold text-gray-700">Test is Active</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseAddTestBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
+                <button id="SaveTestBtn" type="button"
+                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Save
+                    Test</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="UpdateTestModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="UpdateTestModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-pencil-line text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Update Laboratory Test</h3>
+                </div>
+                <button id="CloseUpdateTestX"
+                    class="text-gray-400 hover:text-gray-800 cursor-pointer p-1 transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="UpdateTestForm" class="space-y-4">
+                    <input type="hidden" id="updateTestId" name="id">
+                    <div>
+                        <label for="updateTestName" class="block text-sm font-bold text-gray-700 mb-1">Test Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="updateTestName" name="name"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
+                        <p id="errorUpdateTestName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="updateTestCode" class="block text-sm font-bold text-gray-700 mb-1">Code <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="updateTestCode" name="code"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorUpdateTestCode" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label for="updateTestPrice" class="block text-sm font-bold text-gray-700 mb-1">Price <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" step="0.01" id="updateTestPrice" name="price"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorUpdateTestPrice" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="updateTestDepartment" class="block text-sm font-bold text-gray-700 mb-1">Department
+                            <span class="text-red-500">*</span></label>
+                        <select id="updateTestDepartment" name="department_id"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 appearance-none transition-colors">
+                        </select>
+                        <p id="errorUpdateTestDepartment" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="updateTestSampleType" class="block text-sm font-bold text-gray-700 mb-1">Sample
+                                Type</label>
+                            <input type="text" id="updateTestSampleType" name="sample_type"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorUpdateTestSampleType" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label for="updateTestResultHours" class="block text-sm font-bold text-gray-700 mb-1">Hours
+                                <span class="text-red-500">*</span></label>
+                            <input type="number" id="updateTestResultHours" name="result_hours"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 transition-colors">
+                            <p id="errorUpdateTestResultHours" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="updateTestInstructions"
+                            class="block text-sm font-bold text-gray-700 mb-1">Instructions</label>
+                        <textarea id="updateTestInstructions" name="instructions" rows="2"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-100 outline-none bg-gray-50/50 resize-none transition-colors"></textarea>
+                        <p id="errorUpdateTestInstructions" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="pt-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="updateTestIsActive" name="is_active" class="peer sr-only">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
+                            </div>
+                            <span class="text-sm font-bold text-gray-700">Test is Active</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseUpdateTestBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
+                <button id="UpdateTestBtn" type="button"
+                    class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Update
+                    Test</button>
+            </div>
+        </div>
+    </div>
+    <div id="AddInventoryModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="AddInventoryModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-package text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Register New Item</h3>
+                </div>
+                <button id="CloseAddInventoryX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="AddInventoryForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Item Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="addInvName" name="name"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
+                            placeholder="e.g. 5cc Syringe">
+                        <p id="errorAddInvName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Unit <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="addInvUnit" name="unit"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
+                                placeholder="e.g. pcs, ml, box">
+                            <p id="errorAddInvUnit" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Alert Limit <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" id="addInvAlert" name="alert"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
+                                placeholder="10">
+                            <p id="errorAddInvAlert" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Initial Stock <span
+                                class="text-red-500">*</span></label>
+                        <input type="number" id="addInvStock" name="initial_stock"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
+                            placeholder="0">
+                        <p id="errorAddInvStock" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseAddInventoryBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
+                <button id="SaveInventoryBtn" type="button"
+                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Save
+                    Item</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="EditInventoryModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="EditInventoryModal"
+            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+                        <i class="ph-duotone ph-pencil-line text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Edit Inventory Item</h3>
+                </div>
+                <button id="CloseEditInventoryX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="EditInventoryForm" class="space-y-4">
+                    <input type="hidden" id="editInvId">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Item Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="editInvName" name="name"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                        <p id="errorEditInvName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Unit <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="editInvUnit" name="unit"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <p id="errorEditInvUnit" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Alert Limit <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" id="editInvAlert" name="alert"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                            <p id="errorEditInvAlert" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Current Stock</label>
+                        <input type="number" id="editInvStock" name="stock"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
+                        <p id="errorEditInvStock" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseEditInventoryBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
+                <button id="UpdateInventoryBtn" type="button"
+                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Update
+                    Item</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ModifyStockModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="ModifyStockModal"
+            class="bg-white w-full max-w-md rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div id="ModifyStockIconContainer" class="w-10 h-10 rounded-lg flex items-center justify-center">
+                        <i id="ModifyStockIcon" class="ph-duotone text-xl"></i>
+                    </div>
+                    <h3 id="ModifyStockTitle" class="text-lg font-extrabold text-gray-800">Modify Stock</h3>
+                </div>
+                <button id="CloseModifyStockX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="ModifyStockForm" class="space-y-4">
+                    <input type="hidden" id="modifyStockId">
+                    <input type="hidden" id="modifyStockType">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Quantity <span
+                                class="text-red-500">*</span></label>
+                        <input type="number" id="modifyStockQty" name="stock"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
+                        <p id="errorModifyStockQty" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Reason / Note <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="modifyStockReason" name="action"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
+                        <p id="errorModifyStockReason" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseModifyStockBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
+                <button id="SubmitModifyStockBtn" type="button"
+                    class="text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="InventoryLogsModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="InventoryLogsModal"
+            class="bg-white w-full max-w-4xl rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-clock-counter-clockwise text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800" id="LogsModalTitle">Inventory History</h3>
+                </div>
+                <button id="CloseLogsX" class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-0 overflow-y-auto custom-scrollbar flex-1">
+                <table class="w-full text-left text-sm">
+                    <thead
+                        class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Action Type</th>
+                            <th scope="col" class="px-6 py-4">Quantity</th>
+                            <th scope="col" class="px-6 py-4">Details</th>
+                            <th scope="col" class="px-6 py-4">Date & Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-table-body" class="divide-y divide-gray-100">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</body>

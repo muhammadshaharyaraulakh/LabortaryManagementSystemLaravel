@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+    --color-sidebarBg: #1b2033;
+    --color-mainBg: #f4f6f9;
+    --color-inputBg: #f3f4f6;
+    --color-text-sidebarBg: #1b2033;
+}
+
+@layer utilities {
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #374151;
+        border-radius: 4px;
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+@layer components {
+    .dropdown-enter {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    .dropdown-enter-active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dropdown-leave {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+    .dropdown-leave-active {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}

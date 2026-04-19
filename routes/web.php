@@ -1,0 +1,132 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\loginController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\InventoryManagement;
+use App\Http\Controllers\SocialController;
+use App\Http\Controllers\OrderController;
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::get('/login', function () {
+    return view('authentication.login');
+});
+
+Route::post('/login', [loginController::class, 'login'])->name('login');
+
+Route::middleware('auth')->group(function () {
+
+
+
+    Route::view('/receptionist', 'receptionist.receptionst')->name('receptionist');
+
+    Route::view('/pathologist/dashboard', 'pathologist.dashboard')
+        ->name('pathologist.dashboard');
+
+    Route::view('/samplecollector/dashboard', 'samplecollector.dashboard')
+        ->name('samplecollector.dashboard');
+});
+Route::view('/VerifyCode', 'authentication.VerifyCode')
+    ->name('VerifyCode');
+Route::post('/VerifyCode', [loginController::class, 'verifyCode'])->name('VerifyCode');
+Route::post('resetPassword', [loginController::class, 'resetPassword'])->name('resetPassword');
+Route::post('forgotpassword', [loginController::class, 'forgotPassword'])->name('forgotpassword');
+Route::get('/forgetPassword', function () {
+    return view('authentication.forgetPassword');
+})->name('forgetPassword');
+Route::get('/resetPassword', function () {
+    return view('authentication.resetPassword');
+})->name('resetPassword');
+
+Route::get('/home', function () {
+    return view('home');
+});
+
+
+Route::post('login', [loginController::class, 'login'])->name('login');
+Route::get('/logout', [loginController::class, 'logout'])->name('logout');
+Route::get('/users', [profileController::class, 'allusers'])->name('users');
+
+Route::middleware(['auth', 'check.role'])->group(function () {
+    Route::view('/admin/dashboard', 'admin.dashboard')
+        ->name('admin.adminstrator');
+    Route::prefix('departments')->controller(DepartmentController::class)->group(function () {
+        Route::get('/', 'index')->name('departments');
+        Route::post('/', 'addDepartment')->name('departments.add');
+        Route::get('/{id}', 'show')->name('departments.show');
+        Route::put('/{id}', 'update')->name('departments.update');
+        Route::delete('/{id}', 'delete')->name('departments.delete');
+    });
+
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/allusers', 'allusers')->name('users.all');
+        Route::post('/adduser', 'adduser')->name('users.add');
+        Route::get('/user/{id}', 'show')->name('users.show');
+        Route::put('/edit/{id}', 'edit')->name('users.edit');
+        Route::delete('/delete/{id}', 'delete')->name('users.delete');
+    });
+
+    Route::prefix('inventory')->controller(InventoryManagement::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/add', 'add');
+        Route::get('/alerts', 'alerts');
+        Route::get('/search/{search}', 'search');
+        Route::get('/history', 'allHistory');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}/edit', 'edit');
+        Route::put('/{id}/add-stock', 'addStock');
+        Route::put('/{id}/deduct-stock', 'deductStock');
+        Route::delete('/{id}', 'deleteItem');
+        Route::get('/{id}/logs', 'showLogs');
+    });
+
+});
+
+Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
+    ->name('google.redirect');
+
+Route::get('/auth/google/callback', [SocialController::class, 'googleCallback'])
+    ->name('google.callback');
+
+Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
+    ->name('github.redirect');
+
+Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
+    ->name('github.callback');
+Route::middleware('auth')->group(function () {
+    Route::get('/tests', [TestController::class, 'index']);
+    Route::get('/tests/{id}', [TestController::class, 'show']);
+    Route::post('/tests/add', [TestController::class, 'add']);
+
+    // Using PUT for updates. Your JS sends a POST with a _method=PUT field (or we can just define it as POST/PUT).
+    Route::put('/tests/{id}', [TestController::class, 'update']);
+    Route::delete('/tests/{id}', [TestController::class, 'destroy']);
+
+    // Inventory endpoint referenced in your JS
+    Route::get('/inventory', [InventoryManagement::class, 'index']);
+});
+Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
+Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
+Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
+Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
+Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
+
+
+Route::get('/tests', [TestController::class, 'index']);
+Route::get('/tests/{id}', [TestController::class, 'show']);
+
+
+// Create the Order (API)
+Route::post('/orders', [OrderController::class, 'CreateOrder']);
+
+// View the Order Summary / Receipt (To print as PDF)
+Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
+Route::get('/api/orders', [OrderController::class, 'getOrders']);
+Route::get('/orders/search/{search}', [OrderController::class, 'SearchOrder']);
+Route::post('/dashboard/stats', [OrderController::class, 'Search']);
+
