@@ -94,13 +94,6 @@
             </a>
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-performance" data-title="Performance">
-                <i
-                    class="ph-duotone ph-trend-up text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Performance</span>
-            </a>
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-settings" data-title="Settings">
                 <i
                     class="ph-duotone ph-gear-six text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
@@ -460,14 +453,6 @@
                 <div id="grid-receptionist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
-            <div id="section-performance" class="content-section hidden animate-fade-in">
-                <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-12 w-full flex flex-col items-center justify-center min-h-[400px] border border-gray-50">
-                    <i class="ph-duotone ph-trend-up text-[5rem] text-green-400 mb-4"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">Performance Metrics</h2>
-                    <p class="text-gray-500 mt-2">Lab performance and analytical data will appear here.</p>
-                </div>
-            </div>
             <div id="section-stock" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
@@ -536,14 +521,7 @@
                     </div>
                 </div>
             </div>
-            <div id="section-settings" class="content-section hidden animate-fade-in">
-                <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-12 w-full flex flex-col items-center justify-center min-h-[400px] border border-gray-50">
-                    <i class="ph-duotone ph-gear-six text-[5rem] text-gray-400 mb-4"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">System Settings</h2>
-                    <p class="text-gray-500 mt-2">Configure application preferences and settings.</p>
-                </div>
-            </div>
+            <x-settings />
 
 
         </main>

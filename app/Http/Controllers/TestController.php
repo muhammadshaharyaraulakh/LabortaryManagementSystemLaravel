@@ -34,7 +34,9 @@ class TestController extends Controller
 
     public function index()
     {
-        $tests = Test::has('department')->with('department')->get();
+        $tests = Test::whereHas('department', function ($query) {
+            $query->where('is_active', true);
+        })->with('department')->get();
 
         if ($tests->isNotEmpty()) {
             return response()->json([

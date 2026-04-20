@@ -226,8 +226,15 @@ class InventoryManagement extends Controller
             'action' => 'required|string|max:255'
         ]);
 
+
         $item = DB::transaction(function () use ($request, $id) {
             $updateItem = Inventory::findOrFail($id);
+            if ($request->stock > $updateItem->current_stock) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Stock is not enough',
+                ], 400);
+            }
             $updateItem->decrement('current_stock', $request->stock);
 
             InventoryLog::create([

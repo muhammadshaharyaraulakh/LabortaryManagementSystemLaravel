@@ -124,10 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const card = `
             <div class="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 rounded-[1.25rem] flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div class="h-20 bg-gray-900 w-full relative">
+                <div class="h-20 bg-[#2d374d] w-full relative">
                     <span class="absolute top-3 right-3 text-[9px] uppercase font-bold px-2.5 py-1 rounded-md border ${statusColor} tracking-wide">${statusText}</span>
                 </div>
-                <div class="mx-auto -mt-10 w-20 h-20 rounded-full border-4 border-white bg-gray-50 text-gray-600 flex items-center justify-center shadow-sm relative z-10">
+                <div class="mx-auto -mt-10 w-20 h-20 rounded-full border-4 border-[#2d374d] bg-gray-50 text-gray-600 flex items-center justify-center shadow-sm relative z-10">
                     <i class="ph-duotone ph-buildings text-3xl"></i>
                 </div>
                 <div class="p-5 grow flex flex-col items-center text-center">
