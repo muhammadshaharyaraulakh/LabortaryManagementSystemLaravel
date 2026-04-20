@@ -253,7 +253,7 @@
                         </form>
                     </div>
 
-                    <div id="DashboardReportResults" class="p-6 md:p-8 bg-gray-50">
+                    <div id="DashboardReportResults" class="p-6 md:p-8 bg-gray-50/30">
                         <div id="reportEmptyState" class="text-center py-8">
                             <i class="ph-duotone ph-calendar-check text-5xl mb-3 text-gray-300 block"></i>
                             <p class="text-gray-500 font-medium">Select a date range to view statistics.</p>
