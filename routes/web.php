@@ -58,10 +58,12 @@ Route::middleware(['auth', 'check.role'])->group(function () {
         ->name('admin.adminstrator');
     Route::prefix('departments')->controller(DepartmentController::class)->group(function () {
         Route::get('/', 'index')->name('departments');
+        Route::get('/trashed', 'trashed');
         Route::post('/', 'addDepartment')->name('departments.add');
         Route::get('/{id}', 'show')->name('departments.show');
         Route::put('/{id}', 'update')->name('departments.update');
         Route::delete('/{id}', 'delete')->name('departments.delete');
+        Route::put('/{id}/restore', 'restore');
     });
 
     Route::controller(ProfileController::class)->group(function () {

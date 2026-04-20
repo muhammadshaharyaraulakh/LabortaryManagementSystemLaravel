@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Department;
+use Illuminate\Validation\Rule;
 
 class DepartmentController extends Controller
 {
     public function index()
     {
-        $departments = Department::all();
+        $departments = Department::withCount('tests', 'users')->get();
 
         if ($departments->isEmpty()) {
             return response()->json([
@@ -30,7 +31,7 @@ class DepartmentController extends Controller
     public function addDepartment(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:departments,name',
+            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name')->where('deleted_at', null),
             'type' => 'required',
             'is_active' => 'required|boolean',
         ]);
@@ -45,10 +46,10 @@ class DepartmentController extends Controller
             'status' => 'success',
             'message' => 'Department added successfully',
             'data' => $department
-        ], 201); 
+        ], 201);
     }
 
-     public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $department = Department::find($id);
 
@@ -60,7 +61,7 @@ class DepartmentController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255|unique:departments,name,' . $id,
+            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name')->ignore($department->id)->where('deleted_at', null),
             'type' => 'required',
             'is_active' => 'required|boolean',
         ]);
@@ -115,5 +116,39 @@ class DepartmentController extends Controller
             'message' => 'Department deleted successfully',
         ], 200);
     }
-   
+    public function trashed()
+    {
+        $departments = Department::onlyTrashed()->get();
+        if ($departments->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No Trashed Departments'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $departments
+        ], 200);
+    }
+
+    public function restore($id)
+    {
+        if (empty($id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Id is Empty'
+            ], 400);
+        }
+        $department = Department::withTrashed()->findOrFail($id);
+
+        $department->restore();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Department restored Successfully',
+            'data' => $department
+        ], 200);
+    }
+
 }

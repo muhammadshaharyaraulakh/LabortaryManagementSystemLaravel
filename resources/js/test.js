@@ -1,314 +1,176 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const addTestBackdrop = document.getElementById('AddTestModalBackdrop');
-    const addTestModal = document.getElementById('AddTestModal');
-    const updateTestBackdrop = document.getElementById('UpdateTestModalBackdrop');
-    const updateTestModal = document.getElementById('UpdateTestModal');
-    const gridContainer = document.getElementById('grid-tests');
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+document.addEventListener('DOMContentLoaded', function () {
+    let directoryTests = [];
+    const testDirectoryTableBody = document.getElementById('testDirectoryTableBody');
+    const searchTestsDir = document.getElementById('searchTestsDir');
 
-    function openModal(backdrop, modal) {
-        backdrop.classList.remove('hidden');
-        backdrop.classList.add('flex');
-        setTimeout(() => {
-            backdrop.classList.remove('opacity-0');
-            backdrop.classList.add('opacity-100');
-            modal.classList.remove('scale-95');
-            modal.classList.add('scale-100');
-        }, 10);
-    }
+    async function fetchDirectoryTests() {
+        if (!testDirectoryTableBody) return;
+        testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-purple-600"></i><p class="text-sm text-gray-500 mt-2">Loading tests...</p></td></tr>`;
 
-    function closeModal(backdrop, modal, formId) {
-        backdrop.classList.remove('opacity-100');
-        backdrop.classList.add('opacity-0');
-        modal.classList.remove('scale-100');
-        modal.classList.add('scale-95');
-        setTimeout(() => {
-            backdrop.classList.add('hidden');
-            backdrop.classList.remove('flex');
-            if (formId) {
-                document.getElementById(formId).reset();
-                clearTestErrors(formId === 'AddTestForm' ? 'add' : 'update');
+        try {
+            const response = await fetch('/tests', { headers: typeof fetchHeaders !== 'undefined' ? fetchHeaders : { 'Accept': 'application/json' } });
+            const result = await response.json();
+
+            if (result.status === 200) {
+                directoryTests = result.data;
+                renderDirectoryTests(directoryTests);
+            } else {
+                testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">${result.message || 'No tests found.'}</td></tr>`;
             }
-        }, 300);
-    }
-
-    function clearTestErrors(prefix) {
-        document.querySelectorAll(`[id^="error${prefix === 'add' ? 'Add' : 'Update'}Test"]`).forEach(el => {
-            el.classList.add('hidden');
-            el.innerText = '';
-        });
-        document.querySelectorAll(`#${prefix === 'add' ? 'Add' : 'Update'}TestForm input, #${prefix === 'add' ? 'Add' : 'Update'}TestForm select, #${prefix === 'add' ? 'Add' : 'Update'}TestForm textarea`).forEach(el => {
-            el.classList.remove('border-red-500', 'focus:ring-red-200');
-        });
-    }
-
-    function showTestErrors(errors, prefix) {
-        clearTestErrors(prefix);
-        const fieldMap = {
-            'name': `${prefix}TestName`,
-            'code': `${prefix}TestCode`,
-            'price': `${prefix}TestPrice`,
-            'department_id': `${prefix}TestDepartment`,
-            'sample_type': `${prefix}TestSampleType`,
-            'result_hours': `${prefix}TestResultHours`,
-            'instructions': `${prefix}TestInstructions`
-        };
-
-        for (const [field, messages] of Object.entries(errors)) {
-            const inputId = fieldMap[field];
-            const errorId = `error${inputId.charAt(0).toUpperCase() + inputId.slice(1)}`;
-            const inputEl = document.getElementById(inputId);
-            const errorEl = document.getElementById(errorId);
-
-            if (errorEl) {
-                errorEl.innerText = messages[0];
-                errorEl.classList.remove('hidden');
-            }
-            if (inputEl) {
-                inputEl.classList.add('border-red-500', 'focus:ring-red-200');
-            }
+        } catch (error) {
+            testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Failed to load tests.</td></tr>`;
         }
     }
 
-    const openAddTestBtn = document.getElementById('open-test-modal');
-    if (openAddTestBtn) {
-        openAddTestBtn.addEventListener('click', () => {
-            openModal(addTestBackdrop, addTestModal);
-        });
-    }
+    function renderDirectoryTests(tests) {
+        if (!testDirectoryTableBody) return;
+        testDirectoryTableBody.innerHTML = '';
 
-    document.getElementById('CloseAddTestX').addEventListener('click', () => closeModal(addTestBackdrop, addTestModal, 'AddTestForm'));
-    document.getElementById('CloseAddTestBtn').addEventListener('click', () => closeModal(addTestBackdrop, addTestModal, 'AddTestForm'));
-    document.getElementById('CloseUpdateTestX').addEventListener('click', () => closeModal(updateTestBackdrop, updateTestModal, 'UpdateTestForm'));
-    document.getElementById('CloseUpdateTestBtn').addEventListener('click', () => closeModal(updateTestBackdrop, updateTestModal, 'UpdateTestForm'));
-
-    async function fetchDepartments() {
-        try {
-            const response = await fetch('/departments', { headers: { 'Accept': 'application/json' } });
-            const result = await response.json();
-            if (response.ok && result.status === 'success') {
-                const depts = result.data || result.departments || result.tests;
-                const addSelect = document.getElementById('addTestDepartment');
-                const updateSelect = document.getElementById('updateTestDepartment');
-                addSelect.innerHTML = '<option value="" disabled selected>Select Department</option>';
-                updateSelect.innerHTML = '<option value="" disabled selected>Select Department</option>';
-                
-                depts.forEach(dept => {
-                    const opt = `<option value="${dept.id}">${dept.name}</option>`;
-                    addSelect.insertAdjacentHTML('beforeend', opt);
-                    updateSelect.insertAdjacentHTML('beforeend', opt);
-                });
-            }
-        } catch (error) {}
-    }
-
-    async function fetchTests() {
-        try {
-            const response = await fetch('/tests', { headers: { 'Accept': 'application/json' } });
-            const result = await response.json();
-            if (response.ok && result.status === 'success') {
-                renderTests(result.tests);
-            } else {
-                gridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium">No tests found.</div>`;
-            }
-        } catch (error) {}
-    }
-
-    function renderTests(tests) {
-        gridContainer.innerHTML = '';
         if (!tests || tests.length === 0) {
-            gridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium">No tests found.</div>`;
+            testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 font-medium">No tests found matching your search.</td></tr>`;
             return;
         }
 
         tests.forEach(test => {
-            const isActive = test.is_active == 1;
-            const statusColor = isActive ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
-            const statusText = isActive ? 'Active' : 'Inactive';
-            const deptName = test.department ? test.department.name : 'No Department';
-            const sampleType = test.sample_type || 'N/A';
+            const code = test.testCode || test.test_code || test.code || 'N/A';
+            const name = test.testName || test.test_name || test.name || 'Unnamed Test';
+            const department = test.department?.name || test.department || 'General';
+            const price = test.price || 0;
+            const time = test.timeRequired || test.time_required || 'Standard';
 
-            const card = `
-            <div class="test-card bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 rounded-[1.25rem] flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div class="p-6 grow flex flex-col">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-[0.85rem] bg-purple-50 text-purple-600 flex items-center justify-center text-2xl shadow-sm">
-                                <i class="ph-duotone ph-flask"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-gray-900 text-xl tracking-tight leading-tight">${test.name}</h4>
-                                <p class="text-xs font-bold text-gray-400 mt-0.5 uppercase tracking-wider">${test.code}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-y-4 gap-x-2 mt-2 mb-5">
-                        <div class="bg-gray-50/50 p-3 rounded-xl border border-gray-100/50">
-                            <span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Price</span>
-                            <span class="block text-sm font-extrabold text-gray-800">Rs. ${parseFloat(test.price).toLocaleString()}</span>
-                        </div>
-                        <div class="bg-gray-50/50 p-3 rounded-xl border border-gray-100/50">
-                            <span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Result Time</span>
-                            <span class="block text-sm font-extrabold text-gray-800">${test.result_hours} Hours</span>
-                        </div>
-                        <div class="col-span-2 bg-gray-50/50 p-3 rounded-xl border border-gray-100/50 flex justify-between items-center">
-                            <div>
-                                <span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Department</span>
-                                <span class="block text-sm font-extrabold text-purple-600">${deptName}</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Sample</span>
-                                <span class="block text-sm font-extrabold text-gray-700">${sampleType}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-auto flex justify-between items-center pt-2">
-                        <span class="inline-block text-[10px] uppercase font-bold px-3 py-1 rounded-full tracking-wide ${statusColor}">${statusText}</span>
-                    </div>
-                </div>
-                <div class="flex items-center border-t border-gray-100">
-                    <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3.5 rounded-none text-sm font-bold transition-colors cursor-pointer" onclick="editTest(${test.id})">Edit</button>
-                    <button class="flex-1 bg-sidebarBg hover:bg-gray-800 text-white py-3.5 rounded-none text-sm font-bold transition-colors cursor-pointer" onclick="deleteTest(${test.id}, this)">Delete</button>
-                </div>
-            </div>`;
-            gridContainer.insertAdjacentHTML('beforeend', card);
+            testDirectoryTableBody.innerHTML += `
+            <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
+                <td class="px-6 py-4 text-gray-500">${code}</td>
+                <td class="px-6 py-4">${name}</td>
+                <td class="px-6 py-4">
+                    <span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md text-xs font-bold">${department}</span>
+                </td>
+                <td class="px-6 py-4">Rs. ${price}</td>
+                <td class="px-6 py-4">${time}</td>
+                <td class="px-6 py-4 text-right">
+                    <button data-id="${test.id}" class="btn-view-test text-purple-600 hover:text-purple-800 font-bold px-3 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-50 transition-colors cursor-pointer">
+                        View Details
+                    </button>
+                </td>
+            </tr>
+        `;
         });
     }
 
-    document.getElementById('SaveTestBtn').addEventListener('click', async () => {
-        const payload = {
-            name: document.getElementById('addTestName').value,
-            code: document.getElementById('addTestCode').value,
-            price: document.getElementById('addTestPrice').value,
-            department_id: document.getElementById('addTestDepartment').value,
-            sample_type: document.getElementById('addTestSampleType').value,
-            result_hours: document.getElementById('addTestResultHours').value,
-            instructions: document.getElementById('addTestInstructions').value,
-            is_active: document.getElementById('addTestIsActive').checked ? 1 : 0
-        };
-
-        const saveBtn = document.getElementById('SaveTestBtn');
-        saveBtn.disabled = true;
-        saveBtn.innerText = 'Saving...';
-
-        try {
-            const response = await fetch('/tests', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify(payload)
+    if (searchTestsDir) {
+        searchTestsDir.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const filtered = directoryTests.filter(test => {
+                const code = (test.testCode || test.test_code || test.code || '').toLowerCase();
+                const name = (test.testName || test.test_name || test.name || '').toLowerCase();
+                const department = (test.department?.name || test.department || '').toLowerCase();
+                return name.includes(query) || code.includes(query) || department.includes(query);
             });
-            const result = await response.json();
+            renderDirectoryTests(filtered);
+        });
+    }
 
-            if (response.status === 201) {
-                closeModal(addTestBackdrop, addTestModal, 'AddTestForm');
-                fetchTests();
-            } else if (response.status === 422) {
-                showTestErrors(result.errors, 'add');
-            }
-        } finally {
-            saveBtn.disabled = false;
-            saveBtn.innerText = 'Save Test';
-        }
-    });
+    async function fetchTestDetails(id) {
+        const modalContent = document.querySelector('#TestDetailsModal .p-6');
+        if (!modalContent) return;
 
-    window.editTest = async function(id) {
-        try {
-            const response = await fetch(`/tests/${id}`, { headers: { 'Accept': 'application/json' } });
-            const result = await response.json();
-            
-            if (response.ok && result.status === 'success') {
-                const test = result.test;
-                document.getElementById('updateTestId').value = test.id;
-                document.getElementById('updateTestName').value = test.name;
-                document.getElementById('updateTestCode').value = test.code;
-                document.getElementById('updateTestPrice').value = test.price;
-                document.getElementById('updateTestDepartment').value = test.department_id;
-                document.getElementById('updateTestSampleType').value = test.sample_type || '';
-                document.getElementById('updateTestResultHours').value = test.result_hours;
-                document.getElementById('updateTestInstructions').value = test.instructions || '';
-                document.getElementById('updateTestIsActive').checked = test.is_active == 1;
-                
-                openModal(updateTestBackdrop, updateTestModal);
-            }
-        } catch (error) {}
-    };
-
-    document.getElementById('UpdateTestBtn').addEventListener('click', async () => {
-        const id = document.getElementById('updateTestId').value;
-        const payload = {
-            name: document.getElementById('updateTestName').value,
-            code: document.getElementById('updateTestCode').value,
-            price: document.getElementById('updateTestPrice').value,
-            department_id: document.getElementById('updateTestDepartment').value,
-            sample_type: document.getElementById('updateTestSampleType').value,
-            result_hours: document.getElementById('updateTestResultHours').value,
-            instructions: document.getElementById('updateTestInstructions').value,
-            is_active: document.getElementById('updateTestIsActive').checked ? 1 : 0,
-            _method: 'PUT'
-        };
-
-        const updateBtn = document.getElementById('UpdateTestBtn');
-        updateBtn.disabled = true;
-        updateBtn.innerText = 'Updating...';
+        modalContent.innerHTML = `<div class="flex flex-col items-center justify-center py-10"><i class="ph-bold ph-spinner animate-spin text-3xl text-purple-600 mb-2"></i><p class="text-sm text-gray-500">Fetching details...</p></div>`;
+        openModal('TestDetailsModalBackdrop');
 
         try {
-            const response = await fetch(`/tests/${id}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify(payload)
-            });
+            const response = await fetch(`/tests/${id}`, { headers: typeof fetchHeaders !== 'undefined' ? fetchHeaders : { 'Accept': 'application/json' } });
             const result = await response.json();
 
-            if (response.ok) {
-                closeModal(updateTestBackdrop, updateTestModal, 'UpdateTestForm');
-                fetchTests();
-            } else if (response.status === 422) {
-                showTestErrors(result.errors, 'update');
-            }
-        } finally {
-            updateBtn.disabled = false;
-            updateBtn.innerText = 'Update Test';
-        }
-    });
+            if (result.status === 200) {
+                const test = result.data;
+                const code = test.testCode || test.test_code || test.code || 'N/A';
+                const name = test.testName || test.test_name || test.name || 'Unnamed Test';
+                const department = test.department?.name || test.department || 'General';
 
-    window.deleteTest = async function(id, btnElement) {
-        if (!btnElement.classList.contains('confirming-delete')) {
-            const originalBg = btnElement.className;
-            btnElement.innerText = 'Sure?';
-            btnElement.classList.add('confirming-delete', 'bg-red-600', 'hover:bg-red-700');
-            btnElement.classList.remove('bg-sidebarBg', 'hover:bg-gray-800');
-            
-            setTimeout(() => {
-                if (document.body.contains(btnElement)) {
-                    btnElement.innerText = 'Delete';
-                    btnElement.className = originalBg;
-                    btnElement.classList.remove('confirming-delete');
+                let requirementsHtml = '';
+                if (test.instructions) {
+                    requirementsHtml = `
+                    <div class="bg-orange-50 rounded-lg p-4 border border-orange-100 mb-4">
+                        <span class="text-xs font-bold text-orange-800 uppercase tracking-wider block mb-1">Pre-Test Instructions</span>
+                        <p class="text-sm text-orange-700">${test.instructions}</p>
+                    </div>
+                `;
                 }
-            }, 3000);
-            return;
-        }
 
-        const card = btnElement.closest('.test-card');
+                let parametersHtml = '';
+                if (test.parameters && test.parameters.length > 0) {
+                    const paramList = test.parameters.map(param =>
+                        `<li><span class="font-bold text-gray-700">${param.parameterName}</span> <span class="text-xs text-gray-500 ml-1">(Normal: ${param.normalRange} ${param.unit})</span></li>`
+                    ).join('');
 
-        try {
-            const response = await fetch(`/tests/${id}`, {
-                method: 'DELETE',
-                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
-            });
-            
-            if (response.ok) {
-                if (card) {
-                    card.classList.add('opacity-0', 'scale-90');
-                    setTimeout(() => fetchTests(), 300);
+                    parametersHtml = `
+                    <h5 class="font-bold text-sm text-gray-700 mb-2">Parameters Checked:</h5>
+                    <ul class="text-sm text-gray-600 list-disc list-inside pl-4 space-y-2">
+                        ${paramList}
+                    </ul>
+                `;
                 } else {
-                    fetchTests();
+                    parametersHtml = `<p class="text-sm text-gray-500 italic">No specific parameters listed for this test.</p>`;
                 }
-            }
-        } catch (error) {}
-    };
 
-    fetchDepartments();
-    fetchTests();
+                modalContent.innerHTML = `
+                <div class="flex justify-between items-start mb-1">
+                    <h4 class="text-xl font-bold text-gray-900">${name}</h4>
+                    <span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md text-xs font-bold">${department}</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-4">Code: ${code} | Price: Rs. ${test.price}</p>
+                ${requirementsHtml}
+                ${parametersHtml}
+            `;
+            } else {
+                modalContent.innerHTML = `<div class="py-8 text-center text-red-500 font-bold">${result.message || 'Failed to load test details.'}</div>`;
+            }
+        } catch (error) {
+            modalContent.innerHTML = `<div class="py-8 text-center text-red-500 font-bold">Network error occurred.</div>`;
+        }
+    }
+
+    function openModal(modalId) {
+        const backdrop = document.getElementById(modalId);
+        if (!backdrop) return;
+        backdrop.classList.remove('hidden');
+        backdrop.classList.add('flex');
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            const modalContent = backdrop.firstElementChild;
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        });
+    }
+
+    function closeModal(modalId) {
+        const backdrop = document.getElementById(modalId);
+        if (!backdrop) return;
+        backdrop.classList.add('opacity-0');
+        const modalContent = backdrop.firstElementChild;
+        modalContent.classList.remove('scale-100');
+        modalContent.classList.add('scale-95');
+        setTimeout(() => {
+            backdrop.classList.remove('flex');
+            backdrop.classList.add('hidden');
+        }, 300);
+    }
+
+    fetchDirectoryTests();
+
+    document.addEventListener('click', async (e) => {
+        const viewTestBtn = e.target.closest('.btn-view-test');
+        if (viewTestBtn) {
+            const testId = viewTestBtn.getAttribute('data-id');
+            if (testId) {
+                fetchTestDetails(testId);
+            } else {
+                openModal('TestDetailsModalBackdrop');
+            }
+        }
+
+        if (e.target.closest('.close-modal-btn')) {
+            closeModal(e.target.closest('.close-modal-btn').getAttribute('data-modal'));
+        }
+    });
 });

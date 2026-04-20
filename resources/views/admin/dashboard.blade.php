@@ -39,14 +39,6 @@
 
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-performance" data-title="Performance">
-                <i
-                    class="ph-duotone ph-trend-up text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Performance</span>
-            </a>
-
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-tests" data-title="Tests">
                 <i
                     class="ph-duotone ph-flask text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
@@ -100,7 +92,13 @@
                     class="ph-duotone ph-package text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Stock Management</span>
             </a>
-
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-performance" data-title="Performance">
+                <i
+                    class="ph-duotone ph-trend-up text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Performance</span>
+            </a>
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-settings" data-title="Settings">
@@ -351,7 +349,7 @@
                 <div id="grid-pathologist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
-            <div id="section-department" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+            <div id="section-department" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto pb-12">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
@@ -363,13 +361,30 @@
                         </div>
                     </div>
                     <button id="open-department-modal"
-                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                        <i class="ph ph-plus font-bold text-lg"></i> Add Department
+                        class="bg-gray-900 hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        <i class="ph-bold ph-plus text-lg"></i> Add Department
                     </button>
                 </div>
-                <div id="grid-department" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <div id="grid-department"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                </div>
+
+                <div class="flex items-center gap-3 mb-6 mt-8 pt-8 border-t border-gray-200">
+                    <div class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-trash text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-gray-800">Deleted Departments</h3>
+                    </div>
+                </div>
+
+                <div id="grid-deleted-department"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
+            <x-tests />
+
             <div id="section-sample-collector" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">

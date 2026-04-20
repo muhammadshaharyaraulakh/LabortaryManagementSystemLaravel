@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateDepartmentBackdrop = document.getElementById('UpdateDepartmentModalBackdrop');
     const updateDepartmentModal = document.getElementById('UpdateDepartmentModal');
     const gridContainer = document.getElementById('grid-department');
+    const deletedGridContainer = document.getElementById('grid-deleted-department');
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     function openModal(backdrop, modal) {
@@ -73,57 +74,122 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.getElementById('CloseAddDepartmentX').addEventListener('click', () => closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm'));
-    document.getElementById('CloseAddDepartmentBtn').addEventListener('click', () => closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm'));
-    document.getElementById('CloseUpdateDepartmentX').addEventListener('click', () => closeModal(updateDepartmentBackdrop, updateDepartmentModal, 'UpdateDepartmentForm'));
-    document.getElementById('CloseUpdateDepartmentBtn').addEventListener('click', () => closeModal(updateDepartmentBackdrop, updateDepartmentModal, 'UpdateDepartmentForm'));
+    document.getElementById('CloseAddDepartmentX')?.addEventListener('click', () => closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm'));
+    document.getElementById('CloseAddDepartmentBtn')?.addEventListener('click', () => closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm'));
+    document.getElementById('CloseUpdateDepartmentX')?.addEventListener('click', () => closeModal(updateDepartmentBackdrop, updateDepartmentModal, 'UpdateDepartmentForm'));
+    document.getElementById('CloseUpdateDepartmentBtn')?.addEventListener('click', () => closeModal(updateDepartmentBackdrop, updateDepartmentModal, 'UpdateDepartmentForm'));
 
     async function fetchDepartments() {
         try {
             const response = await fetch('/departments', { headers: { 'Accept': 'application/json' } });
             const result = await response.json();
-            if (response.ok && result.status === 'success') {
-                renderDepartments(result.data || result.departments || result.tests); 
+            if (response.ok && (result.status === 'success' || result.status === 200)) {
+                renderDepartments(result.data); 
             } else {
                 gridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium">No departments found.</div>`;
             }
-        } catch (error) {}
+        } catch (error) {
+            gridContainer.innerHTML = `<div class="col-span-full text-center text-red-500 py-8 font-medium">Error loading data.</div>`;
+        }
+    }
+
+    async function fetchDeletedDepartments() {
+        try {
+            const response = await fetch('/departments/trashed', { headers: { 'Accept': 'application/json' } });
+            const result = await response.json();
+            if (response.ok && (result.status === 'success' || result.status === 200)) {
+                renderDeletedDepartments(result.data); 
+            } else {
+                deletedGridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium">No deleted departments found.</div>`;
+            }
+        } catch (error) {
+            deletedGridContainer.innerHTML = `<div class="col-span-full text-center text-red-500 py-8 font-medium">Error loading data.</div>`;
+        }
     }
 
     function renderDepartments(departments) {
         gridContainer.innerHTML = '';
         if (!departments || departments.length === 0) {
-            gridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium">No departments found.</div>`;
+            gridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium bg-white rounded-2xl border border-gray-100 shadow-sm">No active departments found.</div>`;
             return;
         }
 
         departments.forEach(dept => {
             const isActive = dept.is_active == 1;
-            const statusColor = isActive ? 'text-blue-600 bg-blue-50' : 'text-red-600 bg-red-50';
+            const statusColor = isActive ? 'text-green-600 bg-green-50 border-green-100' : 'text-red-600 bg-red-50 border-red-100';
             const statusText = isActive ? 'Active' : 'Inactive';
             const typeFormatted = dept.type === 'sample_based' ? 'Sample Based' : 'Human Based';
+            const testsCount = dept.tests_count || 0;
+            const usersCount = dept.users_count || 0;
 
             const card = `
-            <div class="dept-card bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 rounded-[1.25rem] flex flex-col overflow-hidden text-center hover:shadow-lg transition-all duration-300">
-                <div class="h-24 bg-sidebarBg w-full"></div>
-                <div class="mx-auto -mt-12 w-24 h-24 rounded-full border-4 border-white bg-gray-100 text-gray-500 flex items-center justify-center font-bold overflow-hidden shadow-sm relative z-10">
-                    <i class="ph-duotone ph-buildings text-4xl"></i>
+            <div class="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 rounded-[1.25rem] flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300">
+                <div class="h-20 bg-gray-900 w-full relative">
+                    <span class="absolute top-3 right-3 text-[9px] uppercase font-bold px-2.5 py-1 rounded-md border ${statusColor} tracking-wide">${statusText}</span>
                 </div>
-                <div class="p-5 grow flex flex-col items-center">
-                    <h4 class="font-black text-gray-900 text-lg truncate w-full" title="${dept.name}">${dept.name}</h4>
-                    <p class="text-sm font-medium text-gray-500 truncate w-full mb-1">${typeFormatted}</p>
-                    <span class="inline-block mt-2 text-[10px] uppercase font-bold px-3 py-1 rounded-full tracking-wide ${statusColor}">${statusText}</span>
+                <div class="mx-auto -mt-10 w-20 h-20 rounded-full border-4 border-white bg-gray-50 text-gray-600 flex items-center justify-center shadow-sm relative z-10">
+                    <i class="ph-duotone ph-buildings text-3xl"></i>
                 </div>
-                <div class="flex items-center border-t border-gray-100 mt-auto">
-                    <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3.5 rounded-none text-sm font-bold transition-colors cursor-pointer" onclick="editDepartment(${dept.id})">Edit</button>
-                    <button class="flex-1 bg-sidebarBg hover:bg-gray-800 text-white py-3.5 rounded-none text-sm font-bold transition-colors cursor-pointer" onclick="deleteDepartment(${dept.id}, this)">Delete</button>
+                <div class="p-5 grow flex flex-col items-center text-center">
+                    <h4 class="font-extrabold text-gray-900 text-lg truncate w-full mb-4" title="${dept.name}">${dept.name}</h4>
+                    
+                    <div class="w-full flex justify-center gap-5 text-sm mb-2">
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 font-medium text-[11px] uppercase tracking-wide mb-0.5">Type</span>
+                            <span class="text-gray-800 font-bold text-xs bg-gray-50 px-2 py-1 rounded-md">${typeFormatted}</span>
+                        </div>
+                        <div class="w-px bg-gray-100"></div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 font-medium text-[11px] uppercase tracking-wide mb-0.5">Tests</span>
+                            <span class="text-gray-800 font-extrabold">${testsCount}</span>
+                        </div>
+                        <div class="w-px bg-gray-100"></div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 font-medium text-[11px] uppercase tracking-wide mb-0.5">Users</span>
+                            <span class="text-gray-800 font-extrabold">${usersCount}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center border-t border-gray-100 mt-auto bg-gray-50/50">
+                    <button class="flex-1 text-blue-600 hover:bg-blue-50 py-3.5 rounded-bl-[1.25rem] text-sm font-bold transition-colors cursor-pointer border-r border-gray-100" onclick="editDepartment(${dept.id})">Edit</button>
+                    <button class="flex-1 text-red-600 hover:bg-red-50 py-3.5 rounded-br-[1.25rem] text-sm font-bold transition-colors cursor-pointer" onclick="deleteDepartment(${dept.id})">Delete</button>
                 </div>
             </div>`;
             gridContainer.insertAdjacentHTML('beforeend', card);
         });
     }
 
-    document.getElementById('SaveDepartmentBtn').addEventListener('click', async () => {
+    function renderDeletedDepartments(departments) {
+        deletedGridContainer.innerHTML = '';
+        if (!departments || departments.length === 0) {
+            deletedGridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium bg-white rounded-2xl border border-gray-100 shadow-sm">No deleted departments found.</div>`;
+            return;
+        }
+
+        departments.forEach(dept => {
+            const typeFormatted = dept.type === 'sample_based' ? 'Sample Based' : 'Human Based';
+            
+            const card = `
+            <div class="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 rounded-[1.25rem] flex flex-col overflow-hidden opacity-75 hover:opacity-100 transition-all duration-300">
+                <div class="h-16 bg-red-50 w-full border-b border-red-100"></div>
+                <div class="mx-auto -mt-8 w-16 h-16 rounded-full border-4 border-white bg-white text-red-400 flex items-center justify-center shadow-sm relative z-10">
+                    <i class="ph-duotone ph-trash text-2xl"></i>
+                </div>
+                <div class="p-5 grow flex flex-col items-center text-center">
+                    <h4 class="font-extrabold text-gray-900 text-base truncate w-full mb-1" title="${dept.name}">${dept.name}</h4>
+                    <span class="text-xs font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-md mt-1">${typeFormatted}</span>
+                </div>
+                <div class="flex items-center border-t border-gray-100 mt-auto">
+                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-3.5 rounded-b-[1.25rem] text-sm font-bold transition-colors cursor-pointer flex items-center justify-center gap-2" onclick="restoreDepartment(${dept.id})">
+                        Restore
+                    </button>
+                </div>
+            </div>`;
+            deletedGridContainer.insertAdjacentHTML('beforeend', card);
+        });
+    }
+
+    document.getElementById('SaveDepartmentBtn')?.addEventListener('click', async () => {
         const payload = {
             name: document.getElementById('addDepartmentName').value,
             type: document.getElementById('addDepartmentType').value,
@@ -145,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm');
                 fetchDepartments();
+                fetchDeletedDepartments();
             } else if (response.status === 422) {
                 showDepartmentErrors(result.errors, 'add');
             }
@@ -159,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`/departments/${id}`, { headers: { 'Accept': 'application/json' } });
             const result = await response.json();
             
-            if (response.ok && result.status === 'success') {
+            if (response.ok && (result.status === 'success' || result.status === 200)) {
                 const dept = result.data || result.department;
                 document.getElementById('updateDepartmentId').value = dept.id;
                 document.getElementById('updateDepartmentName').value = dept.name;
@@ -171,13 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {}
     };
 
-    document.getElementById('UpdateDepartmentBtn').addEventListener('click', async () => {
+    document.getElementById('UpdateDepartmentBtn')?.addEventListener('click', async () => {
         const id = document.getElementById('updateDepartmentId').value;
         const payload = {
             name: document.getElementById('updateDepartmentName').value,
             type: document.getElementById('updateDepartmentType').value,
-            is_active: document.getElementById('updateDepartmentIsActive').checked ? 1 : 0,
-            _method: 'PUT'
+            is_active: document.getElementById('updateDepartmentIsActive').checked ? 1 : 0
         };
 
         const updateBtn = document.getElementById('UpdateDepartmentBtn');
@@ -186,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(`/departments/${id}`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
                 body: JSON.stringify(payload)
             });
@@ -204,25 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    window.deleteDepartment = async function(id, btnElement) {
-        if (!btnElement.classList.contains('confirming-delete')) {
-            const originalBg = btnElement.className;
-            btnElement.innerText = 'Sure?';
-            btnElement.classList.add('confirming-delete', 'bg-red-600', 'hover:bg-red-700');
-            btnElement.classList.remove('bg-sidebarBg', 'hover:bg-gray-800');
-            
-            setTimeout(() => {
-                if (document.body.contains(btnElement)) {
-                    btnElement.innerText = 'Delete';
-                    btnElement.className = originalBg;
-                    btnElement.classList.remove('confirming-delete');
-                }
-            }, 3000);
-            return;
-        }
-
-        const card = btnElement.closest('.dept-card');
-
+    window.deleteDepartment = async function(id) {
         try {
             const response = await fetch(`/departments/${id}`, {
                 method: 'DELETE',
@@ -230,15 +278,26 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             if (response.ok) {
-                if (card) {
-                    card.classList.add('opacity-0', 'scale-90');
-                    setTimeout(() => fetchDepartments(), 300);
-                } else {
-                    fetchDepartments();
-                }
+                fetchDepartments();
+                fetchDeletedDepartments();
+            }
+        } catch (error) {}
+    };
+
+    window.restoreDepartment = async function(id) {
+        try {
+            const response = await fetch(`/departments/${id}/restore`, {
+                method: 'PUT',
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+            });
+            
+            if (response.ok) {
+                fetchDeletedDepartments();
+                fetchDepartments();
             }
         } catch (error) {}
     };
 
     fetchDepartments();
+    fetchDeletedDepartments();
 });

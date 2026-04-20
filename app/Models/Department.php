@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Test;
+use App\Models\User;
 
 class Department extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $fillable = [
         "name",
         "type",
@@ -17,8 +21,8 @@ class Department extends Model
     {
         return $this->hasMany(User::class, 'department_id', 'id');
     }
-    public function department()
+    public function tests()
     {
-        return $this->belongsTo(Department::class, 'department_id', 'id');
+        return $this->hasMany(Test::class, 'departmentId', 'id');
     }
 }
