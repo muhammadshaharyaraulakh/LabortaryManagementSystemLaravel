@@ -31,10 +31,13 @@ class DepartmentController extends Controller
     public function addDepartment(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name')->where('deleted_at', null),
+            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name'),
             'type' => 'required',
             'is_active' => 'required|boolean',
-        ]);
+        ],
+            [
+                'name.unique' => 'This Department name already exists in the active inventory or the trash. Please restore it or choose a different name.'
+            ]);
 
         $department = Department::create([
             'name' => $request->name,
@@ -61,9 +64,11 @@ class DepartmentController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name')->ignore($department->id)->where('deleted_at', null),
+            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name')->ignore($department->id),
             'type' => 'required',
             'is_active' => 'required|boolean',
+        ],[
+            'name.unique' => 'This Department name already exists in the active inventory or the trash. Please restore it or choose a different name.'
         ]);
 
         $department->update([

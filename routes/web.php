@@ -75,17 +75,22 @@ Route::middleware(['auth', 'check.role'])->group(function () {
     });
 
     Route::prefix('inventory')->controller(InventoryManagement::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/add', 'add');
-        Route::get('/alerts', 'alerts');
-        Route::get('/search/{search}', 'search');
-        Route::get('/history', 'allHistory');
-        Route::get('/{id}', 'show');
-        Route::put('/{id}/edit', 'edit');
-        Route::put('/{id}/add-stock', 'addStock');
-        Route::put('/{id}/deduct-stock', 'deductStock');
-        Route::delete('/{id}', 'deleteItem');
-        Route::get('/{id}/logs', 'showLogs');
+        Route::get('/', [InventoryManagement::class, 'index']);
+        Route::get('/trashed', [InventoryManagement::class, 'trashed']);
+        Route::get('/alerts', [InventoryManagement::class, 'alerts']);
+        Route::get('/search/{search}', [InventoryManagement::class, 'search']);
+        Route::get('/history', [InventoryManagement::class, 'allHistory']);
+        Route::get('/export-pdf', [InventoryManagement::class, 'exportStockasPdf']);
+        Route::get('/{id}', [InventoryManagement::class, 'show']);
+        Route::get('/{id}/logs', [InventoryManagement::class, 'showLogs']);
+        Route::post('/add', [InventoryManagement::class, 'add']);
+        Route::put('/{id}/edit', [InventoryManagement::class, 'edit']);
+        Route::put('/{id}/add-stock', [InventoryManagement::class, 'addStock']);
+        Route::put('/{id}/deduct-stock', [InventoryManagement::class, 'deductStock']);
+        Route::delete('/{id}', [InventoryManagement::class, 'deleteItem']);
+        Route::post('/{id}/restore', [InventoryManagement::class, 'restoreItem']);
+        Route::delete('/{id}/force', [InventoryManagement::class, 'forceDeleteItem']);
+
     });
 
 

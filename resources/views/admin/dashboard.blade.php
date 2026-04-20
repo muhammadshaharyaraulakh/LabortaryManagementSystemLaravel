@@ -327,9 +327,6 @@
                 </div>
             </div>
 
-
-            <x-tests />
-
             <div id="section-doctor" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
@@ -471,7 +468,7 @@
                     <p class="text-gray-500 mt-2">Lab performance and analytical data will appear here.</p>
                 </div>
             </div>
-            <div id="section-stock" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+            <div id="section-stock" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
@@ -483,49 +480,59 @@
                             </p>
                         </div>
                     </div>
-                    <div class="flex gap-2 w-full sm:w-auto">
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button id="BtnExportPdf"
+                            class="bg-white border cursor-pointer border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
+                            Export PDF
+                        </button>
                         <button id="BtnGlobalHistory"
-                            class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
-                            <i class="ph ph-clock-counter-clockwise text-lg"></i> History
+                            class="bg-white border cursor-pointer border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
+                            History
                         </button>
                         <button id="BtnOpenAddInventory"
-                            class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                            <i class="ph ph-plus font-bold text-lg"></i> Register Item
+                            class="bg-gray-800 cursor-pointer hover:bg-gray-900 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
+                            Register Item
                         </button>
                     </div>
                 </div>
 
-                <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
-                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4">
-                        <div class="relative w-full sm:w-96">
-                            <i
-                                class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                            <input type="text" id="inventory-search" placeholder="Search inventory items..."
-                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors text-sm font-medium">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden w-full">
+                    <div
+                        class="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
+                        <div class="flex bg-gray-200/60 p-1 rounded-xl w-full md:w-auto">
+                            <button id="TabActiveItems"
+                                class="flex-1 md:w-32 py-1.5 px-3 rounded-lg bg-white shadow-sm text-sm font-bold text-gray-800 transition-all cursor-pointer">Active</button>
+                            <button id="TabTrashedItems"
+                                class="flex-1 md:w-32 py-1.5 px-3 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 transition-all cursor-pointer">Trash
+                                Bin</button>
                         </div>
-                        <button id="BtnFetchAlerts"
-                            class="w-full sm:w-auto bg-red-50 text-red-600 hover:bg-red-100 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
-                            <i class="ph ph-warning-circle text-lg"></i> Low Stock Alerts
-                        </button>
+                        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto flex-1 md:justify-end">
+                            <div class="relative w-full sm:w-72">
+                                <i
+                                    class="ph-duotone ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                                <input type="text" id="inventory-search" placeholder="Search inventory"
+                                    class="w-full pl-11 pr-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-100 bg-white transition-colors text-sm font-medium">
+                            </div>
+                            <button id="BtnFetchAlerts"
+                                class="w-full sm:w-auto bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                                Alerts
+                            </button>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead
+                                class="text-xs text-gray-500 uppercase font-bold bg-gray-50/50 border-b border-gray-100">
                                 <tr>
-                                    <th scope="col" class="px-6 py-4">Item Name</th>
-                                    <th scope="col" class="px-6 py-4">Current Stock</th>
-                                    <th scope="col" class="px-6 py-4">Alert Limit</th>
-                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                                    <th class="px-6 py-4">Item Name</th>
+                                    <th class="px-6 py-4">Stock Quantity</th>
+                                    <th class="px-6 py-4">Alert Limit</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="inventory-table-body">
-                            </tbody>
+                            <tbody id="inventory-table-body"></tbody>
                         </table>
-                    </div>
-                    <div id="inventory-pagination"
-                        class="p-4 border-t border-gray-100 flex justify-between items-center text-sm font-medium text-gray-500">
                     </div>
                 </div>
             </div>
@@ -537,6 +544,7 @@
                     <p class="text-gray-500 mt-2">Configure application preferences and settings.</p>
                 </div>
             </div>
+
 
         </main>
     </div>
@@ -877,208 +885,165 @@
         </div>
     </div>
     <div id="AddInventoryModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
         <div id="AddInventoryModal"
-            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
-                        <i class="ph-duotone ph-package text-xl"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-gray-800">Register New Item</h3>
-                </div>
+            class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">Register New Item</h3>
                 <button id="CloseAddInventoryX"
-                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
+                    class="text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"><i
+                        class="ph-bold ph-x text-lg"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <form id="AddInventoryForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Item Name <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" id="addInvName" name="name"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
-                            placeholder="e.g. 5cc Syringe">
-                        <p id="errorAddInvName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+            <form id="AddInventoryForm" class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Item Name</label>
+                    <input type="text" id="addInvName"
+                        class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-orange-100 outline-none">
+                    <p id="errorAddInvName" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Unit (e.g., pcs, kg, ml)</label>
+                        <input type="text" id="addInvUnit"
+                            class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-orange-100 outline-none">
+                        <p id="errorAddInvUnit" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Unit <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="addInvUnit" name="unit"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
-                                placeholder="e.g. pcs, ml, box">
-                            <p id="errorAddInvUnit" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Alert Limit <span
-                                    class="text-red-500">*</span></label>
-                            <input type="number" id="addInvAlert" name="alert"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
-                                placeholder="10">
-                            <p id="errorAddInvAlert" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Initial Stock</label>
+                        <input type="number" id="addInvStock"
+                            class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-orange-100 outline-none"
+                            min="0">
+                        <p id="errorAddInvStock" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Initial Stock <span
-                                class="text-red-500">*</span></label>
-                        <input type="number" id="addInvStock" name="initial_stock"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 bg-gray-50/50 focus:bg-white transition-colors"
-                            placeholder="0">
-                        <p id="errorAddInvStock" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                </form>
-            </div>
-            <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
-                <button id="CloseAddInventoryBtn" type="button"
-                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
-                <button id="SaveInventoryBtn" type="button"
-                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Save
-                    Item</button>
-            </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Low Stock Alert Limit</label>
+                    <input type="number" id="addInvAlert"
+                        class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-orange-100 outline-none"
+                        min="0">
+                    <p id="errorAddInvAlert" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end gap-2 pt-4 border-t border-gray-100">
+                    <button type="button" id="CloseAddInventoryBtn"
+                        class="px-4 py-2 text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button type="button" id="SaveInventoryBtn"
+                        class="px-4 py-2 text-sm font-bold text-white bg-gray-800 hover:bg-gray-900 rounded-lg transition-colors cursor-pointer">Save
+                        Item</button>
+                </div>
+            </form>
         </div>
     </div>
+
     <div id="EditInventoryModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
         <div id="EditInventoryModal"
-            class="bg-white w-full max-w-lg rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
-                        <i class="ph-duotone ph-pencil-line text-xl"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-gray-800">Edit Inventory Item</h3>
-                </div>
+            class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">Edit Item</h3>
                 <button id="CloseEditInventoryX"
-                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
+                    class="text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"><i
+                        class="ph-bold ph-x text-lg"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <form id="EditInventoryForm" class="space-y-4">
-                    <input type="hidden" id="editInvId">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Item Name <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" id="editInvName" name="name"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
-                        <p id="errorEditInvName" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+            <form id="EditInventoryForm" class="p-5 space-y-4">
+                <input type="hidden" id="editInvId">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Item Name</label>
+                    <input type="text" id="editInvName"
+                        class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none">
+                    <p id="errorEditInvName" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Unit</label>
+                        <input type="text" id="editInvUnit"
+                            class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none">
+                        <p id="errorEditInvUnit" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Unit <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="editInvUnit" name="unit"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
-                            <p id="errorEditInvUnit" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Alert Limit <span
-                                    class="text-red-500">*</span></label>
-                            <input type="number" id="editInvAlert" name="alert"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
-                            <p id="errorEditInvAlert" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                        </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Current Stock</label>
+                        <input type="number" id="editInvStock"
+                            class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none"
+                            readonly>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Current Stock</label>
-                        <input type="number" id="editInvStock" name="stock"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white transition-colors">
-                        <p id="errorEditInvStock" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                </form>
-            </div>
-            <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
-                <button id="CloseEditInventoryBtn" type="button"
-                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
-                <button id="UpdateInventoryBtn" type="button"
-                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Update
-                    Item</button>
-            </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Alert Limit</label>
+                    <input type="number" id="editInvAlert"
+                        class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none">
+                    <p id="errorEditInvAlert" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end gap-2 pt-4 border-t border-gray-100">
+                    <button type="button" id="CloseEditInventoryBtn"
+                        class="px-4 py-2 text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button type="button" id="UpdateInventoryBtn"
+                        class="px-4 py-2 text-sm font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors cursor-pointer">Update
+                        Item</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <div id="ModifyStockModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
         <div id="ModifyStockModal"
-            class="bg-white w-full max-w-md rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div id="ModifyStockIconContainer" class="w-10 h-10 rounded-lg flex items-center justify-center">
-                        <i id="ModifyStockIcon" class="ph-duotone text-xl"></i>
-                    </div>
-                    <h3 id="ModifyStockTitle" class="text-lg font-extrabold text-gray-800">Modify Stock</h3>
-                </div>
+            class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                <h3 id="ModifyStockTitle" class="font-bold text-gray-800">Modify Stock</h3>
                 <button id="CloseModifyStockX"
-                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
+                    class="text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"><i
+                        class="ph-bold ph-x text-lg"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <form id="ModifyStockForm" class="space-y-4">
-                    <input type="hidden" id="modifyStockId">
-                    <input type="hidden" id="modifyStockType">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Quantity <span
-                                class="text-red-500">*</span></label>
-                        <input type="number" id="modifyStockQty" name="stock"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
-                        <p id="errorModifyStockQty" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Reason / Note <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" id="modifyStockReason" name="action"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors">
-                        <p id="errorModifyStockReason" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                    </div>
-                </form>
-            </div>
-            <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
-                <button id="CloseModifyStockBtn" type="button"
-                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
-                <button id="SubmitModifyStockBtn" type="button"
-                    class="text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Confirm</button>
-            </div>
+            <form id="ModifyStockForm" class="p-5 space-y-4">
+                <input type="hidden" id="modifyStockId">
+                <input type="hidden" id="modifyStockType">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Quantity</label>
+                    <input type="number" id="modifyStockQty"
+                        class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 outline-none" min="1">
+                    <p id="errorModifyStockQty" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Reason / Action</label>
+                    <input type="text" id="modifyStockReason"
+                        class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 outline-none">
+                    <p id="errorModifyStockReason" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end gap-2 pt-4 border-t border-gray-100">
+                    <button type="button" id="CloseModifyStockBtn"
+                        class="px-4 py-2 text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
+                    <button type="button" id="SubmitModifyStockBtn"
+                        class="px-4 py-2 text-sm font-bold text-white rounded-lg transition-colors cursor-pointer">Confirm</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <div id="InventoryLogsModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
         <div id="InventoryLogsModal"
-            class="bg-white w-full max-w-4xl rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
-                        <i class="ph-duotone ph-clock-counter-clockwise text-xl"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-gray-800" id="LogsModalTitle">Inventory History</h3>
-                </div>
-                <button id="CloseLogsX" class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
+            class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 id="LogsModalTitle" class="font-bold text-gray-800 flex items-center gap-2">History</h3>
+                <button id="CloseLogsX" class="text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"><i
+                        class="ph-bold ph-x text-lg"></i></button>
             </div>
-            <div class="p-0 overflow-y-auto custom-scrollbar flex-1">
-                <table class="w-full text-left text-sm">
+            <div class="overflow-y-auto p-0">
+                <table class="w-full text-left text-sm whitespace-nowrap">
                     <thead
-                        class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+                        class="text-xs text-gray-500 uppercase font-bold bg-white sticky top-0 border-b border-gray-100 shadow-sm">
                         <tr>
-                            <th scope="col" class="px-6 py-4">Action Type</th>
-                            <th scope="col" class="px-6 py-4">Quantity</th>
-                            <th scope="col" class="px-6 py-4">Details</th>
-                            <th scope="col" class="px-6 py-4">Date & Time</th>
+                            <th class="px-6 py-3">Type</th>
+                            <th class="px-6 py-3">Qty</th>
+                            <th class="px-6 py-3">Action</th>
+                            <th class="px-6 py-3">Date</th>
                         </tr>
                     </thead>
-                    <tbody id="logs-table-body" class="divide-y divide-gray-100">
-                    </tbody>
+                    <tbody id="logs-table-body"></tbody>
                 </table>
             </div>
         </div>
     </div>
+
 
 
 </body>

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Inventory;
 use App\Models\InventoryLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Rule;
+
 class InventoryManagement extends Controller
 {
     public function index()
@@ -30,9 +30,50 @@ class InventoryManagement extends Controller
         ], 200);
     }
 
+    public function trashed()
+    {
+        $trashedStock = Inventory::onlyTrashed()->get();
+
+        if ($trashedStock->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No Trashed Records Found',
+                'data' => []
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Trashed Inventory Fetched Successfully',
+            'data' => $trashedStock
+        ], 200);
+    }
+
+    public function restoreItem($id)
+    {
+        $item = Inventory::onlyTrashed()->findOrFail($id);
+        $item->restore();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Item Restored Successfully',
+        ], 200);
+    }
+
+    public function forceDeleteItem($id)
+    {
+        $item = Inventory::onlyTrashed()->findOrFail($id);
+        $item->forceDelete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Item Permanently Deleted',
+        ], 200);
+    }
+
     public function showLogs($id)
     {
-        $logs = Inventory::with('logs')->findOrFail($id);
+        $logs = Inventory::withTrashed()->with('logs')->findOrFail($id);
 
         return response()->json([
             'status' => 'success',
@@ -54,12 +95,22 @@ class InventoryManagement extends Controller
 
     public function add(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'unit' => 'required|string|max:255',
-            'initial_stock' => 'required|numeric',
-            'alert' => 'required|numeric'
-        ]);
+        $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('inventories', 'name')
+                ],
+                'unit' => 'required|string|max:255',
+                'initial_stock' => 'required|numeric',
+                'alert' => 'required|numeric'
+            ],
+            [
+                'name.unique' => 'This item name already exists in the active inventory or the trash. Please restore it or choose a different name.'
+            ]
+        );
 
         $item = DB::transaction(function () use ($request) {
             $newItem = new Inventory();
@@ -90,16 +141,27 @@ class InventoryManagement extends Controller
 
     public function edit(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'unit' => 'required|string|max:255',
-            'alert' => 'required|numeric',
-            'stock' => 'nullable|numeric'
-        ]);
+        $editItem = Inventory::findOrFail($id);
 
-        $item = DB::transaction(function () use ($request, $id) {
-            $editItem = Inventory::findOrFail($id);
-            $editItem->item_name = $request->name;
+        $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('inventories', 'name')->ignore($editItem->id)
+                ],
+                'unit' => 'required|string|max:255',
+                'alert' => 'required|numeric',
+                'stock' => 'nullable|numeric'
+            ],
+            [
+                'name.unique' => 'This item name already exists in the active inventory or the trash. Please restore it or choose a different name.'
+            ]
+        );
+
+        $item = DB::transaction(function () use ($request, $editItem) {
+            $editItem->name = $request->name;
             $editItem->unit = $request->unit;
             $editItem->alert = $request->alert;
 
@@ -193,13 +255,13 @@ class InventoryManagement extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Item Deleted Successfully',
+            'message' => 'Item Soft Deleted Successfully',
         ], 200);
     }
 
     public function alerts()
     {
-        $alerts = Inventory::whereColumn('current_stock', '<=', 'low_stock_alert')->paginate(15);
+        $alerts = Inventory::whereColumn('current_stock', '<=', 'alert')->get();
 
         if ($alerts->isEmpty()) {
             return response()->json([
@@ -228,7 +290,7 @@ class InventoryManagement extends Controller
             ], 400);
         }
 
-        $results = Inventory::where('item_name', 'like', '%' . $searchQuery . '%')->get();
+        $results = Inventory::where('name', 'like', '%' . $searchQuery . '%')->get();
 
         if ($results->isEmpty()) {
             return response()->json([
@@ -247,7 +309,7 @@ class InventoryManagement extends Controller
 
     public function allHistory()
     {
-        $history = InventoryLog::with('inventory', 'user')->latest()->paginate(20);
+        $history = InventoryLog::with('inventory', 'user')->latest()->get();
 
         if ($history->isEmpty()) {
             return response()->json([
@@ -266,19 +328,14 @@ class InventoryManagement extends Controller
 
     public function exportStockasPdf()
     {
-        $stock = Inventory::all();
-
+        $stock = Inventory::withTrashed()->get();
         if ($stock->isEmpty()) {
             return response()->json([
-                'status' => 'success',
-                'message' => 'No Stock to Export',
-                'data' => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'No stock available to export.'
+            ], 404);
         }
-
-
-        $pdf = Pdf::loadView('pdf.StockReport', ['stock' => $stock]);
-        return $pdf->download('InventoryReport.pdf');
-
+        $pdf = Pdf::loadView('StockReport', ['stock' => $stock]);
+        return $pdf->download('LabInventoryReport.pdf');
     }
 }

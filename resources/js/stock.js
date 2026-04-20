@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Basic DOM Elements
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
     const tableBody = document.getElementById('inventory-table-body');
     const searchInput = document.getElementById('inventory-search');
     let searchTimeout = null;
+    let currentView = 'active'; 
 
-    // Helper: Modal Management
     function openInvModal(backdropId, modalId) {
         const backdrop = document.getElementById(backdropId);
         const modal = document.getElementById(modalId);
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
 
-    // Helper: Validation Errors
     function clearInvErrors(prefix) {
         document.querySelectorAll(`[id^="error${prefix}"]`).forEach(el => {
             el.classList.add('hidden');
@@ -50,13 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function showInvErrors(errors, prefix) {
         clearInvErrors(prefix);
         for (const [field, messages] of Object.entries(errors)) {
-            // Map validation keys to HTML input IDs
             let fieldMap = field;
-            if(field === 'initial_stock') fieldMap = 'stock';
-            if(field === 'action') fieldMap = 'reason';
+            if(field === 'initial_stock' || field === 'stock') fieldMap = 'Stock';
+            if(field === 'action') fieldMap = 'Reason';
+            if(field === 'name') fieldMap = 'Name';
+            if(field === 'unit') fieldMap = 'Unit';
+            if(field === 'alert') fieldMap = 'Alert';
 
-            const inputId = `${prefix.charAt(0).toLowerCase() + prefix.slice(1)}${fieldMap.charAt(0).toUpperCase() + fieldMap.slice(1)}`;
-            const errorId = `error${prefix}${fieldMap.charAt(0).toUpperCase() + fieldMap.slice(1)}`;
+            let inputId, errorId;
+            if (prefix === 'ModifyStock') {
+                inputId = `modifyStock${fieldMap === 'Stock' ? 'Qty' : fieldMap}`;
+                errorId = `errorModifyStock${fieldMap === 'Stock' ? 'Qty' : fieldMap}`;
+            } else {
+                inputId = `${prefix.charAt(0).toLowerCase() + prefix.slice(1)}${fieldMap}`;
+                errorId = `error${prefix}${fieldMap}`;
+            }
             
             const inputEl = document.getElementById(inputId);
             const errorEl = document.getElementById(errorId);
@@ -71,65 +77,112 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Main Fetch Engine
-    async function fetchInventory(url = '/inventory') {
+    async function fetchInventory(url = null) {
+        if (!url) url = currentView === 'trashed' ? '/inventory/trashed' : '/inventory';
+
         try {
             const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
             const result = await response.json();
             if (response.ok && result.status === 'success') {
                 renderInventoryTable(result.data.data || result.data);
             } else {
-                tableBody.innerHTML = `<tr class="bg-white"><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No inventory items found.</td></tr>`;
+                renderEmptyTable(`No ${currentView === 'trashed' ? 'trashed ' : ''}items found.`);
             }
-        } catch (error) {}
+        } catch (error) {
+            renderEmptyTable('Error fetching data. Please try again.');
+        }
+    }
+
+    function renderEmptyTable(message) {
+        tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">${message}</td></tr>`;
     }
 
     function renderInventoryTable(items) {
         tableBody.innerHTML = '';
         if (!items || items.length === 0) {
-            tableBody.innerHTML = `<tr class="bg-white"><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No inventory items found.</td></tr>`;
+            renderEmptyTable(`No ${currentView === 'trashed' ? 'trashed ' : ''}items found.`);
             return;
         }
 
         items.forEach(item => {
-            // UPDATED: Using item.alert instead of item.low_stock_alert
             const isLow = parseFloat(item.current_stock) <= parseFloat(item.alert);
-            const badgeClass = isLow ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600';
+            const badgeClass = currentView === 'trashed' ? 'bg-gray-100 text-gray-500' : (isLow ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-800');
+            const rowClass = currentView === 'trashed' ? 'opacity-75 bg-gray-50/50' : 'bg-white hover:bg-gray-50';
             
+            let stockDisplay = '';
+            let actionButtons = '';
+
+            if (currentView === 'active') {
+                // Modified layout: - [Quantity] +
+                stockDisplay = `
+                    <div class="flex items-center gap-2">
+                        <button class="btn-deduct-stock w-7 h-7 flex items-center justify-center bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors cursor-pointer font-bold text-lg leading-none" data-id="${item.id}">-</button>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass} min-w-[3rem] text-center">${item.current_stock}</span>
+                        <button class="btn-add-stock w-7 h-7 flex items-center justify-center bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors cursor-pointer font-bold text-lg leading-none" data-id="${item.id}">+</button>
+                    </div>
+                `;
+
+                actionButtons = `
+                    <button class="btn-edit text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer" data-id="${item.id}">Edit</button>
+                    <button class="btn-logs text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer" data-id="${item.id}">History</button>
+                    <button class="btn-delete text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer" data-id="${item.id}">Trash</button>
+                `;
+            } else {
+                stockDisplay = `<span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass}">${item.current_stock}</span>`;
+
+                actionButtons = `
+                    <button class="btn-restore text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer mr-2" data-id="${item.id}">Restore</button>
+                    <button class="btn-force-delete text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer" data-id="${item.id}">Delete</button>
+                `;
+            }
+
             const tr = document.createElement('tr');
-            tr.className = 'bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium';
+            tr.className = `border-b border-gray-100 transition-colors text-gray-800 font-medium ${rowClass}`;
             tr.innerHTML = `
                 <td class="px-6 py-4">${item.name} <span class="text-xs text-gray-400 ml-1">(${item.unit})</span></td>
-                <td class="px-6 py-4">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass}">${item.current_stock}</span>
-                </td>
+                <td class="px-6 py-4">${stockDisplay}</td>
                 <td class="px-6 py-4 text-gray-500">${item.alert}</td>
-                <td class="px-6 py-4 text-right">
-                    <button class="btn-edit text-teal-500 hover:text-teal-700 p-1 transition-colors" data-id="${item.id}"><i class="ph-duotone ph-pencil-simple text-lg"></i></button>
-                    <button class="btn-add-stock text-green-500 hover:text-green-700 p-1 transition-colors" data-id="${item.id}"><i class="ph-duotone ph-plus-circle text-lg"></i></button>
-                    <button class="btn-deduct-stock text-orange-500 hover:text-orange-700 p-1 transition-colors" data-id="${item.id}"><i class="ph-duotone ph-minus-circle text-lg"></i></button>
-                    <button class="btn-logs text-blue-500 hover:text-blue-700 p-1 transition-colors" data-id="${item.id}"><i class="ph-duotone ph-clock-counter-clockwise text-lg"></i></button>
-                    <button class="btn-delete text-red-500 hover:text-red-700 p-1 transition-colors" data-id="${item.id}"><i class="ph-duotone ph-trash text-lg"></i></button>
-                </td>
+                <td class="px-6 py-4 text-right flex justify-end gap-2">${actionButtons}</td>
             `;
             tableBody.appendChild(tr);
         });
         bindTableEvents();
     }
 
-    // Top Level Event Listeners
+    function switchTab(view) {
+        currentView = view;
+        if(view === 'active') {
+            document.getElementById('TabActiveItems').className = 'flex-1 md:w-32 py-1.5 px-3 rounded-lg bg-white shadow-sm text-sm font-bold text-gray-800 transition-all cursor-pointer';
+            document.getElementById('TabTrashedItems').className = 'flex-1 md:w-32 py-1.5 px-3 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 transition-all cursor-pointer';
+        } else {
+            document.getElementById('TabTrashedItems').className = 'flex-1 md:w-32 py-1.5 px-3 rounded-lg bg-white shadow-sm text-sm font-bold text-gray-800 transition-all cursor-pointer';
+            document.getElementById('TabActiveItems').className = 'flex-1 md:w-32 py-1.5 px-3 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 transition-all cursor-pointer';
+        }
+        fetchInventory();
+    }
+
+    document.getElementById('TabActiveItems')?.addEventListener('click', () => switchTab('active'));
+    document.getElementById('TabTrashedItems')?.addEventListener('click', () => switchTab('trashed'));
+
     if(searchInput) {
         searchInput.addEventListener('keyup', (e) => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 const q = e.target.value.trim();
-                fetchInventory(q ? `/inventory/search/${q}` : '/inventory');
+                fetchInventory(q ? `/inventory/search/${q}` : null);
             }, 300);
         });
     }
 
-    document.getElementById('BtnFetchAlerts')?.addEventListener('click', () => fetchInventory('/inventory/alerts'));
-    
+    document.getElementById('BtnFetchAlerts')?.addEventListener('click', () => {
+        switchTab('active');
+        fetchInventory('/inventory/alerts');
+    });
+
+    document.getElementById('BtnExportPdf')?.addEventListener('click', () => {
+        window.open('/inventory/export-pdf', '_blank');
+    });
+
     document.getElementById('BtnOpenAddInventory')?.addEventListener('click', () => {
         openInvModal('AddInventoryModalBackdrop', 'AddInventoryModal');
     });
@@ -139,14 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/inventory/history', { headers: { 'Accept': 'application/json' } });
             const data = await res.json();
             if (data.status === 'success') {
-                document.getElementById('LogsModalTitle').innerText = 'Global Inventory History';
+                document.getElementById('LogsModalTitle').innerText = 'Global History';
                 renderLogsTable(data.data.data || data.data);
                 openInvModal('InventoryLogsModalBackdrop', 'InventoryLogsModal');
             }
         } catch (e) {}
     });
 
-    // Add Item
     document.getElementById('SaveInventoryBtn')?.addEventListener('click', async (e) => {
         const btn = e.target;
         btn.disabled = true; btn.innerText = 'Saving...';
@@ -165,19 +217,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(payload)
             });
             const result = await res.json();
-            
             if (res.ok) {
                 closeInvModal('AddInventoryModalBackdrop', 'AddInventoryModal', 'AddInventoryForm', 'AddInv');
                 fetchInventory();
-            } else if (res.status === 422) {
-                showInvErrors(result.errors, 'AddInv');
-            }
-        } finally {
-            btn.disabled = false; btn.innerText = 'Save Item';
-        }
+            } else if (res.status === 422) showInvErrors(result.errors, 'AddInv');
+        } finally { btn.disabled = false; btn.innerText = 'Save Item'; }
     });
 
-    // Update Item
     document.getElementById('UpdateInventoryBtn')?.addEventListener('click', async (e) => {
         const id = document.getElementById('editInvId').value;
         const btn = e.target;
@@ -186,7 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = {
             name: document.getElementById('editInvName').value,
             unit: document.getElementById('editInvUnit').value,
-            stock: document.getElementById('editInvStock').value,
             alert: document.getElementById('editInvAlert').value,
             _method: 'PUT'
         };
@@ -198,24 +243,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(payload)
             });
             const result = await res.json();
-            
             if (res.ok) {
                 closeInvModal('EditInventoryModalBackdrop', 'EditInventoryModal', 'EditInventoryForm', 'EditInv');
                 fetchInventory();
-            } else if (res.status === 422) {
-                showInvErrors(result.errors, 'EditInv');
-            }
-        } finally {
-            btn.disabled = false; btn.innerText = 'Update Item';
-        }
+            } else if (res.status === 422) showInvErrors(result.errors, 'EditInv');
+        } finally { btn.disabled = false; btn.innerText = 'Update Item'; }
     });
 
-    // Dynamic Modify Stock (Handles Add & Deduct)
     document.getElementById('SubmitModifyStockBtn')?.addEventListener('click', async (e) => {
         const id = document.getElementById('modifyStockId').value;
         const type = document.getElementById('modifyStockType').value; 
         const btn = e.target;
-        
         btn.disabled = true; btn.innerText = 'Processing...';
         
         const payload = {
@@ -233,19 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(payload)
             });
             const result = await res.json();
-            
             if (res.ok) {
                 closeInvModal('ModifyStockModalBackdrop', 'ModifyStockModal', 'ModifyStockForm', 'ModifyStock');
                 fetchInventory();
-            } else if (res.status === 422) {
-                showInvErrors(result.errors, 'ModifyStock');
-            }
-        } finally {
-            btn.disabled = false; btn.innerText = 'Confirm';
-        }
+            } else if (res.status === 422) showInvErrors(result.errors, 'ModifyStock');
+        } finally { btn.disabled = false; btn.innerText = 'Confirm'; }
     });
 
-    // Event Delegation for Table Buttons
     function bindTableEvents() {
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', async () => {
@@ -256,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(res.ok) {
                         const item = result.data;
                         document.getElementById('editInvId').value = item.id;
-                        // UPDATED: Using item.name and item.alert
                         document.getElementById('editInvName').value = item.name;
                         document.getElementById('editInvUnit').value = item.unit;
                         document.getElementById('editInvStock').value = item.current_stock;
@@ -294,20 +325,41 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', async function() {
                 const id = btn.getAttribute('data-id');
                 if (!btn.classList.contains('confirming')) {
-                    const icon = btn.innerHTML;
-                    btn.innerHTML = `<span class="text-xs font-bold px-2 rounded bg-red-100">Sure?</span>`;
-                    btn.classList.add('confirming');
-                    setTimeout(() => { 
-                        if(btn) { btn.innerHTML = icon; btn.classList.remove('confirming'); }
-                    }, 3000);
+                    const originalText = btn.innerText;
+                    btn.innerText = `Sure?`;
+                    btn.classList.add('confirming', 'bg-red-600', 'text-white');
+                    setTimeout(() => { if(btn) { btn.innerText = originalText; btn.classList.remove('confirming', 'bg-red-600', 'text-white'); } }, 3000);
                     return;
                 }
-                
                 try {
-                    const res = await fetch(`/inventory/${id}`, { 
-                        method: 'DELETE', 
-                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
-                    });
+                    const res = await fetch(`/inventory/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }});
+                    if(res.ok) fetchInventory();
+                } catch(e) {}
+            });
+        });
+
+        document.querySelectorAll('.btn-restore').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const id = btn.getAttribute('data-id');
+                try {
+                    const res = await fetch(`/inventory/${id}/restore`, { method: 'POST', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }});
+                    if(res.ok) fetchInventory();
+                } catch(e) {}
+            });
+        });
+
+        document.querySelectorAll('.btn-force-delete').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const id = btn.getAttribute('data-id');
+                if (!btn.classList.contains('confirming')) {
+                    const originalText = btn.innerText;
+                    btn.innerText = `Sure?`;
+                    btn.classList.add('confirming', 'bg-red-800');
+                    setTimeout(() => { if(btn) { btn.innerText = originalText; btn.classList.remove('confirming', 'bg-red-800'); } }, 3000);
+                    return;
+                }
+                try {
+                    const res = await fetch(`/inventory/${id}/force`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }});
                     if(res.ok) fetchInventory();
                 } catch(e) {}
             });
@@ -319,22 +371,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modifyStockType').value = type;
         
         const title = document.getElementById('ModifyStockTitle');
-        const iconCont = document.getElementById('ModifyStockIconContainer');
-        const icon = document.getElementById('ModifyStockIcon');
         const submitBtn = document.getElementById('SubmitModifyStockBtn');
 
         if(type === 'add') {
             title.innerText = 'Add Incoming Stock';
-            iconCont.className = 'w-10 h-10 rounded-lg flex items-center justify-center bg-green-50 text-green-500';
-            icon.className = 'ph-duotone ph-plus-circle text-xl';
-            submitBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer';
-            document.getElementById('modifyStockReason').placeholder = 'e.g. Purchased from vendor';
+            submitBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer';
+            document.getElementById('modifyStockReason').placeholder = 'e.g. Received shipment';
         } else {
             title.innerText = 'Deduct Stock';
-            iconCont.className = 'w-10 h-10 rounded-lg flex items-center justify-center bg-red-50 text-red-500';
-            icon.className = 'ph-duotone ph-minus-circle text-xl';
-            submitBtn.className = 'bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer';
-            document.getElementById('modifyStockReason').placeholder = 'e.g. Expired, Damaged';
+            submitBtn.className = 'bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer';
+            document.getElementById('modifyStockReason').placeholder = 'e.g. Expired, consumed';
         }
         
         openInvModal('ModifyStockModalBackdrop', 'ModifyStockModal');
@@ -344,29 +390,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.getElementById('logs-table-body');
         tbody.innerHTML = '';
         if (!logs || logs.length === 0) {
-            tbody.innerHTML = `<tr class="bg-white"><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No history records found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No history found.</td></tr>`;
             return;
         }
 
         logs.forEach(log => {
             const isOut = log.type === 'Out';
             const tr = document.createElement('tr');
-            tr.className = 'bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium';
+            tr.className = 'border-b border-gray-50 hover:bg-gray-50 transition-colors text-gray-800 text-sm';
+            
+            const dateStr = new Date(log.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
             tr.innerHTML = `
-                <td class="px-6 py-4">
+                <td class="px-6 py-3">
                     <span class="px-3 py-1 rounded-full text-xs font-bold ${isOut ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}">
-                        <i class="ph-bold ${isOut ? 'ph-arrow-down' : 'ph-arrow-up'} mr-1"></i> ${log.type}
+                        ${log.type}
                     </span>
                 </td>
-                <td class="px-6 py-4 font-extrabold">${log.quantity}</td>
-                <td class="px-6 py-4 text-gray-600">${log.action}</td>
-                <td class="px-6 py-4 text-gray-400 text-xs">${new Date(log.created_at).toLocaleString()}</td>
+                <td class="px-6 py-3 font-extrabold">${log.quantity}</td>
+                <td class="px-6 py-3 text-gray-600">
+                    ${log.action} 
+                    ${log.inventory ? `<span class="block text-xs text-gray-400">Item: ${log.inventory.name}</span>` : ''}
+                </td>
+                <td class="px-6 py-3 text-gray-400 text-xs">${dateStr}</td>
             `;
             tbody.appendChild(tr);
         });
     }
 
-    // Modal Close Triggers
     const closeTriggers = [
         { btn: 'CloseAddInventoryX', back: 'AddInventoryModalBackdrop', mod: 'AddInventoryModal', form: 'AddInventoryForm', pref: 'AddInv' },
         { btn: 'CloseAddInventoryBtn', back: 'AddInventoryModalBackdrop', mod: 'AddInventoryModal', form: 'AddInventoryForm', pref: 'AddInv' },
@@ -381,7 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(t.btn)?.addEventListener('click', () => closeInvModal(t.back, t.mod, t.form, t.pref));
     });
 
-    // Initialize
     if (document.getElementById('section-stock')) {
         fetchInventory();
     }
