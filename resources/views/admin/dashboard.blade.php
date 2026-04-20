@@ -168,90 +168,167 @@
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
-            <div id="section-dashboard" class="content-section block animate-fade-in">
+            <div id="section-dashboard" class="content-section block animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full max-w-7xl mx-auto">
-                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
-                        <div class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-users text-2xl"></i>
-                        </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1">142</h3>
-                        <p class="text-gray-500 font-medium">Total Patients</p>
-                    </div>
-
                     <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
                         <div
                             class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-test-tube text-2xl"></i>
+                            <i class="ph-duotone ph-shopping-cart text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1">120</h3>
-                        <p class="text-gray-500 font-medium">Total Tests</p>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-orders-today">0</h3>
+                        <p class="text-gray-500 font-medium">Monthly Orders</p>
                     </div>
 
                     <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
                         <div
-                            class="w-12 h-12 rounded-lg bg-green-50 text-green-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-trend-up text-2xl"></i>
+                            class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-check-circle text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1">5,0000</h3>
-                        <p class="text-gray-500 font-medium">+50 this week</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 w-full max-w-7xl mx-auto">
-                    <div
-                        class="lg:col-span-2 bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 w-full">
-                        <div class="relative h-64 w-full">
-                            <canvas id="lineChart"></canvas>
-                        </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-completed-today">0</h3>
+                        <p class="text-gray-500 font-medium">Completed Tests</p>
                     </div>
 
-                    <div
-                        class="lg:col-span-1 bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 w-full flex items-center justify-center relative min-h-[300px]">
-                        <div class="relative h-full w-full max-w-[250px]">
-                            <canvas id="doughnutChart"></canvas>
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-clock text-2xl"></i>
                         </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-pending-today">0</h3>
+                        <p class="text-gray-500 font-medium">Pending Tests</p>
+                    </div>
+
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-money text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-money-today">Rs. 0</h3>
+                        <p class="text-gray-500 font-medium">Monthly Revenue</p>
+                    </div>
+
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-receipt text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-tax-today">Rs. 0</h3>
+                        <p class="text-gray-500 font-medium">Total Tax</p>
+                    </div>
+
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                        <div class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
+                            <i class="ph-duotone ph-trash text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-deleted-today">0</h3>
+                        <p class="text-gray-500 font-medium">Deleted Orders</p>
                     </div>
                 </div>
 
                 <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-8 w-full max-w-5xl mb-8">
-                    <h2 class="text-xl font-extrabold text-black mb-6">Latest Registered Patients</h2>
-                    <div class="overflow-x-auto rounded-lg border border-gray-200">
-                        <table class="w-full text-sm text-left">
-                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
-                                <tr>
-                                    <th scope="col" class="px-6 py-4">Name</th>
-                                    <th scope="col" class="px-6 py-4">Age</th>
-                                    <th scope="col" class="px-6 py-4">Test Type</th>
-                                    <th scope="col" class="px-6 py-4">Phone Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
-                                    <td class="px-6 py-4">Ali Khan</td>
-                                    <td class="px-6 py-4">29</td>
-                                    <td class="px-6 py-4">CBC Test</td>
-                                    <td class="px-6 py-4">+92 321 9876543</td>
-                                </tr>
-                                <tr
-                                    class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
-                                    <td class="px-6 py-4">Sara Ahmed</td>
-                                    <td class="px-6 py-4">34</td>
-                                    <td class="px-6 py-4">Lipid Profile</td>
-                                    <td class="px-6 py-4">+92 333 1122334</td>
-                                </tr>
-                                <tr class="bg-white hover:bg-gray-50 transition-colors text-gray-800 font-medium">
-                                    <td class="px-6 py-4">Hamza Iqbal</td>
-                                    <td class="px-6 py-4">41</td>
-                                    <td class="px-6 py-4">Thyroid Test</td>
-                                    <td class="px-6 py-4">+92 300 4567890</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                    <div
+                        class="p-5 border-b border-gray-100 flex flex-col lg:flex-row justify-between gap-4 items-start lg:items-center bg-gray-50/50">
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-2">
+                                <i class="ph-duotone ph-calendar-blank text-xl text-gray-500"></i>
+                                <h3 class="text-base font-bold text-gray-800">Custom Date Statistics</h3>
+                            </div>
+                            <p id="dateErrorMsg" class="text-sm font-bold text-red-500 mt-1 hidden"></p>
+                        </div>
+
+                        <form id="DashboardDateFilterForm"
+                            class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                            <div class="relative w-full sm:w-auto">
+                                <input type="text" id="filterStartDate" placeholder="Start Date"
+                                    class="w-full sm:w-40 pl-4 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="relative w-full sm:w-auto">
+                                <input type="text" id="filterEndDate" placeholder="End Date"
+                                    class="w-full sm:w-40 pl-4 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-blue-500">
+                            </div>
+                            <button type="submit"
+                                class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2 cursor-pointer rounded-xl text-sm font-bold flex items-center justify-center gap-2 w-full sm:w-auto transition-colors">
+                                <i class="ph-bold ph-magnifying-glass"></i> Search
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="DashboardReportResults" class="p-6 md:p-8 bg-gray-50">
+                        <div id="reportEmptyState" class="text-center py-8">
+                            <i class="ph-duotone ph-calendar-check text-5xl mb-3 text-gray-300 block"></i>
+                            <p class="text-gray-500 font-medium">Select a date range to view statistics.</p>
+                        </div>
+
+                        <div id="reportLoadingState" class="hidden text-center py-8">
+                            <i class="ph-bold ph-spinner animate-spin text-4xl mb-3 text-blue-500 block"></i>
+                            <p class="text-gray-500 font-medium">Calculating Statistics</p>
+                        </div>
+
+                        <div id="reportDataState" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+                            <div
+                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
+                                    <i class="ph-duotone ph-shopping-cart text-2xl"></i>
+                                </div>
+                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-orders">0</h3>
+                                <p class="text-gray-500 font-medium">Orders</p>
+                            </div>
+
+                            <div
+                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4">
+                                    <i class="ph-duotone ph-check-circle text-2xl"></i>
+                                </div>
+                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-completed">0</h3>
+                                <p class="text-gray-500 font-medium">Completed</p>
+                            </div>
+
+                            <div
+                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+                                    <i class="ph-duotone ph-clock text-2xl"></i>
+                                </div>
+                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-pending">0</h3>
+                                <p class="text-gray-500 font-medium">Pending</p>
+                            </div>
+
+                            <div
+                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4">
+                                    <i class="ph-duotone ph-money text-2xl"></i>
+                                </div>
+                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-money">Rs. 0</h3>
+                                <p class="text-gray-500 font-medium">Revenue</p>
+                            </div>
+
+                            <div
+                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-4">
+                                    <i class="ph-duotone ph-receipt text-2xl"></i>
+                                </div>
+                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-tax">Rs. 0</h3>
+                                <p class="text-gray-500 font-medium">Tax</p>
+                            </div>
+
+                            <div
+                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
+                                    <i class="ph-duotone ph-trash text-2xl"></i>
+                                </div>
+                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-deleted">0</h3>
+                                <p class="text-gray-500 font-medium">Deleted</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
 
             <x-tests />
 
@@ -274,7 +351,7 @@
                 <div id="grid-pathologist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
-              <div id="section-department" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+            <div id="section-department" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
@@ -313,7 +390,6 @@
                 <div id="grid-sample-collector"
                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
             </div>
-
             <div id="section-technician" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
@@ -333,7 +409,6 @@
                 <div id="grid-technician" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
-
             <div id="section-specialist" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
@@ -354,7 +429,6 @@
                 <div id="grid-specialist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
-
             <div id="section-receptionist" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
@@ -382,8 +456,6 @@
                     <p class="text-gray-500 mt-2">Lab performance and analytical data will appear here.</p>
                 </div>
             </div>
-
-
             <div id="section-stock" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">

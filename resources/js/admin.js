@@ -137,39 +137,99 @@ document.addEventListener('DOMContentLoaded', () => {
     if (openMobileBtn) openMobileBtn.addEventListener('click', openMobileSidebar);
     if (closeMobileBtn) closeMobileBtn.addEventListener('click', closeMobileSidebar);
     if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+});
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#filterStartDate", { dateFormat: "Y-m-d" });
+    flatpickr("#filterEndDate", { dateFormat: "Y-m-d" });
 
-    // --- Chart Logic ---
-    const lineCtxEl = document.getElementById('lineChart');
-    if (lineCtxEl) {
-        const lineCtx = lineCtxEl.getContext('2d');
-        new Chart(lineCtx, {
-            type: 'line',
-            data: {
-                labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-                datasets: [
-                    { label: 'Dataset 1', data: [300, 600, 250, 150, 850, 0, 150, 850, 1000, 250], borderColor: '#b24a96', backgroundColor: 'transparent', borderWidth: 1.5, pointBackgroundColor: '#ffffff', pointBorderColor: '#b24a96', pointBorderWidth: 2, pointRadius: 4, tension: 0 },
-                    { label: 'Dataset 2', data: [800, 800, 450, 400, 700, 250, 100, 600, 0, 300], borderColor: '#72c8b7', backgroundColor: 'transparent', borderWidth: 1.5, pointBackgroundColor: '#ffffff', pointBorderColor: '#72c8b7', pointBorderWidth: 2, pointRadius: 4, tension: 0 }
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, max: 1000, ticks: { stepSize: 250, color: '#9ca3af', font: { size: 10 } }, grid: { color: '#f3f4f6' }, border: { display: false } }, x: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { display: false }, border: { color: '#e5e7eb' } } }
-            }
-        });
-    }
+    const errorMsg = document.getElementById('dateErrorMsg');
+    const emptyState = document.getElementById('reportEmptyState');
+    const loadingState = document.getElementById('reportLoadingState');
+    const dataState = document.getElementById('reportDataState');
 
-    const doughnutCtxEl = document.getElementById('doughnutChart');
-    if (doughnutCtxEl) {
-        const doughnutCtx = doughnutCtxEl.getContext('2d');
-        new Chart(doughnutCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['1000', '200', '300', '500'],
-                datasets: [{ data: [50, 10, 15, 25], backgroundColor: ['#a8d124', '#e29b20', '#e8278f', '#b824a4'], borderWidth: 0, hoverOffset: 4 }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8, padding: 20, font: { family: 'Inter', size: 11, weight: 'bold' } } }, tooltip: { callbacks: { label: function (context) { return ` ${context.raw}%`; } } } }
+    const updateMonthlyUI = (data) => {
+        document.getElementById('stat-orders-today').innerText = data.activeOrders;
+        document.getElementById('stat-completed-today').innerText = data.completedTests;
+        document.getElementById('stat-pending-today').innerText = data.pendingTests;
+        document.getElementById('stat-money-today').innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
+        document.getElementById('stat-tax-today').innerText = `Rs. ${data.totalTax.toLocaleString()}`;
+        document.getElementById('stat-deleted-today').innerText = data.deletedOrders;
+    };
+
+    const updateSearchUI = (data) => {
+        document.getElementById('res-orders').innerText = data.activeOrders;
+        document.getElementById('res-completed').innerText = data.completedTests;
+        document.getElementById('res-pending').innerText = data.pendingTests;
+        document.getElementById('res-money').innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
+        document.getElementById('res-tax').innerText = `Rs. ${data.totalTax.toLocaleString()}`;
+        document.getElementById('res-deleted').innerText = data.deletedOrders;
+    };
+
+    const fetchMonthlyStats = async () => {
+        try {
+            const response = await fetch('/stats/monthly');
+            if (response.ok) {
+                const result = await response.json();
+                if (result.status === 200) updateMonthlyUI(result.data);
             }
-        });
-    }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    document.getElementById('DashboardDateFilterForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        errorMsg.classList.add('hidden');
+        errorMsg.innerText = '';
+        emptyState.classList.add('hidden');
+        dataState.classList.add('hidden');
+        loadingState.classList.remove('hidden');
+
+        const startDate = document.getElementById('filterStartDate').value;
+        const endDate = document.getElementById('filterEndDate').value;
+
+        if (!startDate || !endDate) {
+            loadingState.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            errorMsg.innerText = 'Please select both start and end dates.';
+            errorMsg.classList.remove('hidden');
+            return;
+        }
+
+        try {
+            const response = await fetch('/stats/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ startDate, endDate })
+            });
+
+            const result = await response.json();
+
+            if (response.status === 422) {
+                const errors = result.errors;
+                const firstError = Object.values(errors)[0][0];
+                throw new Error(firstError);
+            }
+
+            if (result.status === 200) {
+                updateSearchUI(result.data);
+                loadingState.classList.add('hidden');
+                dataState.classList.remove('hidden');
+            } else {
+                throw new Error(result.message || 'Something went wrong.');
+            }
+        } catch (error) {
+            loadingState.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            errorMsg.innerText = error.message;
+            errorMsg.classList.remove('hidden');
+        }
+    });
+
+    fetchMonthlyStats();
 });

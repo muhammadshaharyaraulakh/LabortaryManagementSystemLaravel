@@ -8,6 +8,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\InventoryManagement;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StatisticsController;
 
 
 Route::get('/', function () {
@@ -85,6 +86,10 @@ Route::middleware(['auth', 'check.role'])->group(function () {
         Route::get('/{id}/logs', 'showLogs');
     });
 
+
+    Route::get('/stats/monthly', [StatisticsController::class, 'fetchMonthlyDetails']);
+    Route::post('/stats/search', [StatisticsController::class, 'Search']);
+
 });
 
 Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
@@ -126,20 +131,8 @@ Route::post('/orders', [OrderController::class, 'CreateOrder']);
 Route::delete('/orders/{id}', [OrderController::class, 'delete']);
 Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
 Route::get('/orders/search/{search}', [OrderController::class, 'SearchOrder']);
-
-// ==========================================
-// DASHBOARD STATS ROUTE
-// ==========================================
 Route::post('/dashboard/stats', [OrderController::class, 'Search']);
-
-// ==========================================
-// TEST DIRECTORY ROUTES (Fetched by JS)
-// ==========================================
 Route::get('/tests', [TestController::class, 'index']);
 Route::get('/tests/{id}', [TestController::class, 'show']);
-
-// ==========================================
-// SETTINGS / PROFILE ROUTES (Fetched by JS)
-// ==========================================
 Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
 Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
