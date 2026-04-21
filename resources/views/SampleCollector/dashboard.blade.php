@@ -23,26 +23,16 @@
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-white bg-white/10 transition-colors group active-nav cursor-pointer"
                 data-target="section-pending" data-title="Pending Collections">
-                <i class="ph-duotone ph-needle text-2xl w-7 text-center text-white transition-colors nav-icon"></i>
+                <i
+                    class="ph-duotone ph-syringe text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Pending Collections</span>
             </a>
-
-
-
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-tests" data-title="Tests">
                 <i
                     class="ph-duotone ph-flask text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Tests</span>
-            </a>
-
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-history" data-title="Collection History">
-                <i
-                    class="ph-duotone ph-clock-counter-clockwise text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">My History</span>
             </a>
 
             <a href="#"
