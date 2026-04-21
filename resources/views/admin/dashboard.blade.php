@@ -84,7 +84,13 @@
                     class="ph-duotone ph-headset text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Receptionist</span>
             </a>
-
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-deleted-users" data-title="Deleted Staff">
+                <i
+                    class="ph-duotone ph-user text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Deleted Staff</span>
+            </a>
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-stock" data-title="Stock Management">
@@ -125,10 +131,7 @@
             </div>
 
             <div class="flex items-center space-x-6">
-                <div class="relative hidden sm:flex items-center">
-                    <input type="text" placeholder="Search"
-                        class="bg-white border border-gray-200 rounded-full py-1.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200 w-48 lg:w-64 shadow-sm">
-                </div>
+
 
                 <div class="relative">
                     <button id="profile-btn"
@@ -453,6 +456,22 @@
                 <div id="grid-receptionist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
             </div>
+            <div id="section-deleted-users" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-trash text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Deleted Staff</h2>
+                            <p class="text-sm text-gray-500 font-medium">Restore or permanently remove staff members</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="grid-deleted-users"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </div>
             <div id="section-stock" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
@@ -642,9 +661,6 @@
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
-                        <i class="ph-duotone ph-pencil-line text-xl"></i>
-                    </div>
                     <h3 class="text-lg font-extrabold text-gray-800">Update Staff Member</h3>
                 </div>
                 <button id="CloseUpdateUserX"

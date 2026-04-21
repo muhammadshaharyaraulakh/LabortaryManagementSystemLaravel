@@ -68,10 +68,13 @@ Route::middleware(['auth', 'check.role'])->group(function () {
 
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/allusers', 'allusers')->name('users.all');
+        Route::get('/deletedusers', 'deletedUsers')->name('users.deleted');
         Route::post('/adduser', 'adduser')->name('users.add');
         Route::get('/user/{id}', 'show')->name('users.show');
         Route::put('/edit/{id}', 'edit')->name('users.edit');
         Route::delete('/delete/{id}', 'delete')->name('users.delete');
+        Route::post('/restoreuser/{id}', 'restoreUser')->name('users.restore');
+        Route::delete('/forcedeleteuser/{id}', 'forceDelete')->name('users.forceDelete');
     });
 
     Route::prefix('inventory')->controller(InventoryManagement::class)->group(function () {

@@ -7,11 +7,29 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
 class ProfileController extends Controller
 {
     public function allusers()
     {
-        $users = User::with('department')
+        $users = User::whereHas('department', function ($query) {
+            $query->where('is_active', true);
+        })
+            ->where('role', '!=', 'Admin')
+            ->whereNotNull('role')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'users' => $users
+        ], 200);
+    }
+    public function deletedUsers()
+    {
+        $users = User::onlyTrashed()
+            ->whereHas('department', function ($query) {
+                $query->where('is_active', true);
+            })
             ->where('role', '!=', 'Admin')
             ->whereNotNull('role')
             ->get();
@@ -19,27 +37,23 @@ class ProfileController extends Controller
         if ($users->isNotEmpty()) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'Users retrieved successfully',
                 'users' => $users
             ], 200);
         }
 
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Users not found',
-            'users' => []
-        ], 404);
+        return response()->json(['status' => 'error', 'message' => 'No deleted users found', 'users' => []], 404);
     }
-
     public function adduser(Request $request)
     {
         $validations = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|' . Rule::unique('users', 'email'),
             'password' => 'required|string|min:12',
             'role' => 'required|string|in:Receptionist,Technician,SampleCollector,Pathologist,SpecialistDoctor',
             'department_id' => 'nullable|exists:departments,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ], [
+            'email.unique' => 'Email already exists',
         ]);
         $validations['password'] = Hash::make($request->password);
         if ($request->hasFile('image')) {
@@ -73,11 +87,13 @@ class ProfileController extends Controller
 
         $validations = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'required|email|' . Rule::unique('users', 'email')->ignore($id),
             'password' => 'nullable|string|min:12',
             'role' => 'required|string|in:Receptionist,Technician,SampleCollector,Pathologist,SpecialistDoctor',
             'department_id' => 'nullable|exists:departments,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ], [
+            'email.unique' => 'Email already exists',
         ]);
         $validations['password'] = Hash::make($request->password);
         if (empty($validations['password'])) {
@@ -115,6 +131,35 @@ class ProfileController extends Controller
             'message' => 'User deleted successfully'
         ], 200);
     }
+    public function restoreUser($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User restored successfully'
+        ], 200);
+    }
+
+    public function forceDelete($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        if ($user->image && file_exists(public_path($user->image))) {
+            unlink(public_path($user->image));
+        }
+        if ($user->signature && file_exists(public_path($user->signature))) {
+            unlink(public_path($user->signature));
+        }
+
+        $user->forceDelete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User permanently removed'
+        ], 200);
+    }
+
     public function updatePassword(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -188,18 +233,7 @@ class ProfileController extends Controller
             'signature' => $user->signature
         ]);
     }
-    public function updateGamil(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        $validation = $request->validate([
-            'gmail' => 'required|gmail|unique:User,gmail'
-        ]);
-        $user->update($validation);
-        return response()->json([
-            'status' => 200,
-            'message' => 'Gmail updated successfully'
-        ]);
-    }
+
     public function updateEmail(Request $request, $id)
     {
         $user = User::findOrFail($id);
