@@ -9,6 +9,7 @@ use App\Http\Controllers\InventoryManagement;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\SampleCollectorController;
 
 
 Route::get('/', function () {
@@ -29,8 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::view('/pathologist/dashboard', 'pathologist.dashboard')
         ->name('pathologist.dashboard');
 
-    Route::view('/samplecollector/dashboard', 'samplecollector.dashboard')
-        ->name('samplecollector.dashboard');
+
 });
 Route::view('/VerifyCode', 'authentication.VerifyCode')
     ->name('VerifyCode');
@@ -117,12 +117,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/tests', [TestController::class, 'index']);
     Route::get('/tests/{id}', [TestController::class, 'show']);
     Route::post('/tests/add', [TestController::class, 'add']);
-
-    // Using PUT for updates. Your JS sends a POST with a _method=PUT field (or we can just define it as POST/PUT).
     Route::put('/tests/{id}', [TestController::class, 'update']);
     Route::delete('/tests/{id}', [TestController::class, 'destroy']);
-
-    // Inventory endpoint referenced in your JS
     Route::get('/inventory', [InventoryManagement::class, 'index']);
 });
 Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
@@ -146,3 +142,11 @@ Route::get('/tests', [TestController::class, 'index']);
 Route::get('/tests/{id}', [TestController::class, 'show']);
 Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
 Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
+
+
+
+
+Route::view('/dashboard', 'SampleCollector.dashboard')
+    ->name('SampleCollector.dashboard');
+Route::get('/PendingOrders', [SampleCollectorController::class, 'index'])->name('PendingOrders');
+Route::post('/CollectSample', [SampleCollectorController::class, 'CollectSample'])->name('CollectSample');
