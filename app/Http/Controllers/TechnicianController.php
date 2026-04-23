@@ -34,7 +34,7 @@ class TechnicianController extends Controller
         $pendingVerification = DB::table('order_test')
             ->join('tests', 'order_test.testId', '=', 'tests.id')
             ->where('tests.departmentId', $departmentId)
-            ->where('order_test.status', 'Completed')
+            ->where('order_test.status', 'Unverified')
             ->where('order_test.testedBy', $user->id)
             ->count();
 
@@ -132,6 +132,28 @@ class TechnicianController extends Controller
                             ->where('order_test.status', 'InProgress')
                             ->where('order_test.testedBy', $user->id)
                             ->with(['parameters', 'requirements']);
+                    }
+                ])->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $orders
+        ]);
+    }
+
+    public function getPendingVerificationList()
+    {
+        $user = Auth::user();
+
+        $orders = Order::whereHas('tests', function ($query) use ($user) {
+            $query->where('tests.departmentId', $user->department_id)
+                ->where('order_test.status', 'Unverified')
+                ->where('order_test.testedBy', $user->id);
+        })->with([
+                    'tests' => function ($query) use ($user) {
+                        $query->where('tests.departmentId', $user->department_id)
+                            ->where('order_test.status', 'Unverified')
+                            ->where('order_test.testedBy', $user->id);
                     }
                 ])->get();
 

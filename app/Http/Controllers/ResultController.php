@@ -57,7 +57,9 @@ class ResultController extends Controller
             }
             DB::table('order_test')
                 ->where('id', $request->orderTestId)
-                ->update(['status' => 'Unverified']);
+                ->update([
+                    'status' => 'Unverified'
+                ]);
 
             DB::commit();
 

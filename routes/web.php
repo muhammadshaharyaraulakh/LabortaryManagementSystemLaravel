@@ -157,6 +157,8 @@ Route::view('/TechnicianDashboard', 'Technician.dashboard');
 Route::get('/TechnicianStats', [TechnicianController::class, 'getDashboardStats']);
 Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
 Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
+Route::get('/getPendingVerifications', [TechnicianController::class, 'getPendingVerificationList']);
+
 
 
 

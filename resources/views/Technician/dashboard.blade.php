@@ -67,8 +67,7 @@
                 </button>
                 <h1 id="header-title"
                     class="text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200">
-                    Dashboard
-                </h1>
+                    Dashboard</h1>
             </div>
             <div class="flex items-center gap-4">
                 <div class="hidden md:flex flex-col items-end mr-4">
@@ -153,7 +152,6 @@
                         <p id="receiveErrorMsg" class="mt-4 text-red-500 font-bold text-sm hidden animate-fade-in"></p>
                     </div>
                 </div>
-
             </div>
 
             <div id="section-worklist" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
@@ -177,7 +175,6 @@
                         <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-gray-50 text-gray-700 font-bold border-b border-gray-100">
                                 <tr>
-
                                     <th class="px-6 py-4">Patient Info</th>
                                     <th class="px-6 py-4">Test Assigned</th>
                                     <th class="px-6 py-4">Status</th>
@@ -202,9 +199,8 @@
                         <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-gray-50 text-gray-700 font-bold border-b border-gray-100">
                                 <tr>
-                                    <th class="px-6 py-4">Vial ID</th>
+                                    <th class="px-6 py-4">Tracking ID</th>
                                     <th class="px-6 py-4">Test Name</th>
-                                    <th class="px-6 py-4">Completed At</th>
                                     <th class="px-6 py-4">Status</th>
                                 </tr>
                             </thead>
@@ -226,10 +222,10 @@
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-sidebarBg text-white">
                 <div>
                     <h3 class="font-black text-lg flex items-center gap-2">
-                        <i class="ph-bold ph-flask"></i> <span id="modalTestNameTitle">Test Name</span>
+                        <i class="ph-bold ph-flask"></i> <span id="modalTestNameTitle"></span>
                     </h3>
-                    <p class="text-xs text-gray-300 font-medium mt-1"><span id="modalVialIdText"
-                            class="font-mono text-white"></span> | Patient <span id="modalPatientNameText"></span></p>
+                    <p class="text-xs text-gray-300 font-medium mt-1">Patient: <span id="modalPatientNameText"></span>
+                    </p>
                 </div>
                 <button class="close-modal-btn text-gray-300 hover:text-white transition-colors cursor-pointer"
                     data-modal="ResultEntryModalBackdrop">
@@ -238,7 +234,9 @@
             </div>
 
             <form id="ResultEntryForm" class="flex flex-col flex-1 overflow-hidden">
-                <input type="hidden" id="entryVialId">
+                <input type="hidden" id="entryOrderTestId">
+                <input type="hidden" id="entryTrackingId">
+
                 <div class="flex-1 overflow-y-auto bg-gray-50 p-6 custom-scrollbar">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <table class="w-full text-left text-sm">
@@ -365,7 +363,7 @@
                         document.getElementById('stat-completed-today').innerText = data.completedToday || 0;
                     }
                 } catch (error) {
-                    console.error('Failed to fetch stats', error);
+                    console.error(error);
                 }
             }
 
@@ -379,7 +377,7 @@
                         }
                     }
                 } catch (error) {
-                    console.error('Failed to fetch worklist', error);
+                    console.error(error);
                 }
             }
 
@@ -390,7 +388,7 @@
                 let testCount = 0;
 
                 if (!orders || orders.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 font-medium">No samples in active worklist.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No samples in active worklist.</td></tr>`;
                     badge.innerText = `0 Tests`;
                     return;
                 }
@@ -402,7 +400,6 @@
                             const tr = document.createElement('tr');
                             tr.className = 'hover:bg-gray-50 transition-colors animate-fade-in';
                             tr.innerHTML = `
-                              
                                 <td class="px-6 py-4">
                                     <p class="font-bold text-gray-800">${order.name}</p>
                                     <p class="text-xs text-gray-500">${order.gender}, ${order.age}y</p>
@@ -414,7 +411,11 @@
                                 <td class="px-6 py-4 text-right">
                                     <button
                                         class="btn-enter-results bg-sidebarBg text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-gray-800 transition-all cursor-pointer"
-                                        data-vial="${test.pivot.vialBarcode}" data-test="${test.name}" data-patient="${order.name}" data-parameters='${JSON.stringify(test.parameters)}'>
+                                        data-order-test-id="${test.pivot.id}"
+                                        data-tracking-id="${order.trackingId}"
+                                        data-test="${test.name}"
+                                        data-patient="${order.name}"
+                                        data-parameters='${JSON.stringify(test.parameters)}'>
                                         Enter Results
                                     </button>
                                 </td>
@@ -484,15 +485,16 @@
             document.addEventListener('click', (e) => {
                 const enterBtn = e.target.closest('.btn-enter-results');
                 if (enterBtn) {
-                    const vialId = enterBtn.getAttribute('data-vial');
+                    const orderTestId = enterBtn.getAttribute('data-order-test-id');
+                    const trackingId = enterBtn.getAttribute('data-tracking-id');
                     const testName = enterBtn.getAttribute('data-test');
                     const patientName = enterBtn.getAttribute('data-patient');
                     const parametersStr = enterBtn.getAttribute('data-parameters');
 
                     document.getElementById('modalTestNameTitle').innerText = testName;
-                    document.getElementById('modalVialIdText').innerText = vialId;
                     document.getElementById('modalPatientNameText').innerText = patientName;
-                    document.getElementById('entryVialId').value = vialId;
+                    document.getElementById('entryOrderTestId').value = orderTestId;
+                    document.getElementById('entryTrackingId').value = trackingId;
 
                     const paramTableBody = document.getElementById('parametersTableBody');
                     paramTableBody.innerHTML = '';
@@ -519,6 +521,8 @@
                                         <input type="${param.inputType === 'number' ? 'number' : 'text'}" 
                                                step="0.01" 
                                                required 
+                                               data-param-id="${param.id}"
+                                               data-flag="Normal"
                                                ${min !== null ? `data-min="${min}"` : ''} 
                                                ${max !== null ? `data-max="${max}"` : ''} 
                                                class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors" 
@@ -537,7 +541,6 @@
                             paramTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No parameters defined for this test.</td></tr>`;
                         }
                     } catch (error) {
-                        console.error('Error parsing parameters', error);
                         paramTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Error loading parameters.</td></tr>`;
                     }
 
@@ -563,18 +566,22 @@
                         this.classList.remove('border-gray-300', 'border-red-500', 'border-yellow-500', 'bg-red-50', 'bg-yellow-50');
 
                         if (isNaN(val)) {
+                            this.dataset.flag = 'Normal';
                             this.classList.add('border-gray-300');
                             flagCell.innerHTML = '<span class="text-gray-300 text-xs font-bold">-</span>';
                             return;
                         }
 
                         if (val < min) {
+                            this.dataset.flag = 'Low';
                             this.classList.add('border-yellow-500', 'bg-yellow-50');
                             flagCell.innerHTML = '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-black text-xs border border-yellow-200">L</span>';
                         } else if (val > max) {
+                            this.dataset.flag = 'High';
                             this.classList.add('border-red-500', 'bg-red-50');
                             flagCell.innerHTML = '<span class="bg-red-100 text-red-700 px-2 py-1 rounded font-black text-xs border border-red-200">H</span>';
                         } else {
+                            this.dataset.flag = 'Normal';
                             this.classList.add('border-gray-300');
                             flagCell.innerHTML = '<span class="text-green-500 text-xs font-bold"><i class="ph-bold ph-check"></i></span>';
                         }
@@ -594,8 +601,125 @@
                 });
             }
 
+            const resultForm = document.getElementById('ResultEntryForm');
+            if (resultForm) {
+                resultForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const btn = document.getElementById('submitResultsBtn');
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Saving...`;
+                    btn.disabled = true;
+
+                    const orderTestId = document.getElementById('entryOrderTestId').value;
+                    const trackingId = document.getElementById('entryTrackingId').value;
+
+                    const inputs = document.querySelectorAll('.result-input');
+                    const resultsArray = [];
+
+                    inputs.forEach(input => {
+                        resultsArray.push({
+                            testParameterId: input.getAttribute('data-param-id'),
+                            resultValue: input.value,
+                            statusFlag: input.dataset.flag || 'Normal'
+                        });
+                    });
+
+                    const payload = {
+                        orderTestId: orderTestId,
+                        trackingId: trackingId,
+                        remarks: null,
+                        attachmentPaths: null,
+                        results: resultsArray
+                    };
+
+                    try {
+                        const response = await fetch('/addResult', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const resData = await response.json();
+
+                        if (response.ok && resData.status === 200) {
+                            closeModal('ResultEntryModalBackdrop');
+                            fetchStats();
+                            fetchWorklist();
+                            fetchPendingVerifications();
+
+                            const msgEl = document.createElement('div');
+                            msgEl.className = 'fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold text-sm flex items-center gap-2';
+                            msgEl.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> Results submitted successfully.`;
+                            document.body.appendChild(msgEl);
+
+                            setTimeout(() => {
+                                msgEl.style.opacity = '0';
+                                msgEl.style.transition = 'opacity 0.3s ease';
+                                setTimeout(() => msgEl.remove(), 300);
+                            }, 3000);
+                        } else {
+                            alert(resData.message || 'Failed to save results.');
+                        }
+                    } catch (error) {
+                        alert('Network Error. Please try again.');
+                    } finally {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            async function fetchPendingVerifications() {
+                try {
+                    const response = await fetch('/getPendingVerifications');
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.status === 200) {
+                            renderPendingVerifications(result.data);
+                        }
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            function renderPendingVerifications(orders) {
+                const tbody = document.getElementById('completedTableBody');
+                tbody.innerHTML = '';
+
+                if (!orders || orders.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 font-medium">No tests pending verification.</td></tr>`;
+                    return;
+                }
+
+                orders.forEach(order => {
+                    if (order.tests && order.tests.length > 0) {
+                        order.tests.forEach(test => {
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-gray-50 transition-colors animate-fade-in';
+                            tr.innerHTML = `
+                                <td class="px-6 py-4 font-mono text-sm text-gray-700">${order.trackingId}</td>
+                                <td class="px-6 py-4 font-bold text-gray-700">${test.name}</td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-yellow-50 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold border border-yellow-100">Pending</span>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                });
+            }
+
             fetchStats();
             fetchWorklist();
+            fetchPendingVerifications();
         });
     </script>
 </body>
+
+</html>
