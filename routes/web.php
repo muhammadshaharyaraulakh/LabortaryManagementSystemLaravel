@@ -10,6 +10,7 @@ use App\Http\Controllers\SocialController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SampleCollectorController;
+use App\Http\Controllers\TechnicianController;
 
 
 Route::get('/', function () {
@@ -150,3 +151,8 @@ Route::view('/dashboard', 'SampleCollector.dashboard')
     ->name('SampleCollector.dashboard');
 Route::get('/PendingOrders', [SampleCollectorController::class, 'index'])->name('PendingOrders');
 Route::post('/CollectSample', [SampleCollectorController::class, 'CollectSample'])->name('CollectSample');
+
+Route::view('/TechnicianDashboard', 'Technician.dashboard');
+Route::get('/TechnicianStats', [TechnicianController::class, 'getDashboardStats']);
+Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
+Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
