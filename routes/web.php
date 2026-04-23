@@ -11,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SampleCollectorController;
 use App\Http\Controllers\TechnicianController;
+use App\Http\Controllers\ResultController;
 
 
 Route::get('/', function () {
@@ -156,3 +157,7 @@ Route::view('/TechnicianDashboard', 'Technician.dashboard');
 Route::get('/TechnicianStats', [TechnicianController::class, 'getDashboardStats']);
 Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
 Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
+
+
+
+Route::post('/addResult', [ResultController::class, 'addResult']);
