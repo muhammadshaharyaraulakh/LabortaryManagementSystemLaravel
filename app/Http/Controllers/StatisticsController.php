@@ -33,8 +33,8 @@ class StatisticsController extends Controller
             'status' => 200,
             'data' => [
                 'activeOrders' => $active->count(),
-                'completedTests' => $allTests->where('pivot.status', 'completed')->count(),
-                'pendingTests' => $allTests->where('pivot.status', '!==', 'completed')->count(),
+                'completedTests' => $allTests->where('pivot.status', 'Completed')->count(),
+                'pendingTests' => $allTests->where('pivot.status', '!==', 'Completed')->count(),
                 'totalRevenue' => $active->sum('grandTotal'),
                 'totalTax' => $active->sum('tax'),
                 'deletedOrders' => $monthOrders->whereNotNull('deleted_at')->count(),
@@ -60,10 +60,10 @@ class StatisticsController extends Controller
             return $order->tests;
         });
         $completedTests = $allActiveTests->filter(function ($test) {
-            return $test->pivot->status === 'completed';
+            return $test->pivot->status === 'Completed';
         });
         $pendingTests = $allActiveTests->filter(function ($test) {
-            return $test->pivot->status !== 'completed';
+            return $test->pivot->status !== 'Completed';
         });
         return response()->json([
             'status' => 200,

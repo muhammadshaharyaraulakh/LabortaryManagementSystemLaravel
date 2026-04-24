@@ -538,6 +538,11 @@
                             <tbody id="inventory-table-body"></tbody>
                         </table>
                     </div>
+
+                    <div id="inventory-pagination"
+                        class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30">
+                        <!-- Pagination content will be injected by JS -->
+                    </div>
                 </div>
             </div>
             <x-settings />

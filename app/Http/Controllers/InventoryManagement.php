@@ -13,13 +13,13 @@ class InventoryManagement extends Controller
 {
     public function index()
     {
-        $stock = Inventory::all();
+        $stock = Inventory::simplePaginate(15);
 
         if ($stock->isEmpty()) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'No Record for Inventory',
-                'data' => []
+                'data' => $stock
             ], 200);
         }
 
@@ -32,13 +32,13 @@ class InventoryManagement extends Controller
 
     public function trashed()
     {
-        $trashedStock = Inventory::onlyTrashed()->get();
+        $trashedStock = Inventory::onlyTrashed()->latest()->simplePaginate(15);
 
         if ($trashedStock->isEmpty()) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'No Trashed Records Found',
-                'data' => []
+                'data' => $trashedStock
             ], 200);
         }
 

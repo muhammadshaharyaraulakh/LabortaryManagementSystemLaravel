@@ -78,19 +78,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchInventory(url = null) {
+        const paginationContainer = document.getElementById('inventory-pagination');
         if (!url) url = currentView === 'trashed' ? '/inventory/trashed' : '/inventory';
 
         try {
             const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
             const result = await response.json();
             if (response.ok && result.status === 'success') {
-                renderInventoryTable(result.data.data || result.data);
+                const data = result.data.data || result.data;
+                renderInventoryTable(data);
+                
+                if (result.data.next_page_url || result.data.prev_page_url) {
+                    renderPagination(result.data);
+                    paginationContainer?.classList.remove('hidden');
+                } else {
+                    if(paginationContainer) paginationContainer.innerHTML = '';
+                    paginationContainer?.classList.add('hidden');
+                }
             } else {
                 renderEmptyTable(`No ${currentView === 'trashed' ? 'trashed ' : ''}items found.`);
+                if(paginationContainer) paginationContainer.innerHTML = '';
+                paginationContainer?.classList.add('hidden');
             }
         } catch (error) {
             renderEmptyTable('Error fetching data. Please try again.');
+            if(paginationContainer) paginationContainer.innerHTML = '';
+            paginationContainer?.classList.add('hidden');
         }
+    }
+
+    function renderPagination(paginationData) {
+        const container = document.getElementById('inventory-pagination');
+        if (!container) return;
+
+        const prevUrl = paginationData.prev_page_url;
+        const nextUrl = paginationData.next_page_url;
+        const from = paginationData.from || 0;
+        const to = paginationData.to || 0;
+
+        container.innerHTML = `
+            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                Showing ${from} to ${to}
+            </div>
+            <div class="flex gap-2">
+                <button id="prev-page" ${!prevUrl ? 'disabled' : ''} 
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all border ${!prevUrl ? 'text-gray-300 border-gray-100 cursor-not-allowed' : 'text-gray-700 border-gray-200 hover:bg-white hover:shadow-sm cursor-pointer'}"
+                    data-url="${prevUrl || ''}">
+                    <i class="ph ph-caret-left mr-1"></i> Previous
+                </button>
+                <button id="next-page" ${!nextUrl ? 'disabled' : ''} 
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all border ${!nextUrl ? 'text-gray-300 border-gray-100 cursor-not-allowed' : 'text-gray-700 border-gray-200 hover:bg-white hover:shadow-sm cursor-pointer'}"
+                    data-url="${nextUrl || ''}">
+                    Next <i class="ph ph-caret-right ml-1"></i>
+                </button>
+            </div>
+        `;
+
+        document.getElementById('prev-page')?.addEventListener('click', () => {
+            if (prevUrl) fetchInventory(prevUrl);
+        });
+
+        document.getElementById('next-page')?.addEventListener('click', () => {
+            if (nextUrl) fetchInventory(nextUrl);
+        });
     }
 
     function renderEmptyTable(message) {
@@ -117,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 stockDisplay = `
                     <div class="flex items-center gap-2">
                         <button class="btn-deduct-stock w-7 h-7 flex items-center justify-center bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors cursor-pointer font-bold text-lg leading-none" data-id="${item.id}">-</button>
-                        <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass} min-w-[3rem] text-center">${item.current_stock}</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass} min-w-10 text-center">${item.current_stock}</span>
                         <button class="btn-add-stock w-7 h-7 flex items-center justify-center bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors cursor-pointer font-bold text-lg leading-none" data-id="${item.id}">+</button>
                     </div>
                 `;
