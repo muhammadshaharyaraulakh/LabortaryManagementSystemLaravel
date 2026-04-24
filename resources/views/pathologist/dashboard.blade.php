@@ -133,7 +133,7 @@
                             class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
                             <i class="ph-duotone ph-hourglass text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1">24</h3>
+                        <h3 id="pending-approvals-count" class="text-3xl font-extrabold text-black mb-1">0</h3>
                         <p class="text-gray-500 font-medium">Pending Approvals</p>
                     </div>
 
@@ -143,7 +143,7 @@
                             class="w-12 h-12 rounded-lg bg-green-50 text-green-500 flex items-center justify-center mb-4">
                             <i class="ph-duotone ph-check-circle text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1">156</h3>
+                        <h3 id="completed-today-count" class="text-3xl font-extrabold text-black mb-1">0</h3>
                         <p class="text-gray-500 font-medium">Reports Completed (Today)</p>
                     </div>
 
@@ -152,7 +152,7 @@
                         <div class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
                             <i class="ph-duotone ph-warning-circle text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1">3</h3>
+                        <h3 id="critical-results-count" class="text-3xl font-extrabold text-black mb-1">0</h3>
                         <p class="text-gray-500 font-medium">Critical/Abnormal Results</p>
                     </div>
                 </div>
@@ -194,20 +194,7 @@
                                     <th scope="col" class="px-6 py-4 text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr
-                                    class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
-                                    <td class="px-6 py-4">TST-8901</td>
-                                    <td class="px-6 py-4">Ali Khan</td>
-                                    <td class="px-6 py-4">Lipid Profile</td>
-                                    <td class="px-6 py-4">Blood Serum</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button
-                                            class="btn-open-verify bg-sidebarBg hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm cursor-pointer">
-                                            Verify Results
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody id="pending-results-table">
                             </tbody>
                         </table>
                     </div>
@@ -229,15 +216,20 @@
 
                 <div
                     class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
-                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row gap-4">
-                        <div class="relative w-full sm:w-96">
-                            <i
-                                class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                            <input type="text" placeholder="Search reports..."
-                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors text-sm font-medium">
+                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">From</label>
+                            <input type="date" id="reportStartDate"
+                                class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white transition-colors font-medium text-gray-700">
                         </div>
-                        <input type="date"
-                            class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white transition-colors font-medium text-gray-700">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">To</label>
+                            <input type="date" id="reportEndDate"
+                                class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white transition-colors font-medium text-gray-700">
+                        </div>
+                        <button id="btnFilterReports" class="ml-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors cursor-pointer">
+                            Filter Reports
+                        </button>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -251,21 +243,7 @@
                                     <th scope="col" class="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr
-                                    class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
-                                    <td class="px-6 py-4">REP-2204</td>
-                                    <td class="px-6 py-4">Sara Ahmed</td>
-                                    <td class="px-6 py-4">Liver Function Test</td>
-                                    <td class="px-6 py-4">Oct 24, 2023</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button
-                                            class="btn-view-report text-blue-500 hover:text-blue-700 p-1 transition-colors mr-2"><i
-                                                class="ph-duotone ph-eye text-xl"></i></button>
-                                        <button class="text-gray-500 hover:text-gray-800 p-1 transition-colors"><i
-                                                class="ph-duotone ph-printer text-xl"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody id="completed-reports-table">
                             </tbody>
                         </table>
                     </div>
@@ -799,7 +777,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-extrabold text-gray-800">Verify Test Results</h3>
-                        <p class="text-xs text-gray-500 font-medium">Patient: Ali Khan | Test: CBC</p>
+                        <p class="text-xs text-gray-500 font-medium" id="verifyModalSubtitle">Patient: Ali Khan | Test: CBC</p>
                     </div>
                 </div>
                 <button id="CloseVerifyTestX"
@@ -818,37 +796,21 @@
                                     <th class="px-4 py-3">Normal Range</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                <tr>
-                                    <td class="px-4 py-3 font-medium">Hemoglobin (Hb)</td>
-                                    <td class="px-4 py-3"><input type="text" value="11.5"
-                                            class="w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none text-red-600 font-bold">
-                                    </td>
-                                    <td class="px-4 py-3 text-gray-500">g/dL</td>
-                                    <td class="px-4 py-3 text-gray-500">13.8 - 17.2</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 font-medium">WBC Count</td>
-                                    <td class="px-4 py-3"><input type="text" value="7500"
-                                            class="w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none">
-                                    </td>
-                                    <td class="px-4 py-3 text-gray-500">cells/mcL</td>
-                                    <td class="px-4 py-3 text-gray-500">4500 - 11000</td>
-                                </tr>
+                            <tbody class="divide-y divide-gray-100" id="verifyResultsTbody">
                             </tbody>
                         </table>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Clinical Remarks / Expert
                             Opinion</label>
-                        <select
+                        <select id="clinicalRemarksTemplate"
                             class="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-gray-50/50 mb-2 cursor-pointer text-gray-600">
                             <option disabled selected>Select a pre-defined template...</option>
                             <option>Patient has mild anemia, recommend iron supplements.</option>
                             <option>Results are within normal limits.</option>
                             <option>Critical values observed, immediate clinical correlation required.</option>
                         </select>
-                        <textarea rows="3"
+                        <textarea id="verifyRemarks" rows="3"
                             class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-gray-50/50 transition-colors resize-none"
                             placeholder="Or enter custom diagnostic notes here..."></textarea>
                     </div>
@@ -873,7 +835,7 @@
                 <div class="flex gap-3">
                     <button id="CloseVerifyTestBtn" type="button"
                         class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancel</button>
-                    <button type="button"
+                    <button id="BtnVerifyAndSign" type="button"
                         class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
                         <i class="ph-bold ph-check-circle"></i> Verify & Sign
                     </button>
@@ -966,6 +928,7 @@
             // ==========================================
             // 1. GLOBAL SETUP & HEADERS
             // ==========================================
+            const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             const fetchHeaders = {
                 'Accept': 'application/json',
@@ -973,6 +936,7 @@
             };
 
             let inventoryItemsList = [];
+            let hasSignature = false;
 
             // ==========================================
             // 2. ERROR HANDLING HELPERS
@@ -1139,6 +1103,9 @@
                     if (activeIcon) activeIcon.classList.replace('text-gray-400', 'text-white');
 
                     switchSection(link.getAttribute('data-target'), link.getAttribute('data-title'));
+                    if (link.getAttribute('data-target') === 'section-completed-reports') {
+                        fetchCompletedReports();
+                    }
                     if (window.innerWidth < 768) toggleSidebar();
                 });
             });
@@ -1196,7 +1163,111 @@
                 }, 300);
             }
 
-            document.querySelectorAll('.btn-open-verify').forEach(btn => btn.addEventListener('click', () => openModal('VerifyTestModalBackdrop', 'VerifyTestModal')));
+
+            document.addEventListener('click', async (e) => {
+                if (e.target.closest('.btn-open-verify')) {
+                    const btn = e.target.closest('.btn-open-verify');
+                    const orderTestId = btn.dataset.orderTestId;
+                    const patientName = btn.dataset.patientName;
+                    const testName = btn.dataset.testName;
+
+                    if (!hasSignature) {
+                        alert('Please upload your signature in Settings before verifying results.');
+                        switchSection('section-settings', 'Settings');
+                        return;
+                    }
+
+                    document.getElementById('verifyModalSubtitle').innerText = `Patient: ${patientName} | Test: ${testName}`;
+                    const tbody = document.getElementById('verifyResultsTbody');
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Loading results...</td></tr>';
+                    document.getElementById('VerifyTestForm').dataset.orderTestId = orderTestId;
+
+                    openModal('VerifyTestModalBackdrop', 'VerifyTestModal');
+
+                    try {
+                        const res = await fetch(`/getResultsByOrderTestId/${orderTestId}`, { headers: fetchHeaders });
+                        const result = await res.json();
+
+                        if (result.status === 200) {
+                            tbody.innerHTML = '';
+                            result.data.forEach(item => {
+                                const row = `
+                                    <tr data-result-id="${item.id}">
+                                        <td class="px-4 py-3 font-medium">${item.parameter?.parameterName || 'N/A'}</td>
+                                        <td class="px-4 py-3">
+                                            <input type="text" value="${item.resultValue || ''}" 
+                                                class="result-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none">
+                                        </td>
+                                        <td class="px-4 py-3 text-gray-500">${item.parameter?.unit || ''}</td>
+                                        <td class="px-4 py-3 text-gray-500">${item.parameter?.normalRange || ''}</td>
+                                    </tr>
+                                `;
+                                tbody.insertAdjacentHTML('beforeend', row);
+                            });
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-red-500">Error loading results.</td></tr>';
+                    }
+                }
+            });
+
+            document.getElementById('clinicalRemarksTemplate')?.addEventListener('change', function() {
+                document.getElementById('verifyRemarks').value = this.value;
+            });
+
+            document.getElementById('BtnVerifyAndSign')?.addEventListener('click', async function() {
+                const form = document.getElementById('VerifyTestForm');
+                const orderTestId = form.dataset.orderTestId;
+                const rows = document.querySelectorAll('#verifyResultsTbody tr[data-result-id]');
+                const results = [];
+
+                rows.forEach(row => {
+                    results.push({
+                        id: row.dataset.resultId,
+                        resultValue: row.querySelector('.result-input').value
+                    });
+                });
+
+                const payload = {
+                    orderTestId: orderTestId,
+                    results: results,
+                    remarks: document.getElementById('verifyRemarks').value,
+                    alertPatient: document.getElementById('criticalFlag').checked
+                };
+
+                const originalText = this.innerText;
+                this.innerText = 'Verifying...';
+                this.disabled = true;
+
+                try {
+                    const response = await fetch('/verifyResult', {
+                        method: 'POST',
+                        headers: {
+                            ...fetchHeaders,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const res = await response.json();
+                    if (res.status === 200) {
+                        alert('Verified successfully!');
+                        closeModal('VerifyTestModalBackdrop', 'VerifyTestModal');
+                        fetchPendingResults();
+                        fetchPathologistStats();
+                        fetchCompletedReports();
+                    } else {
+                        alert(res.message || 'Verification failed');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('An error occurred during verification.');
+                } finally {
+                    this.innerText = originalText;
+                    this.disabled = false;
+                }
+            });
             document.getElementById('CloseVerifyTestX')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
             document.getElementById('CloseVerifyTestBtn')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
             document.getElementById('BtnRejectSample')?.addEventListener('click', () => openModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
@@ -1457,19 +1528,132 @@
                 });
             }
 
+            async function fetchPendingResults() {
+                try {
+                    const response = await fetch('/getPendingResultList', { headers: fetchHeaders });
+                    const result = await response.json();
+                    const tbody = document.getElementById('pending-results-table');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (response.ok && result.status === 200 && result.data && result.data.length > 0) {
+                        result.data.forEach(order => {
+                            order.tests.forEach(test => {
+                                const row = `
+                                    <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
+                                        <td class="px-6 py-4">TST-${test.pivot.id}</td>
+                                        <td class="px-6 py-4">${order.name}</td>
+                                        <td class="px-6 py-4">${test.name}</td>
+                                        <td class="px-6 py-4">${test.sampleType || 'N/A'}</td>
+                                        <td class="px-6 py-4 text-right">
+                                            <button data-order-test-id="${test.pivot.id}"
+                                                data-patient-name="${order.name}"
+                                                data-test-name="${test.name}"
+                                                class="btn-open-verify bg-sidebarBg hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm cursor-pointer">
+                                                Verify Results
+                                            </button>
+                                        </td>
+                                    </tr>`;
+                                tbody.insertAdjacentHTML('beforeend', row);
+                            });
+                        });
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500 font-medium">
+                                    <i class="ph-duotone ph-checks text-4xl mb-2 text-gray-400"></i>
+                                    <p>No pending results found.</p>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error fetching pending results:', error);
+                }
+            }
+
+            async function fetchPathologistStats() {
+                try {
+                    const response = await fetch('/getPathologistStats', { headers: fetchHeaders });
+                    const stats = await response.json();
+                    
+                    document.getElementById('pending-approvals-count').innerText = stats.pendingApprovals || 0;
+                    document.getElementById('completed-today-count').innerText = stats.completedToday || 0;
+                    document.getElementById('critical-results-count').innerText = stats.criticalResults || 0;
+                } catch (error) {
+                    console.error('Error fetching stats:', error);
+                }
+            }
+
+            async function fetchCompletedReports() {
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+                
+                try {
+                    const url = new URL('/getCompletedReports', window.location.origin);
+                    if (startDate) url.searchParams.append('startDate', startDate);
+                    if (endDate) url.searchParams.append('endDate', endDate);
+
+                    const response = await fetch(url, { headers: fetchHeaders });
+                    const result = await response.json();
+                    const tbody = document.getElementById('completed-reports-table');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (response.ok && result.status === 200 && result.data && result.data.length > 0) {
+                        result.data.forEach(report => {
+                            const date = new Date(report.completionDate).toLocaleDateString('en-US', {
+                                month: 'short', day: 'numeric', year: 'numeric'
+                            });
+                            const row = `
+                                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
+                                    <td class="px-6 py-4">REP-${report.id}</td>
+                                    <td class="px-6 py-4">${report.patientName}</td>
+                                    <td class="px-6 py-4">${report.testName}</td>
+                                    <td class="px-6 py-4">${date}</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button data-order-test-id="${report.id}"
+                                            class="btn-view-report text-blue-500 hover:text-blue-700 p-1 transition-colors mr-2 cursor-pointer">
+                                            <i class="ph-duotone ph-eye text-xl"></i>
+                                        </button>
+                                        <button class="text-gray-500 hover:text-gray-800 p-1 transition-colors cursor-pointer">
+                                            <i class="ph-duotone ph-printer text-xl"></i>
+                                        </button>
+                                    </td>
+                                </tr>`;
+                            tbody.insertAdjacentHTML('beforeend', row);
+                        });
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500 font-medium">
+                                    <i class="ph-duotone ph-file-dashed text-4xl mb-2 text-gray-400"></i>
+                                    <p>No completed reports found.</p>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error fetching reports:', error);
+                }
+            }
+
+            document.getElementById('btnFilterReports')?.addEventListener('click', fetchCompletedReports);
+
             // ==========================================
             // 10. INITIALIZATION CALLS
             // ==========================================
             loadInventoryItems();
             fetchTests();
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Configuration & Helpers ---
-            const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
+            fetchPendingResults();
+            fetchPathologistStats();
+            fetchCompletedReports();
+            // ==========================================
+            // 11. SETTINGS & PROFILE MANAGEMENT
+            // ==========================================
+            
             // Self-contained error helper specifically for these forms
             function showFormErrors(form, errors) {
                 // Clear previous errors
@@ -1522,6 +1706,8 @@
                         headers: { 'Accept': 'application/json' }
                     });
                     const data = await res.json();
+                    
+                    hasSignature = !!(data.status === 200 && data.signature);
 
                     if (data.status === 200 && data.signature) {
                         // Prevent broken image paths by ensuring leading slash

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Result;
 use App\Models\Inventory;
 use App\Models\InventoryLog;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ResultController extends Controller
 {
@@ -76,5 +78,156 @@ class ResultController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+    public function getPendingResultList()
+    {
+        $user = Auth::user();
+
+        $orders = Order::whereHas('tests', function ($query) use ($user) {
+            $query->where('tests.departmentId', $user->department_id)
+                ->where('order_test.status', 'Unverified');
+        })->with([
+                    'tests' => function ($query) use ($user) {
+                        $query->where('tests.departmentId', $user->department_id)
+                            ->where('order_test.status', 'Unverified');
+                    }
+                ])->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $orders
+        ]);
+    }
+
+    public function getResultsByOrderTestId($id)
+    {
+        $results = Result::where('orderTestId', $id)
+            ->with('parameter')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $results
+        ]);
+    }
+
+    public function verifyResult(Request $request)
+    {
+        $request->validate([
+            'orderTestId' => 'required|exists:order_test,id',
+            'results' => 'required|array',
+            'results.*.id' => 'required|exists:results,id',
+            'results.*.resultValue' => 'nullable',
+            'remarks' => 'nullable|string',
+            'alertPatient' => 'boolean'
+        ]);
+
+        $user = Auth::user();
+
+        if (!$user->signature) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Please upload your signature in settings before verifying results.'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->results as $res) {
+                Result::where('id', $res['id'])->update([
+                    'resultValue' => $res['resultValue'],
+                    'remarks' => $request->remarks,
+                    'signatureImagePath' => $user->signature,
+                    'alertPatient' => $request->alertPatient ?? false,
+                    'verifiedBy' => $user->name,
+                ]);
+            }
+
+            DB::table('order_test')
+                ->where('id', $request->orderTestId)
+                ->update(['status' => 'Completed']);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Test verified and signed successfully.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 500,
+                'message' => 'Failed to verify results.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getPathologistStats()
+    {
+        $user = Auth::user();
+        $departmentId = $user->department_id;
+
+        $pendingApprovals = DB::table('order_test')
+            ->join('tests', 'order_test.testId', '=', 'tests.id')
+            ->where('tests.departmentId', $departmentId)
+            ->where('order_test.status', 'Unverified')
+            ->count();
+
+        $completedToday = DB::table('order_test')
+            ->join('results', 'order_test.id', '=', 'results.orderTestId')
+            ->where('results.verifiedBy', $user->name)
+            ->whereDate('order_test.updated_at', Carbon::today())
+            ->distinct('order_test.id')
+            ->count('order_test.id');
+
+        $criticalResults = DB::table('order_test')
+            ->join('results', 'order_test.id', '=', 'results.orderTestId')
+            ->where('results.verifiedBy', $user->name)
+            ->where('results.alertPatient', true)
+            ->distinct('order_test.id')
+            ->count('order_test.id');
+
+        return response()->json([
+            'pendingApprovals' => $pendingApprovals,
+            'completedToday' => $completedToday,
+            'criticalResults' => $criticalResults
+        ]);
+    }
+
+    public function getCompletedReports(Request $request)
+    {
+        $user = Auth::user();
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        $query = DB::table('order_test')
+            ->join('orders', 'order_test.orderId', '=', 'orders.id')
+            ->join('tests', 'order_test.testId', '=', 'tests.id')
+            ->select('order_test.*', 'orders.name as patientName', 'tests.name as testName', 'order_test.updated_at as completionDate')
+            ->where('order_test.status', 'Completed')
+            ->whereExists(function ($query) use ($user) {
+                $query->select(DB::raw(1))
+                    ->from('results')
+                    ->whereRaw('results.orderTestId = order_test.id')
+                    ->where('results.verifiedBy', $user->name);
+            });
+
+        if ($startDate && $endDate) {
+            $query->whereBetween(DB::raw('DATE(order_test.updated_at)'), [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('order_test.updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('order_test.updated_at', '<=', $endDate);
+        } else {
+            $query->whereDate('order_test.updated_at', Carbon::today());
+        }
+
+        $reports = $query->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $reports
+        ]);
     }
 }

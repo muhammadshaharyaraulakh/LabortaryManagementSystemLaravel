@@ -163,3 +163,8 @@ Route::get('/getPendingVerifications', [TechnicianController::class, 'getPending
 
 
 Route::post('/addResult', [ResultController::class, 'addResult']);
+Route::get('/getPendingResultList', [ResultController::class, 'getPendingResultList']);
+Route::get('/getResultsByOrderTestId/{id}', [ResultController::class, 'getResultsByOrderTestId']);
+Route::post('/verifyResult', [ResultController::class, 'verifyResult']);
+Route::get('/getPathologistStats', [ResultController::class, 'getPathologistStats']);
+Route::get('/getCompletedReports', [ResultController::class, 'getCompletedReports']);

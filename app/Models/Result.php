@@ -13,7 +13,10 @@ class Result extends Model
         'resultValue',
         'attachmentPaths',
         'statusFlag',
-        'remarks'
+        'remarks',
+        'signatureImagePath',
+        'alertPatient',
+        'verifiedBy'
     ];
 
     protected $casts = [
