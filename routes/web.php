@@ -168,3 +168,6 @@ Route::get('/getResultsByOrderTestId/{id}', [ResultController::class, 'getResult
 Route::post('/verifyResult', [ResultController::class, 'verifyResult']);
 Route::get('/getPathologistStats', [ResultController::class, 'getPathologistStats']);
 Route::get('/getCompletedReports', [ResultController::class, 'getCompletedReports']);
+
+Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class, 'downloadReport']);
+Route::view('/test', 'test');

@@ -250,4 +250,25 @@ class OrderController extends Controller
             ]
         ]);
     }
+
+    public function downloadReport($trackingId, $testId)
+    {
+        $order = Order::with(['tests' => function ($query) use ($testId) {
+            $query->where('tests.id', $testId);
+        }])->where('trackingId', $trackingId)->firstOrFail();
+
+        $test = $order->tests->first();
+
+        if (!$test || $test->pivot->status !== 'Completed') {
+            abort(404, 'Report not ready or not found.');
+        }
+
+        $results = \App\Models\Result::where('orderTestId', $test->pivot->id)
+            ->with('parameter')
+            ->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('TestReport', compact('order', 'test', 'results'));
+
+        return $pdf->download("Report-{$trackingId}-{$test->name}.pdf");
+    }
 }

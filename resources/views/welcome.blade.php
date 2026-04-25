@@ -255,17 +255,22 @@
             </div>
 
             <div class="bg-white rounded-[1.5rem] p-6 md:p-10 shadow-2xl">
-                <form class="flex flex-col md:flex-row gap-4 mb-4">
+                <form id="tracking-form" class="flex flex-col md:flex-row gap-4 mb-4">
                     <div class="flex-1">
-                        <input type="text" placeholder="Enter 10-digit Tracking ID (e.g., LAB-123456)"
+                        <input type="text" id="tracking-id-input" placeholder="Enter Tracking ID (e.g., ORD-20260424-ABCD)"
                             class="w-full bg-inputBg border border-gray-200 rounded-xl px-6 py-4 text-gray-800 font-bold placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brandAccent transition-all text-lg">
                     </div>
 
-                    <button type="button"
-                        class="px-8 py-4 bg-sidebarBg text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg whitespace-nowrap">
-                        View Report
+                    <button type="submit" id="track-report-btn"
+                        class="px-8 py-4 bg-sidebarBg text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg whitespace-nowrap flex items-center justify-center gap-2">
+                        <span id="btn-text">View Report</span>
+                        <i id="btn-spinner" class="ph-bold ph-spinner animate-spin hidden"></i>
                     </button>
                 </form>
+
+                <div id="tracking-results-container" class="mt-8 hidden">
+                    <!-- Results will be injected here -->
+                </div>
 
                 <div class="flex justify-end pt-4 border-t border-gray-100 mt-4">
                     <button type="button"
@@ -273,7 +278,6 @@
                         <i class="ph-bold ph-sparkle"></i> Analyze with AI
                     </button>
                 </div>
-
             </div>
         </div>
     </section>
@@ -357,6 +361,110 @@
 
             const animatedElements = document.querySelectorAll('.animate-fade-in-up');
             animatedElements.forEach(el => observer.observe(el));
+
+            const trackingForm = document.getElementById('tracking-form');
+            const trackingInput = document.getElementById('tracking-id-input');
+            const resultsContainer = document.getElementById('tracking-results-container');
+            const trackBtn = document.getElementById('track-report-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnSpinner = document.getElementById('btn-spinner');
+
+            trackingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const trackingId = trackingInput.value.trim();
+
+                if (!trackingId) {
+                    alert('Please enter a Tracking ID');
+                    return;
+                }
+
+                // Show loading state
+                trackBtn.disabled = true;
+                btnText.textContent = 'Searching...';
+                btnSpinner.classList.remove('hidden');
+                resultsContainer.classList.add('hidden');
+
+                try {
+                    const response = await fetch(`/orders/search/${trackingId}`);
+                    const result = await response.json();
+
+                    if (response.ok && result.status === 200) {
+                        const order = result.orders[0];
+                        renderResults(order);
+                    } else {
+                        resultsContainer.innerHTML = `
+                            <div class="p-6 bg-red-50 border border-red-100 rounded-2xl text-center text-red-600 font-bold">
+                                <i class="ph-bold ph-warning-circle text-3xl mb-2 block"></i>
+                                ${result.message || 'No record found with this Tracking ID.'}
+                            </div>
+                        `;
+                        resultsContainer.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error('Error fetching report:', error);
+                    alert('An error occurred while fetching your report. Please try again.');
+                } finally {
+                    trackBtn.disabled = false;
+                    btnText.textContent = 'View Report';
+                    btnSpinner.classList.add('hidden');
+                }
+            });
+
+            function renderResults(order) {
+                let html = `
+                    <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100 mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-sidebarBg">${order.name}</h3>
+                                <p class="text-sm text-gray-500 font-medium">Tracking ID: ${order.trackingId}</p>
+                            </div>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">Order Found</span>
+                        </div>
+                        <div class="space-y-4">
+                `;
+
+                order.tests.forEach(test => {
+                    const status = test.pivot.status;
+                    const isCompleted = status === 'Completed';
+                    const statusClass = isCompleted ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+                    
+                    html += `
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-xl border border-gray-100 gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
+                                    <i class="ph-bold ph-test-tube"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">${test.name}</h4>
+                                    <span class="inline-block px-2 py-0.5 ${statusClass} rounded text-[10px] font-bold uppercase tracking-tighter">${status}</span>
+                                </div>
+                            </div>
+                            
+                            ${isCompleted ? `
+                                <a href="/orders/${order.trackingId}/test/${test.id}/report" 
+                                   class="px-5 py-2 bg-brandAccent text-white rounded-lg text-sm font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
+                                    <i class="ph-bold ph-download-simple"></i> Download Report
+                                </a>
+                            ` : `
+                                <div class="text-xs text-gray-400 font-medium italic flex items-center gap-1">
+                                    <i class="ph ph-clock"></i> Result pending verification
+                                </div>
+                            `}
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+
+                resultsContainer.innerHTML = html;
+                resultsContainer.classList.remove('hidden');
+                
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         });
     </script>
 </body>
