@@ -171,3 +171,4 @@ Route::get('/getCompletedReports', [ResultController::class, 'getCompletedReport
 
 Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class, 'downloadReport']);
 Route::view('/test', 'test');
+Route::view('/home', 'home');
