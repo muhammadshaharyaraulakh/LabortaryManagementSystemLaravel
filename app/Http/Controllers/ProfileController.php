@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 class ProfileController extends Controller
 {
     public function allusers()
@@ -22,7 +23,7 @@ class ProfileController extends Controller
         return response()->json([
             'status' => 'success',
             'users' => $users
-        ], 200);
+        ], Response::HTTP_OK);
     }
     public function deletedUsers()
     {

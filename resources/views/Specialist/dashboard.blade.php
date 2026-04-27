@@ -9,7 +9,7 @@
         class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 md:relative transform -translate-x-full md:translate-x-0">
         <div class="h-20 flex items-center justify-between px-6 pt-2">
             <span id="brand-text"
-                class="text-white text-xl font-bold whitespace-nowrap tracking-wide">Pathologist</span>
+                class="text-white text-xl font-bold whitespace-nowrap tracking-wide">Specialist Doctor</span>
             <button id="toggle-desktop-sidebar"
                 class="text-gray-300 hover:text-white transition-colors hidden md:block cursor-pointer">
                 <i class="ph ph-caret-double-left text-xl" id="desktop-toggle-icon"></i>
@@ -1104,7 +1104,7 @@
 
                     switchSection(link.getAttribute('data-target'), link.getAttribute('data-title'));
                     if (link.getAttribute('data-target') === 'section-completed-reports') {
-                        fetchCompletedReports();
+                        fetchSpecialistCompletedReports();
                     }
                     if (window.innerWidth < 768) toggleSidebar();
                 });
@@ -1190,20 +1190,51 @@
 
                         if (result.status === 200) {
                             tbody.innerHTML = '';
-                            result.data.forEach(item => {
-                                const row = `
-                                    <tr data-result-id="${item.id}">
-                                        <td class="px-4 py-3 font-medium">${item.parameter?.parameterName || 'N/A'}</td>
-                                        <td class="px-4 py-3">
-                                            <input type="text" value="${item.resultValue || ''}" 
-                                                class="result-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none">
-                                        </td>
-                                        <td class="px-4 py-3 text-gray-500">${item.parameter?.unit || ''}</td>
-                                        <td class="px-4 py-3 text-gray-500">${item.parameter?.normalRange || ''}</td>
-                                    </tr>
-                                `;
-                                tbody.insertAdjacentHTML('beforeend', row);
-                            });
+                            if (result.data && result.data.length > 0) {
+                                // For human based tests, there might be NO parameters, just remarks and attachments.
+                                // We check if the first item has no parameter ID.
+                                if(!result.data[0].parameter && !result.data[0].resultValue) {
+                                    const item = result.data[0];
+                                    let attachmentHtml = '';
+                                    if(item.attachmentPaths) {
+                                        try {
+                                            const paths = JSON.parse(item.attachmentPaths);
+                                            if(paths && paths.length > 0) {
+                                                attachmentHtml = `<a href="/${paths[0]}" target="_blank" class="text-blue-500 hover:underline"><i class="ph-bold ph-link"></i> View Attachment</a>`;
+                                            }
+                                        } catch(e) {}
+                                    }
+                                    const row = `
+                                        <tr data-result-id="${item.id}">
+                                            <td colspan="4" class="px-4 py-4">
+                                                <div class="mb-4">
+                                                    <span class="font-bold text-gray-700">Technician Remarks:</span><br>
+                                                    <p class="text-gray-600 bg-gray-50 p-3 rounded-lg mt-1">${item.remarks || 'No remarks provided.'}</p>
+                                                </div>
+                                                ${attachmentHtml ? '<div class="mb-2 font-bold text-gray-700">Attachments: ' + attachmentHtml + '</div>' : ''}
+                                            </td>
+                                        </tr>
+                                    `;
+                                    tbody.insertAdjacentHTML('beforeend', row);
+                                } else {
+                                    result.data.forEach(item => {
+                                        const row = `
+                                            <tr data-result-id="${item.id}">
+                                                <td class="px-4 py-3 font-medium">${item.parameter?.parameterName || 'N/A'}</td>
+                                                <td class="px-4 py-3">
+                                                    <input type="text" value="${item.resultValue || ''}" 
+                                                        class="result-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none">
+                                                </td>
+                                                <td class="px-4 py-3 text-gray-500">${item.parameter?.unit || ''}</td>
+                                                <td class="px-4 py-3 text-gray-500">${item.parameter?.normalRange || ''}</td>
+                                            </tr>
+                                        `;
+                                        tbody.insertAdjacentHTML('beforeend', row);
+                                    });
+                                }
+                            } else {
+                                tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">No data found.</td></tr>';
+                            }
                         }
                     } catch (err) {
                         console.error(err);
@@ -1255,9 +1286,9 @@
                     if (res.status === 200) {
                         alert('Verified successfully!');
                         closeModal('VerifyTestModalBackdrop', 'VerifyTestModal');
-                        fetchPendingResults();
-                        fetchPathologistStats();
-                        fetchCompletedReports();
+                        fetchSpecialistPendingList();
+                        fetchSpecialistStats();
+                        fetchSpecialistCompletedReports();
                     } else {
                         alert(res.message || 'Verification failed');
                     }
@@ -1529,9 +1560,9 @@
                 });
             }
 
-            async function fetchPendingResults() {
+            async function fetchSpecialistPendingList() {
                 try {
-                    const response = await fetch('/getPendingResultList', { headers: fetchHeaders });
+                    const response = await fetch('/getSpecialistPendingList', { headers: fetchHeaders });
                     const result = await response.json();
                     const tbody = document.getElementById('pending-results-table');
                     if (!tbody) return;
@@ -1574,9 +1605,9 @@
                 }
             }
 
-            async function fetchPathologistStats() {
+            async function fetchSpecialistStats() {
                 try {
-                    const response = await fetch('/getPathologistStats', { headers: fetchHeaders });
+                    const response = await fetch('/getSpecialistStats', { headers: fetchHeaders });
                     const stats = await response.json();
                     
                     document.getElementById('pending-approvals-count').innerText = stats.pendingApprovals || 0;
@@ -1587,12 +1618,12 @@
                 }
             }
 
-            async function fetchCompletedReports() {
+            async function fetchSpecialistCompletedReports() {
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 
                 try {
-                    const url = new URL('/getCompletedReports', window.location.origin);
+                    const url = new URL('/getSpecialistCompletedReports', window.location.origin);
                     if (startDate) url.searchParams.append('startDate', startDate);
                     if (endDate) url.searchParams.append('endDate', endDate);
 
@@ -1641,16 +1672,16 @@
                 }
             }
 
-            document.getElementById('btnFilterReports')?.addEventListener('click', fetchCompletedReports);
+            document.getElementById('btnFilterReports')?.addEventListener('click', fetchSpecialistCompletedReports);
 
             // ==========================================
             // 10. INITIALIZATION CALLS
             // ==========================================
             loadInventoryItems();
             fetchTests();
-            fetchPendingResults();
-            fetchPathologistStats();
-            fetchCompletedReports();
+            fetchSpecialistPendingList();
+            fetchSpecialistStats();
+            fetchSpecialistCompletedReports();
             // ==========================================
             // 11. SETTINGS & PROFILE MANAGEMENT
             // ==========================================

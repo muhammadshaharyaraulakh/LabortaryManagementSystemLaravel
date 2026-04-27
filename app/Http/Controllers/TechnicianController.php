@@ -163,4 +163,115 @@ class TechnicianController extends Controller
         ]);
     }
 
+    public function getHumanDashboardStats()
+    {
+        $user = Auth::user();
+        $departmentId = $user->department_id;
+
+        $pendingTests = DB::table('order_test')
+            ->join('tests', 'order_test.testId', '=', 'tests.id')
+            ->where('tests.departmentId', $departmentId)
+            ->where('order_test.status', 'Created')
+            ->count();
+
+        $testsInProgress = DB::table('order_test')
+            ->join('tests', 'order_test.testId', '=', 'tests.id')
+            ->where('tests.departmentId', $departmentId)
+            ->where('order_test.status', 'InProgress')
+            ->where('order_test.testedBy', $user->id)
+            ->count();
+
+        $pendingVerification = DB::table('order_test')
+            ->join('tests', 'order_test.testId', '=', 'tests.id')
+            ->where('tests.departmentId', $departmentId)
+            ->where('order_test.status', 'Unverified')
+            ->where('order_test.testedBy', $user->id)
+            ->count();
+
+        $completedToday = DB::table('order_test')
+            ->join('tests', 'order_test.testId', '=', 'tests.id')
+            ->where('tests.departmentId', $departmentId)
+            ->where('order_test.status', 'Verified')
+            ->whereDate('order_test.updated_at', Carbon::today())
+            ->count();
+
+        return response()->json([
+            'pendingTests' => $pendingTests,
+            'testsInProgress' => $testsInProgress,
+            'pendingVerification' => $pendingVerification,
+            'completedToday' => $completedToday
+        ]);
+    }
+
+    public function HumanTechnicianPendingWorklist()
+    {
+        $user = Auth::user();
+
+        $orders = Order::whereHas('tests', function ($query) use ($user) {
+            $query->where('tests.departmentId', $user->department_id)
+                ->where('order_test.status', 'Created');
+        })->with([
+            'tests' => function ($query) use ($user) {
+                $query->where('tests.departmentId', $user->department_id)
+                    ->where('order_test.status', 'Created')
+                    ->with(['parameters', 'requirements']);
+            }
+        ])->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $orders
+        ]);
+    }
+
+    public function StartHumanTest(Request $request)
+    {
+        $request->validate([
+            'orderTestId' => 'required|exists:order_test,id',
+        ]);
+
+        $user = Auth::user();
+        
+        $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
+        
+        if (!$orderTest) {
+            return response()->json(['status' => 404, 'message' => 'Test not found'], 404);
+        }
+
+        if ($orderTest->status !== 'Created') {
+            return response()->json(['status' => 400, 'message' => 'Test is not in Pending/Created state.'], 400);
+        }
+
+        DB::table('order_test')->where('id', $request->orderTestId)->update([
+            'status' => 'InProgress',
+            'testedBy' => $user->id,
+            'updated_at' => Carbon::now()
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Test started successfully. Moved to Active Worklist.'
+        ]);
+    }
+
+    public function uploadHumanResultFile(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|max:10240', // max 10MB
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('public/results', $filename);
+
+            return response()->json([
+                'status' => 200,
+                'path' => '/storage/results/' . $filename,
+                'message' => 'File uploaded successfully'
+            ]);
+        }
+
+        return response()->json(['status' => 400, 'message' => 'No file uploaded'], 400);
+    }
 }

@@ -159,6 +159,13 @@ Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
 Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
 Route::get('/getPendingVerifications', [TechnicianController::class, 'getPendingVerificationList']);
 
+// Human-Based Technician Routes
+Route::view('/HumanTechnicianDashboard', 'Technician.human_dashboard');
+Route::get('/HumanTechnicianStats', [TechnicianController::class, 'getHumanDashboardStats']);
+Route::get('/HumanTechnicianPendingWorklist', [TechnicianController::class, 'HumanTechnicianPendingWorklist']);
+Route::post('/StartHumanTest', [TechnicianController::class, 'StartHumanTest']);
+Route::post('/uploadHumanResultFile', [TechnicianController::class, 'uploadHumanResultFile']);
+
 
 
 
@@ -168,6 +175,12 @@ Route::get('/getResultsByOrderTestId/{id}', [ResultController::class, 'getResult
 Route::post('/verifyResult', [ResultController::class, 'verifyResult']);
 Route::get('/getPathologistStats', [ResultController::class, 'getPathologistStats']);
 Route::get('/getCompletedReports', [ResultController::class, 'getCompletedReports']);
+
+// Specialist Doctor (Human-Based) Routes
+Route::view('/SpecialistDashboard', 'Specialist.dashboard')->name('specialist.dashboard');
+Route::get('/getSpecialistStats', [ResultController::class, 'getPathologistStats']); // Reuses pathologist logic
+Route::get('/getSpecialistPendingList', [ResultController::class, 'getPendingResultList']); // Reuses pathologist logic
+Route::get('/getSpecialistCompletedReports', [ResultController::class, 'getCompletedReports']); // Reuses pathologist logic
 
 Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class, 'downloadReport']);
 Route::view('/test', 'test');

@@ -20,7 +20,7 @@ class ResultController extends Controller
             'trackingId' => 'required|string',
             'remarks' => 'nullable|string',
             'attachmentPaths' => 'nullable|array',
-            'results' => 'required|array',
+            'results' => 'nullable|array',
             'results.*.testParameterId' => 'nullable|exists:test_parameters,id',
             'results.*.resultValue' => 'nullable',
             'results.*.statusFlag' => 'nullable',
@@ -29,17 +29,29 @@ class ResultController extends Controller
         DB::beginTransaction();
         try {
             $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
-            foreach ($request->results as $res) {
+            
+            if (!empty($request->results)) {
+                foreach ($request->results as $res) {
+                    Result::create([
+                        'orderTestId' => $request->orderTestId,
+                        'testParameterId' => $res['testParameterId'] ?? null,
+                        'trackingId' => $request->trackingId,
+                        'resultValue' => $res['resultValue'] ?? null,
+                        'statusFlag' => $res['statusFlag'] ?? null,
+                        'attachmentPaths' => isset($request->attachmentPaths) ? json_encode($request->attachmentPaths) : null,
+                        'remarks' => $request->remarks ?? null,
+                    ]);
+                }
+            } else {
+                // For human-based or tests without parameters
                 Result::create([
                     'orderTestId' => $request->orderTestId,
-                    'testParameterId' => $res['testParameterId'] ?? null,
                     'trackingId' => $request->trackingId,
-                    'resultValue' => $res['resultValue'] ?? null,
-                    'statusFlag' => $res['statusFlag'] ?? null,
-                    'attachmentPaths' => $request->attachmentPaths ?? null,
+                    'attachmentPaths' => isset($request->attachmentPaths) ? json_encode($request->attachmentPaths) : null,
                     'remarks' => $request->remarks ?? null,
                 ]);
             }
+            
             $requirements = DB::table('test_requirements')->where('testId', $orderTest->testId)->get();
 
             foreach ($requirements as $requirement) {
