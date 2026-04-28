@@ -28,6 +28,13 @@
                     class="ph-duotone ph-squares-four text-2xl w-7 text-center text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Dashboard</span>
             </a>
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-performance" data-title="Performance Analytics">
+                <i
+                    class="ph ph-chart-line-up text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Performance</span>
+            </a>
 
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
@@ -47,49 +54,10 @@
 
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-doctor" data-title="Doctor">
+                data-target="section-manage-staff" data-title="Manage Staff">
                 <i
-                    class="ph-duotone ph-stethoscope text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Pathologist</span>
-            </a>
-
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-sample-collector" data-title="Sample Collector">
-                <i
-                    class="ph-duotone ph-syringe text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Sample Collector</span>
-            </a>
-
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-technician" data-title="Technicians">
-                <i
-                    class="ph-duotone ph-desktop text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Technician</span>
-            </a>
-
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-specialist" data-title="Specialist Doctors">
-                <i
-                    class="ph-duotone ph-clipboard-text text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Specialist Doctor</span>
-            </a>
-
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-receptionist" data-title="Receptionist">
-                <i
-                    class="ph-duotone ph-headset text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Receptionist</span>
-            </a>
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-deleted-users" data-title="Deleted Staff">
-                <i
-                    class="ph-duotone ph-user text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Deleted Staff</span>
+                    class="ph-duotone ph-users-three text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Manage Staff</span>
             </a>
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
@@ -110,7 +78,7 @@
                 <a href="{{ Route('logout') }}"
                     class="flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer">
                     <i
-                        class="ph-duotone ph-sign-out text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors"></i>
+                        class="ph ph-sign-out text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors"></i>
                     <span class="ml-3 nav-text whitespace-nowrap">Logout</span>
                 </a>
             </div>
@@ -143,15 +111,18 @@
                         class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 hidden z-50 transform origin-top-right dropdown-enter">
                         <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
                             <p class="text-sm font-bold text-gray-900">Administrator</p>
-                            <p class="text-xs text-gray-500 font-medium mt-0.5">Shaharyar</p>
+                            <p class="text-xs text-gray-500 font-medium mt-0.5">{{ Auth::user()->name }}
+                            </p>
                         </div>
                         <div class="py-2">
-                            <a href="#"
-                                class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
+                            <a href="#" data-target="section-dashboard" data-title="Dashboard"
+                                class="nav-link px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
+                                <i class="ph ph-user text-lg text-gray-400"></i>
                                 Profile
                             </a>
-                            <a href="#"
-                                class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
+                            <a href="#" data-target="section-settings" data-title="Settings"
+                                class="nav-link px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
+                                <i class="ph ph-gear text-lg text-gray-400"></i>
                                 Settings
                             </a>
                             <x-logout />
@@ -258,72 +229,165 @@
                             <p class="text-gray-500 font-medium">Calculating Statistics</p>
                         </div>
 
-                        <div id="reportDataState" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
-                            <div
-                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                        <div id="reportDataState" class="hidden animate-fade-in">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div
-                                    class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
-                                    <i class="ph-duotone ph-shopping-cart text-2xl"></i>
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    <div
+                                        class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-shopping-cart text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-orders">0</h3>
+                                    <p class="text-gray-500 font-medium">Orders</p>
                                 </div>
-                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-orders">0</h3>
-                                <p class="text-gray-500 font-medium">Orders</p>
-                            </div>
 
-                            <div
-                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
                                 <div
-                                    class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4">
-                                    <i class="ph-duotone ph-check-circle text-2xl"></i>
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    <div
+                                        class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-check-circle text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-completed">0</h3>
+                                    <p class="text-gray-500 font-medium">Completed</p>
                                 </div>
-                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-completed">0</h3>
-                                <p class="text-gray-500 font-medium">Completed</p>
-                            </div>
 
-                            <div
-                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
                                 <div
-                                    class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-                                    <i class="ph-duotone ph-clock text-2xl"></i>
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    <div
+                                        class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-clock text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-pending">0</h3>
+                                    <p class="text-gray-500 font-medium">Pending</p>
                                 </div>
-                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-pending">0</h3>
-                                <p class="text-gray-500 font-medium">Pending</p>
-                            </div>
 
-                            <div
-                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
                                 <div
-                                    class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4">
-                                    <i class="ph-duotone ph-money text-2xl"></i>
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    <div
+                                        class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-money text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-money">Rs. 0</h3>
+                                    <p class="text-gray-500 font-medium">Revenue</p>
                                 </div>
-                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-money">Rs. 0</h3>
-                                <p class="text-gray-500 font-medium">Revenue</p>
-                            </div>
 
-                            <div
-                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
                                 <div
-                                    class="w-12 h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-4">
-                                    <i class="ph-duotone ph-receipt text-2xl"></i>
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    <div
+                                        class="w-12 h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-receipt text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-tax">Rs. 0</h3>
+                                    <p class="text-gray-500 font-medium">Tax</p>
                                 </div>
-                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-tax">Rs. 0</h3>
-                                <p class="text-gray-500 font-medium">Tax</p>
-                            </div>
 
-                            <div
-                                class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
                                 <div
-                                    class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
-                                    <i class="ph-duotone ph-trash text-2xl"></i>
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    <div
+                                        class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-trash text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-deleted">0</h3>
+                                    <p class="text-gray-500 font-medium">Deleted</p>
                                 </div>
-                                <h3 class="text-3xl font-extrabold text-black mb-1" id="res-deleted">0</h3>
-                                <p class="text-gray-500 font-medium">Deleted</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <div id="section-manage-staff" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-users-three text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-gray-800">Staff Management</h2>
+                        <p class="text-sm text-gray-500 font-medium">Overview and administration of all laboratory personnel</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Pathologists -->
+                    <button class="inner-nav-link text-left bg-white p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 hover:border-blue-200 hover:shadow-md transition-all group cursor-pointer" data-target="section-doctor" data-title="Pathologists">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="ph-duotone ph-stethoscope text-2xl"></i>
+                            </div>
+                            <i class="ph ph-arrow-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Pathologists</h3>
+                        <p class="text-xs text-gray-500 font-medium">Manage pathologist profiles and signing authority</p>
+                    </button>
+
+                    <!-- Sample Collectors -->
+                    <button class="inner-nav-link text-left bg-white p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 hover:border-blue-200 hover:shadow-md transition-all group cursor-pointer" data-target="section-sample-collector" data-title="Sample Collectors">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="ph-duotone ph-syringe text-2xl"></i>
+                            </div>
+                            <i class="ph ph-arrow-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Sample Collectors</h3>
+                        <p class="text-xs text-gray-500 font-medium">Track and manage sample collection personnel</p>
+                    </button>
+
+                    <!-- Technicians -->
+                    <button class="inner-nav-link text-left bg-white p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 hover:border-blue-200 hover:shadow-md transition-all group cursor-pointer" data-target="section-technician" data-title="Technicians">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="ph-duotone ph-desktop text-2xl"></i>
+                            </div>
+                            <i class="ph ph-arrow-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Technicians</h3>
+                        <p class="text-xs text-gray-500 font-medium">Manage machine operators and lab techs</p>
+                    </button>
+
+                    <!-- Specialist Doctors -->
+                    <button class="inner-nav-link text-left bg-white p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 hover:border-blue-200 hover:shadow-md transition-all group cursor-pointer" data-target="section-specialist" data-title="Specialist Doctors">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="ph-duotone ph-clipboard-text text-2xl"></i>
+                            </div>
+                            <i class="ph ph-arrow-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Specialist Doctors</h3>
+                        <p class="text-xs text-gray-500 font-medium">Radiologists, Cardiologists and Consultants</p>
+                    </button>
+
+                    <!-- Reception Staff -->
+                    <button class="inner-nav-link text-left bg-white p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 hover:border-blue-200 hover:shadow-md transition-all group cursor-pointer" data-target="section-receptionist" data-title="Receptionists">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="ph-duotone ph-headset text-2xl"></i>
+                            </div>
+                            <i class="ph ph-arrow-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Reception Staff</h3>
+                        <p class="text-xs text-gray-500 font-medium">Manage front desk operations and personnel</p>
+                    </button>
+
+                    <!-- Deleted Staff -->
+                    <button class="inner-nav-link text-left bg-white p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 hover:border-blue-200 hover:shadow-md transition-all group cursor-pointer" data-target="section-deleted-users" data-title="Deleted Staff">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="ph-duotone ph-trash text-2xl"></i>
+                            </div>
+                            <i class="ph ph-arrow-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Deleted Staff</h3>
+                        <p class="text-xs text-gray-500 font-medium">Restore or permanently remove staff members</p>
+                    </button>
+                </div>
+            </div>
 
             <div id="section-doctor" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="mb-4">
+                    <button class="inner-nav-link flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-blue-600 transition-colors cursor-pointer" data-target="section-manage-staff" data-title="Manage Staff">
+                        <i class="ph ph-arrow-left"></i> Back to Staff
+                    </button>
+                </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
@@ -379,6 +443,11 @@
             <x-tests />
 
             <div id="section-sample-collector" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="mb-4">
+                    <button class="inner-nav-link flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-blue-600 transition-colors cursor-pointer" data-target="section-manage-staff" data-title="Manage Staff">
+                        <i class="ph ph-arrow-left"></i> Back to Staff
+                    </button>
+                </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
@@ -399,6 +468,11 @@
                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
             </div>
             <div id="section-technician" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="mb-4">
+                    <button class="inner-nav-link flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-blue-600 transition-colors cursor-pointer" data-target="section-manage-staff" data-title="Manage Staff">
+                        <i class="ph ph-arrow-left"></i> Back to Staff
+                    </button>
+                </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-500 flex items-center justify-center">
@@ -418,6 +492,11 @@
                 </div>
             </div>
             <div id="section-specialist" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="mb-4">
+                    <button class="inner-nav-link flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-blue-600 transition-colors cursor-pointer" data-target="section-manage-staff" data-title="Manage Staff">
+                        <i class="ph ph-arrow-left"></i> Back to Staff
+                    </button>
+                </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-500 flex items-center justify-center">
@@ -438,6 +517,11 @@
                 </div>
             </div>
             <div id="section-receptionist" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="mb-4">
+                    <button class="inner-nav-link flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-blue-600 transition-colors cursor-pointer" data-target="section-manage-staff" data-title="Manage Staff">
+                        <i class="ph ph-arrow-left"></i> Back to Staff
+                    </button>
+                </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center">
@@ -457,6 +541,11 @@
                 </div>
             </div>
             <div id="section-deleted-users" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="mb-4">
+                    <button class="inner-nav-link flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-blue-600 transition-colors cursor-pointer" data-target="section-manage-staff" data-title="Manage Staff">
+                        <i class="ph ph-arrow-left"></i> Back to Staff
+                    </button>
+                </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
@@ -543,6 +632,334 @@
                         class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30">
                         <!-- Pagination content will be injected by JS -->
                     </div>
+                </div>
+            </div>
+            <div id="section-performance" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto pb-12">
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-chart-line-up text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Performance Analytics</h2>
+                            <p class="text-sm text-gray-500 font-medium">Evaluate employee efficiency and departmental
+                                workload</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button
+                            class="bg-white border cursor-pointer border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
+                            <i class="ph-bold ph-download-simple text-lg"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 p-5 mb-8 flex flex-col lg:flex-row gap-4 items-end">
+                    <div class="w-full lg:w-1/4">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Target Role</label>
+                        <div class="relative">
+                            <select id="filterPerfRole"
+                                class="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+                                <option value="all">All Roles</option>
+                                <option value="technician">Technicians (Sample)</option>
+                                <option value="technician_human">Technicians (Human)</option>
+                                <option value="pathologist">Pathologists</option>
+                                <option value="specialist">Specialist Doctors</option>
+                                <option value="collector">Sample Collectors</option>
+                                <option value="receptionist">Receptionists</option>
+                            </select>
+                            <i
+                                class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-1/3">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Select Employee</label>
+                        <div class="relative">
+                            <select id="filterPerfEmployee"
+                                class="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer disabled:bg-gray-100 disabled:text-gray-400">
+                                <option value="" disabled selected>Select an employee...</option>
+                                <option value="1">Ahmed (Sample Technician)</option>
+                                <option value="2">Dr. Sarah (Pathologist)</option>
+                            </select>
+                            <i
+                                class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-1/4">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Date Range</label>
+                        <div class="relative">
+                            <select id="filterPerfDate"
+                                class="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month" selected>This Month</option>
+                                <option value="custom">Custom Range...</option>
+                            </select>
+                            <i
+                                class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <button
+                        class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2.5 cursor-pointer rounded-xl text-sm font-bold flex items-center justify-center gap-2 w-full lg:w-auto transition-colors shadow-sm">
+                        <i class="ph-bold ph-magnifying-glass text-lg"></i> Analyze
+                    </button>
+                </div>
+
+                <div id="perfPageEmptyState"
+                    class="hidden text-center py-16 bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50">
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ph-duotone ph-user-focus text-4xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-1">No Employee Selected</h3>
+                    <p class="text-sm text-gray-500 font-medium">Use the filters above to select an employee and view
+                        their analytics.</p>
+                </div>
+
+                <div id="perfPageDataState" class="animate-fade-in space-y-6">
+
+                    <div
+                        class="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-white border border-gray-50 rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+                        <div class="flex items-center gap-5">
+                            <div
+                                class="w-20 h-20 rounded-full bg-indigo-50 border-4 border-white shadow-sm overflow-hidden shrink-0">
+                                <img src="https://ui-avatars.com/api/?name=Ahmed+Khan&background=eef2ff&color=4f46e5"
+                                    alt="Ahmed Khan" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-extrabold text-gray-900 mb-1">Ahmed Khan</h3>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span
+                                        class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg">Sample
+                                        Technician</span>
+                                    <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg"><i
+                                            class="ph-bold ph-buildings mr-1"></i> Biochemistry Dept</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 w-full sm:w-auto">
+                            <div
+                                class="bg-gray-50 px-4 py-2.5 rounded-xl border border-gray-100 w-full sm:w-auto text-center sm:text-left">
+                                <p class="text-xs font-bold text-gray-500 mb-0.5">Overall Rating</p>
+                                <div
+                                    class="flex items-center justify-center sm:justify-start text-yellow-400 gap-1 text-lg">
+                                    <i class="ph-fill ph-star"></i>
+                                    <i class="ph-fill ph-star"></i>
+                                    <i class="ph-fill ph-star"></i>
+                                    <i class="ph-fill ph-star"></i>
+                                    <i class="ph-duotone ph-star-half"></i>
+                                    <span class="text-sm font-extrabold text-gray-800 ml-1">4.5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div
+                            class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
+                                <i class="ph-duotone ph-check-square-offset text-2xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-extrabold text-black mb-1">342</h3>
+                            <p class="text-gray-500 font-medium text-sm flex justify-between items-center">
+                                Completed Tasks
+                                <span
+                                    class="text-green-500 text-xs font-bold bg-green-50 px-2 py-0.5 rounded flex items-center"><i
+                                        class="ph-bold ph-trend-up mr-1"></i> 8%</span>
+                            </p>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+                                <i class="ph-duotone ph-timer text-2xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-extrabold text-black mb-1">42<span
+                                    class="text-lg text-gray-500 font-medium ml-1">min</span></h3>
+                            <p class="text-gray-500 font-medium text-sm flex justify-between items-center">
+                                Avg. Turnaround
+                                <span
+                                    class="text-green-500 text-xs font-bold bg-green-50 px-2 py-0.5 rounded flex items-center"><i
+                                        class="ph-bold ph-trend-down mr-1"></i> 5m</span>
+                            </p>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center mb-4">
+                                <i class="ph-duotone ph-warning-octagon text-2xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-extrabold text-black mb-1">2.1%</h3>
+                            <p class="text-gray-500 font-medium text-sm flex justify-between items-center">
+                                Error / Rejection Rate
+                                <span
+                                    class="text-red-500 text-xs font-bold bg-red-50 px-2 py-0.5 rounded flex items-center"><i
+                                        class="ph-bold ph-trend-up mr-1"></i> 0.2%</span>
+                            </p>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4">
+                                <i class="ph-duotone ph-clock-user text-2xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-extrabold text-black mb-1">164<span
+                                    class="text-lg text-gray-500 font-medium ml-1">hrs</span></h3>
+                            <p class="text-gray-500 font-medium text-sm flex justify-between items-center">
+                                Total Hours Logged
+                                <span class="text-gray-500 text-xs font-bold bg-gray-100 px-2 py-0.5 rounded">This
+                                    Month</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div
+                            class="lg:col-span-2 bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">Task Completion Trend</h3>
+                                    <p class="text-sm text-gray-500 font-medium">Daily completed tasks over the selected
+                                        period</p>
+                                </div>
+                            </div>
+                            <div
+                                class="w-full h-[300px] bg-gray-50/50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-center">
+                                <div>
+                                    <i class="ph-duotone ph-chart-bar text-5xl text-gray-300 mb-2"></i>
+                                    <p class="text-sm font-bold text-gray-500">JS Chart Canvas Area</p>
+                                    <p class="text-xs text-gray-400">Implement Chart.js or ApexCharts here</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-6">Action Breakdown</h3>
+
+                            <div class="space-y-5">
+                                <div>
+                                    <div class="flex justify-between text-sm font-bold mb-1.5">
+                                        <span class="text-gray-700">Test Results Entered</span>
+                                        <span class="text-indigo-600">65%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                                        <div class="bg-indigo-500 h-2.5 rounded-full" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm font-bold mb-1.5">
+                                        <span class="text-gray-700">Samples Collected</span>
+                                        <span class="text-blue-500">20%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                                        <div class="bg-blue-500 h-2.5 rounded-full" style="width: 20%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm font-bold mb-1.5">
+                                        <span class="text-gray-700">Inventory Handled</span>
+                                        <span class="text-orange-500">10%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                                        <div class="bg-orange-400 h-2.5 rounded-full" style="width: 10%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm font-bold mb-1.5">
+                                        <span class="text-gray-700">Corrections/Edits</span>
+                                        <span class="text-red-500">5%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                                        <div class="bg-red-400 h-2.5 rounded-full" style="width: 5%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                        <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                                <i class="ph-duotone ph-list-dashes text-lg text-indigo-500"></i> Recent Actions Log
+                            </h3>
+                            <button
+                                class="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">View
+                                All</button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm whitespace-nowrap">
+                                <thead
+                                    class="text-xs text-gray-500 uppercase font-bold bg-white border-b border-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4">Action Taken</th>
+                                        <th class="px-6 py-4">Reference (Order/Test)</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4 text-right">Time Logged</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-50">
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4 font-medium text-gray-800 flex items-center gap-2">
+                                            <div
+                                                class="w-8 h-8 rounded-lg bg-green-50 text-green-600 flex items-center justify-center">
+                                                <i class="ph-bold ph-flask"></i>
+                                            </div>
+                                            Entered CBC Result
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600">#ORD-9921</td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-md">Completed</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right text-gray-500">10 mins ago</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4 font-medium text-gray-800 flex items-center gap-2">
+                                            <div
+                                                class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                                <i class="ph-bold ph-drop"></i>
+                                            </div>
+                                            Collected Sample (Blood)
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600">#ORD-9922</td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-md">Pending
+                                                Result</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right text-gray-500">45 mins ago</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4 font-medium text-gray-800 flex items-center gap-2">
+                                            <div
+                                                class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                                                <i class="ph-bold ph-package"></i>
+                                            </div>
+                                            Updated Stock
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600">Reagents (Bio)</td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="px-2.5 py-1 bg-orange-50 text-orange-700 text-xs font-bold rounded-md">Logged</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right text-gray-500">2 hours ago</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <x-settings />
