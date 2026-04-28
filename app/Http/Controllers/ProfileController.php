@@ -25,6 +25,23 @@ class ProfileController extends Controller
             'users' => $users
         ], Response::HTTP_OK);
     }
+    public function users($role)
+    {
+        $users = User::with('department')
+            ->where('role', $role)
+            ->whereHas('department', function ($query) {
+                $query->where('is_active', true);
+            })
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => $users->isNotEmpty()
+                ? 'Users Fetched Successfully'
+                : 'No users found',
+            'users' => $users
+        ], Response::HTTP_OK);
+    }
     public function deletedUsers()
     {
         $users = User::onlyTrashed()

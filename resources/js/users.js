@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // ==========================================
+    // 1. GLOBAL VARIABLES & INITIALIZATION
+    // ==========================================
     const addUserBackdrop = document.getElementById("AddUserModalBackdrop");
     const addUserModal = document.getElementById("AddUserModal");
     const updateUserBackdrop = document.getElementById(
@@ -7,6 +10,89 @@ document.addEventListener("DOMContentLoaded", () => {
     const updateUserModal = document.getElementById("UpdateUserModal");
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
+    // ==========================================
+    // 2. DYNAMIC LOADING & NAVIGATION STATE
+    // ==========================================
+    // Track current view to refresh grids after adding/editing/deleting
+    let currentActiveRole = null;
+    let currentActiveGrid = null;
+
+    const roleSectionMap = {
+        "section-doctor": { role: "Pathologist", gridId: "grid-pathologist" },
+        "section-sample-collector": {
+            role: "SampleCollector",
+            gridId: "grid-sample-collector",
+        },
+        "section-technician": { role: "Technician", gridId: "grid-technician" },
+        "section-specialist": {
+            role: "SpecialistDoctor",
+            gridId: "grid-specialist",
+        },
+        "section-receptionist": {
+            role: "Receptionist",
+            gridId: "grid-receptionist",
+        },
+    };
+
+    // Listen for clicks on the inner navigation (Staff Hub cards) to trigger data fetch
+    document.querySelectorAll(".inner-nav-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+            const targetId = link.getAttribute("data-target");
+
+            if (roleSectionMap[targetId]) {
+                currentActiveRole = roleSectionMap[targetId].role;
+                currentActiveGrid = roleSectionMap[targetId].gridId;
+                fetchUsersByRole(currentActiveRole, currentActiveGrid);
+            } else if (targetId === "section-deleted-users") {
+                currentActiveRole = "deleted";
+                currentActiveGrid = "grid-deleted-users";
+                fetchAndPopulateDeletedUsers();
+            } else {
+                // If navigating back to main hub, clear tracking
+                currentActiveRole = null;
+                currentActiveGrid = null;
+            }
+        });
+    });
+
+    // Fetch specific role
+    function fetchUsersByRole(role, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        // Show a loading spinner before data arrives
+        container.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-[1.25rem] border border-dashed border-gray-200">
+                <i class="ph-bold ph-spinner animate-spin text-4xl text-blue-500 mb-2"></i>
+                <p class="text-gray-500 font-medium">Loading...</p>
+            </div>`;
+
+        fetch(`/users/${role}`, { headers: { Accept: "application/json" } })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success" && data.users) {
+                    renderUserGrid(containerId, data.users);
+                } else {
+                    renderUserGrid(containerId, []);
+                }
+            })
+            .catch(() => {
+                renderUserGrid(containerId, []);
+            });
+    }
+
+    // Helper to refresh the grid you are currently looking at after a CRUD operation
+    function refreshCurrentGrid() {
+        if (currentActiveRole === "deleted") {
+            fetchAndPopulateDeletedUsers();
+        } else if (currentActiveRole) {
+            fetchUsersByRole(currentActiveRole, currentActiveGrid);
+        }
+    }
+
+    // ==========================================
+    // 3. MODAL & ERROR HANDLING
+    // ==========================================
     function openModal(backdrop, modal) {
         backdrop.classList.remove("hidden");
         backdrop.classList.add("flex");
@@ -92,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Modal Trigger Listeners
     document.querySelectorAll(".open-user-modal-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
             const role = btn.getAttribute("data-role");
@@ -123,56 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
             closeModal(updateUserBackdrop, updateUserModal, "UpdateUserForm")
         );
 
-    function fetchDepartments() {
-        fetch("/departments", { headers: { Accept: "application/json" } })
-            .then((res) => res.json())
-            .then((data) => {
-                const addDept = document.getElementById("addUserDepartment");
-                const updateDept = document.getElementById(
-                    "updateUserDepartment"
-                );
-                addDept.innerHTML = '<option value="">None (General)</option>';
-                updateDept.innerHTML =
-                    '<option value="">None (General)</option>';
-                if (data.data) {
-                    data.data.forEach((dept) => {
-                        const opt = `<option value="${dept.id}">${dept.name}</option>`;
-                        addDept.insertAdjacentHTML("beforeend", opt);
-                        updateDept.insertAdjacentHTML("beforeend", opt);
-                    });
-                }
-            });
-    }
 
-    function fetchAndPopulateUsers() {
-        fetch("/allusers", { headers: { Accept: "application/json" } })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === "success") {
-                    const users = data.users;
-                    renderUserGrid(
-                        "grid-pathologist",
-                        users.filter((u) => u.role === "Pathologist")
-                    );
-                    renderUserGrid(
-                        "grid-sample-collector",
-                        users.filter((u) => u.role === "SampleCollector")
-                    );
-                    renderUserGrid(
-                        "grid-technician",
-                        users.filter((u) => u.role === "Technician")
-                    );
-                    renderUserGrid(
-                        "grid-specialist",
-                        users.filter((u) => u.role === "SpecialistDoctor")
-                    );
-                    renderUserGrid(
-                        "grid-receptionist",
-                        users.filter((u) => u.role === "Receptionist")
-                    );
-                }
-            });
-    }
 
     function renderUserGrid(containerId, users) {
         const container = document.getElementById(containerId);
@@ -189,6 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         container.innerHTML = users
             .map((user) => {
+                // Updated to point directly to the public folder
                 const imgTag = user.image
                     ? `<img src="/${user.image}" class="w-full h-full object-cover">`
                     : `<span class="text-2xl">${user.name
@@ -223,6 +262,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function fetchAndPopulateDeletedUsers() {
+        const container = document.getElementById("grid-deleted-users");
+        if (container) {
+            container.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-[1.25rem] border border-dashed border-gray-200">
+                    <i class="ph-bold ph-spinner animate-spin text-4xl text-red-500 mb-2"></i>
+                    <p class="text-gray-500 font-medium">Loading deleted staff...</p>
+                </div>`;
+        }
+
         fetch("/deletedusers", { headers: { Accept: "application/json" } })
             .then((response) => response.json())
             .then((data) => {
@@ -252,6 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         container.innerHTML = users
             .map((user) => {
+                // Updated to point directly to the public folder
                 const imgTag = user.image
                     ? `<img src="/${user.image}" class="w-full h-full object-cover grayscale">`
                     : `<span class="text-2xl">${user.name
@@ -287,6 +336,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("");
     }
 
+    // ==========================================
+    // 5. CRUD OPERATIONS
+    // ==========================================
+
+    // Add User
     document
         .getElementById("SaveUserBtn")
         .addEventListener("click", async () => {
@@ -311,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.status === 201) {
                     closeModal(addUserBackdrop, addUserModal, "AddUserForm");
-                    fetchAndPopulateUsers();
+                    refreshCurrentGrid(); // Re-fetch the currently viewed grid
                 } else if (response.status === 422) {
                     showUserErrors(result.errors, "add");
                 }
@@ -321,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+    // Edit User (Fetch data to fill form)
     window.editUser = async function (id) {
         try {
             const response = await fetch(`/user/${id}`, {
@@ -344,7 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const iconEl = document.getElementById("updateUserCameraIcon");
 
                 if (user.image) {
-                    previewEl.src = "/" + user.image;
+                    previewEl.src = "/" + user.image; // Updated to point directly to the public folder
                     previewEl.classList.remove("hidden");
                     iconEl.classList.add("hidden");
                 } else {
@@ -358,6 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {}
     };
 
+    // Update User
     document
         .getElementById("UpdateUserBtn")
         .addEventListener("click", async () => {
@@ -376,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         "X-CSRF-TOKEN": csrfToken,
                         Accept: "application/json",
-                        "X-Requested-With": "XMLHttpRequest", 
+                        "X-Requested-With": "XMLHttpRequest",
                     },
                     body: formData,
                 });
@@ -388,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         updateUserModal,
                         "UpdateUserForm"
                     );
-                    fetchAndPopulateUsers();
+                    refreshCurrentGrid(); // Re-fetch the currently viewed grid
                 } else if (response.status === 422) {
                     showUserErrors(result.errors, "update");
                 }
@@ -398,6 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+    // Soft Delete User
     window.deleteUser = async function (id, btnElement) {
         if (!btnElement.classList.contains("confirming-delete")) {
             const originalBg = btnElement.className;
@@ -434,18 +491,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                 if (card) {
                     card.classList.add("opacity-0", "scale-90");
-                    setTimeout(() => {
-                        fetchAndPopulateUsers();
-                        fetchAndPopulateDeletedUsers(); 
-                    }, 300);
+                    setTimeout(() => refreshCurrentGrid(), 300);
                 } else {
-                    fetchAndPopulateUsers();
-                    fetchAndPopulateDeletedUsers();
+                    refreshCurrentGrid();
                 }
             }
         } catch (err) {}
     };
 
+    // Restore User
     window.restoreUser = async function (id, btnElement) {
         const originalText = btnElement.innerText;
         btnElement.innerText = "Restoring";
@@ -461,8 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (response.ok) {
-                fetchAndPopulateUsers();
-                fetchAndPopulateDeletedUsers();
+                refreshCurrentGrid();
             } else {
                 btnElement.innerText = originalText;
                 btnElement.disabled = false;
@@ -473,6 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // Force Delete User
     window.forceDeleteUser = async function (id, btnElement) {
         if (!btnElement.classList.contains("confirming-delete")) {
             const originalClasses = btnElement.className;
@@ -509,18 +563,17 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                 if (card) {
                     card.classList.add("opacity-0", "scale-90");
-                    setTimeout(() => fetchAndPopulateDeletedUsers(), 300);
+                    setTimeout(() => refreshCurrentGrid(), 300);
                 } else {
-                    fetchAndPopulateDeletedUsers();
+                    refreshCurrentGrid();
                 }
             }
         } catch (err) {}
     };
 
-    fetchDepartments();
-    fetchAndPopulateUsers();
-    fetchAndPopulateDeletedUsers(); 
-
+    // ==========================================
+    // 6. FORM UI LOGIC (Images & Passwords)
+    // ==========================================
     const addImageCircle = document.getElementById("addUserImageCircle");
     const addImageInput = document.getElementById("addUserImage");
     const addImagePreview = document.getElementById("addUserImagePreview");
@@ -598,4 +651,6 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePasswordInput,
             updateEyeIcon
         );
+
+
 });

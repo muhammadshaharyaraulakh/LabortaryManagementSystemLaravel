@@ -69,7 +69,7 @@ Route::middleware(['auth', 'check.role'])->group(function () {
     });
 
     Route::controller(ProfileController::class)->group(function () {
-        Route::get('/allusers', 'allusers')->name('users.all');
+        Route::get('/users/{role}', 'users')->name('users.role');
         Route::get('/deletedusers', 'deletedUsers')->name('users.deleted');
         Route::post('/adduser', 'adduser')->name('users.add');
         Route::get('/user/{id}', 'show')->name('users.show');
