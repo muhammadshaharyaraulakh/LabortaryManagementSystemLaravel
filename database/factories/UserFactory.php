@@ -1,8 +1,8 @@
 <?php
+
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Department;
 
@@ -14,8 +14,14 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'password' => Hash::make('password'),
-            'role' => fake()->randomElement(['Receptionist', 'SampleCollector', 'Pathologist']),
-            'department_id' => Department::inRandomOrder()->first()->id ?? null,
+            'role' => fake()->randomElement([
+                'Receptionist',
+                'SampleCollector',
+                'Pathologist',
+                'Technician',
+                'SpecialistDoctor'
+            ]),
+            'department_id' => Department::query()->inRandomOrder()->value('id'),
         ];
     }
 }

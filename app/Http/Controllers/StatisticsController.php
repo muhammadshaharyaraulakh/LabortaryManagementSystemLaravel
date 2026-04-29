@@ -2,45 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use Hamcrest\Core\IsNot;
 use Illuminate\Http\Request;
-use App\Models\Test;
-use App\Models\Department;
-use App\Models\User;
-use App\Models\TestParameter;
-use App\Models\TestRequirement;
+use Symfony\Component\HttpFoundation\Response;
 use App\Models\Order;
 use Carbon\Carbon;
-use function PHPUnit\Framework\assertNotEmpty;
+
 class StatisticsController extends Controller
 {
+    // =========================
+    // MONTHLY DETAILS
+    // =========================
     public function fetchMonthlyDetails()
     {
-        $monthOrders = Order::withTrashed()
+        $orders = Order::withTrashed()
             ->with('tests')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->get();
 
-        if ($monthOrders->isEmpty()) {
-            return response()->json(['status' => 'error', 'message' => 'No data']);
+        if ($orders->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'No records found for this month',
+                'data' => [
+                    'activeOrders' => 0,
+                    'completedTests' => 0,
+                    'pendingTests' => 0,
+                    'totalRevenue' => 0,
+                    'totalTax' => 0,
+                    'deletedOrders' => 0,
+                ],
+            ], Response::HTTP_OK);
         }
 
-        $active = $monthOrders->whereNull('deleted_at');
-        $allTests = $active->flatMap(fn($o) => $o->tests);
+        $activeOrders = $orders->whereNull('deleted_at');
+        $deletedOrders = $orders->whereNotNull('deleted_at');
+
+        $allTests = $activeOrders->flatMap(function ($order) {
+            return $order->tests;
+        });
+
+        $completedTests = $allTests->where('pivot.status', 'Completed');
+        $pendingTests = $allTests->where('pivot.status', '!=', 'Completed');
 
         return response()->json([
-            'status' => 200,
+            'success' => true,
+            'message' => 'Monthly statistics retrieved successfully',
             'data' => [
-                'activeOrders' => $active->count(),
-                'completedTests' => $allTests->where('pivot.status', 'Completed')->count(),
-                'pendingTests' => $allTests->where('pivot.status', '!==', 'Completed')->count(),
-                'totalRevenue' => $active->sum('grandTotal'),
-                'totalTax' => $active->sum('tax'),
-                'deletedOrders' => $monthOrders->whereNotNull('deleted_at')->count(),
+                'activeOrders' => $activeOrders->count(),
+                'completedTests' => $completedTests->count(),
+                'pendingTests' => $pendingTests->count(),
+                'totalRevenue' => $activeOrders->sum('grandTotal'),
+                'totalTax' => $activeOrders->sum('tax'),
+                'deletedOrders' => $deletedOrders->count(),
             ]
-        ]);
+        ], Response::HTTP_OK);
     }
+
+    // =========================
+    // DATE RANGE SEARCH
+    // =========================
     public function Search(Request $request)
     {
         $validation = $request->validate([
@@ -51,22 +72,36 @@ class StatisticsController extends Controller
         $startDate = Carbon::parse($validation['startDate'])->startOfDay();
         $endDate = Carbon::parse($validation['endDate'])->endOfDay();
 
-        $allFetched = Order::withTrashed()->with('tests')
+        $orders = Order::withTrashed()
+            ->with('tests')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
-        $activeOrders = $allFetched->whereNull('deleted_at');
-        $deletedOrders = $allFetched->whereNotNull('deleted_at');
-        $allActiveTests = $activeOrders->flatMap(function (Order $order) {
-            return $order->tests;
-        });
-        $completedTests = $allActiveTests->filter(function ($test) {
-            return $test->pivot->status === 'Completed';
-        });
-        $pendingTests = $allActiveTests->filter(function ($test) {
-            return $test->pivot->status !== 'Completed';
-        });
+
+        if ($orders->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'No records found for given range',
+                'data' => [
+                    'activeOrders' => 0,
+                    'completedTests' => 0,
+                    'pendingTests' => 0,
+                    'totalRevenue' => 0,
+                    'totalTax' => 0,
+                    'deletedOrders' => 0,
+                ],
+            ], Response::HTTP_OK);
+        }
+
+        $activeOrders = $orders->whereNull('deleted_at');
+        $deletedOrders = $orders->whereNotNull('deleted_at');
+
+        $allTests = $activeOrders->flatMap(fn($order) => $order->tests);
+
+        $completedTests = $allTests->where('pivot.status', 'Completed');
+        $pendingTests = $allTests->where('pivot.status', '!=', 'Completed');
+
         return response()->json([
-            'status' => 200,
+            'success' => true,
             'message' => 'Statistics calculated successfully',
             'data' => [
                 'activeOrders' => $activeOrders->count(),
@@ -76,6 +111,6 @@ class StatisticsController extends Controller
                 'totalTax' => $activeOrders->sum('tax'),
                 'deletedOrders' => $deletedOrders->count(),
             ]
-        ]);
+        ], Response::HTTP_OK);
     }
 }

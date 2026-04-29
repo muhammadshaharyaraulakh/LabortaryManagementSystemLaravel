@@ -5,155 +5,196 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class DepartmentController extends Controller
 {
+    // =========================
+    // GET ALL DEPARTMENTS
+    // =========================
     public function index()
     {
-        $departments = Department::withCount('tests', 'users')->get();
+        $departments = Department::withCount(['tests', 'users'])->get();
 
         if ($departments->isEmpty()) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Departments not found',
+                'success' => true,
+                'message' => 'No departments found',
                 'data' => []
-            ], 404);
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Departments retrieved successfully',
             'data' => $departments
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
-
+    // =========================
+    // ADD DEPARTMENT
+    // =========================
     public function addDepartment(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name'),
-            'type' => 'required',
-            'is_active' => 'required|boolean',
-        ],
-            [
-                'name.unique' => 'This Department name already exists in the active inventory or the trash. Please restore it or choose a different name.'
-            ]);
-
-        $department = Department::create([
-            'name' => $request->name,
-            'type' => $request->type,
-            'is_active' => $request->is_active,
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('departments', 'name')
+            ],
+            'type' => ['required', 'string'],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'name.unique' => 'This Department name already exists. Please restore it or choose a different name.'
         ]);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Department added successfully',
-            'data' => $department
-        ], 201);
-    }
+        try {
+            $department = Department::create($validated);
 
-    public function update(Request $request, $id)
-    {
-        $department = Department::find($id);
-
-        if (!$department) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Department not found',
-            ], 404);
+                'success' => true,
+                'message' => 'Department added successfully',
+                'data' => $department
+            ], Response::HTTP_CREATED);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add department',
+                'data' => null,
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $request->validate([
-            'name' => 'required|string|max:255|' . Rule::unique('departments', 'name')->ignore($department->id),
-            'type' => 'required',
-            'is_active' => 'required|boolean',
-        ],[
-            'name.unique' => 'This Department name already exists in the active inventory or the trash. Please restore it or choose a different name.'
-        ]);
-
-        $department->update([
-            'name' => $request->name,
-            'type' => $request->type,
-            'is_active' => $request->is_active,
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Department updated successfully',
-            'data' => $department
-        ], 200);
     }
 
+    // =========================
+    // SHOW SINGLE DEPARTMENT
+    // =========================
     public function show($id)
     {
         $department = Department::find($id);
 
         if (!$department) {
             return response()->json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Department not found',
-            ], 404);
+                'data' => null
+            ], Response::HTTP_NOT_FOUND);
         }
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Department fetched successfully',
-            'data' => $department,
-        ], 200);
+            'data' => $department
+        ], Response::HTTP_OK);
     }
 
+    // =========================
+    // UPDATE DEPARTMENT
+    // =========================
+    public function update(Request $request, $id)
+    {
+        $department = Department::find($id);
 
+        if (!$department) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Department not found',
+                'data' => null
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('departments', 'name')->ignore($department->id)
+            ],
+            'type' => ['required', 'string'],
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        $department->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Department updated successfully',
+            'data' => $department
+        ], Response::HTTP_OK);
+    }
+
+    // =========================
+    // DELETE (SOFT DELETE)
+    // =========================
     public function delete($id)
     {
         $department = Department::find($id);
 
         if (!$department) {
             return response()->json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Department not found',
-            ], 404);
+                'data' => null
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $department->delete();
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Department deleted successfully',
-        ], 200);
+            'data' => null
+        ], Response::HTTP_OK);
     }
+
+    // =========================
+    // TRASHED DEPARTMENTS
+    // =========================
     public function trashed()
     {
         $departments = Department::onlyTrashed()->get();
-        if ($departments->isEmpty()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'No Trashed Departments'
-            ], 404);
-        }
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
+            'message' => $departments->isEmpty()
+                ? 'No trashed departments found'
+                : 'Trashed departments retrieved successfully',
             'data' => $departments
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
+    // =========================
+    // RESTORE DEPARTMENT
+    // =========================
     public function restore($id)
     {
-        if (empty($id)) {
+        if (!$id) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Id is Empty'
-            ], 400);
+                'success' => false,
+                'message' => 'ID is required',
+                'data' => null
+            ], Response::HTTP_BAD_REQUEST);
         }
-        $department = Department::withTrashed()->findOrFail($id);
+
+        $department = Department::withTrashed()->find($id);
+
+        if (!$department) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Department not found',
+                'data' => null
+            ], Response::HTTP_NOT_FOUND);
+        }
 
         $department->restore();
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Department restored Successfully',
+            'success' => true,
+            'message' => 'Department restored successfully',
             'data' => $department
-        ], 200);
+        ], Response::HTTP_OK);
     }
-
 }

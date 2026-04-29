@@ -13,7 +13,8 @@ class Inventory extends Model
     protected $fillable = [
         'name',
         'unit',
-        'alert'
+        'alert',
+        'current_stock'
     ];
 
     public function logs()

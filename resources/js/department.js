@@ -1,303 +1,519 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const addDepartmentBackdrop = document.getElementById('AddDepartmentModalBackdrop');
-    const addDepartmentModal = document.getElementById('AddDepartmentModal');
-    const updateDepartmentBackdrop = document.getElementById('UpdateDepartmentModalBackdrop');
-    const updateDepartmentModal = document.getElementById('UpdateDepartmentModal');
-    const gridContainer = document.getElementById('grid-department');
-    const deletedGridContainer = document.getElementById('grid-deleted-department');
+document.addEventListener("DOMContentLoaded", () => {
+    // ==========================================
+    // 1. DOM ELEMENTS & INITIALIZATION
+    // ==========================================
+    const addDepartmentBackdrop = document.getElementById(
+        "AddDepartmentModalBackdrop"
+    );
+    const addDepartmentModal = document.getElementById("AddDepartmentModal");
+    const updateDepartmentBackdrop = document.getElementById(
+        "UpdateDepartmentModalBackdrop"
+    );
+    const updateDepartmentModal = document.getElementById(
+        "UpdateDepartmentModal"
+    );
+
+    const listContainer = document.getElementById("list-department");
+    const deletedListContainer = document.getElementById(
+        "list-deleted-department"
+    );
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
+    const viewDeletedBtn = document.getElementById(
+        "view-deleted-departments-btn"
+    );
+    const backToDeptBtn = document.getElementById("back-to-departments-btn");
+
+    // ==========================================
+    // 2. MODAL MANAGEMENT HELPERS
+    // ==========================================
     function openModal(backdrop, modal) {
-        backdrop.classList.remove('hidden');
-        backdrop.classList.add('flex');
+        backdrop.classList.remove("hidden");
+        backdrop.classList.add("flex");
         setTimeout(() => {
-            backdrop.classList.remove('opacity-0');
-            backdrop.classList.add('opacity-100');
-            modal.classList.remove('scale-95');
-            modal.classList.add('scale-100');
+            backdrop.classList.remove("opacity-0");
+            backdrop.classList.add("opacity-100");
+            modal.classList.remove("scale-95");
+            modal.classList.add("scale-100");
         }, 10);
     }
 
     function closeModal(backdrop, modal, formId) {
-        backdrop.classList.remove('opacity-100');
-        backdrop.classList.add('opacity-0');
-        modal.classList.remove('scale-100');
-        modal.classList.add('scale-95');
+        backdrop.classList.remove("opacity-100");
+        backdrop.classList.add("opacity-0");
+        modal.classList.remove("scale-100");
+        modal.classList.add("scale-95");
         setTimeout(() => {
-            backdrop.classList.add('hidden');
-            backdrop.classList.remove('flex');
+            backdrop.classList.add("hidden");
+            backdrop.classList.remove("flex");
             if (formId) {
                 document.getElementById(formId).reset();
-                clearDepartmentErrors(formId === 'AddDepartmentForm' ? 'add' : 'update');
+                clearDepartmentErrors(
+                    formId === "AddDepartmentForm" ? "add" : "update"
+                );
             }
         }, 300);
     }
 
+    // ==========================================
+    // 3. FORM ERROR HANDLING
+    // ==========================================
     function clearDepartmentErrors(prefix) {
-        document.querySelectorAll(`[id^="error${prefix === 'add' ? 'Add' : 'Update'}Department"]`).forEach(el => {
-            el.classList.add('hidden');
-            el.innerText = '';
-        });
-        document.querySelectorAll(`#${prefix === 'add' ? 'Add' : 'Update'}DepartmentForm input, #${prefix === 'add' ? 'Add' : 'Update'}DepartmentForm select`).forEach(el => {
-            el.classList.remove('border-red-500', 'focus:ring-red-200');
-        });
+        document
+            .querySelectorAll(
+                `[id^="error${prefix === "add" ? "Add" : "Update"}Department"]`
+            )
+            .forEach((el) => {
+                el.classList.add("hidden");
+                el.innerText = "";
+            });
+        document
+            .querySelectorAll(
+                `#${
+                    prefix === "add" ? "Add" : "Update"
+                }DepartmentForm input, #${
+                    prefix === "add" ? "Add" : "Update"
+                }DepartmentForm select`
+            )
+            .forEach((el) => {
+                el.classList.remove("border-red-500", "focus:ring-red-200");
+            });
     }
 
     function showDepartmentErrors(errors, prefix) {
         clearDepartmentErrors(prefix);
         const fieldMap = {
-            'name': `${prefix}DepartmentName`,
-            'type': `${prefix}DepartmentType`,
-            'is_active': `${prefix}DepartmentIsActive`
+            name: `${prefix}DepartmentName`,
+            type: `${prefix}DepartmentType`,
+            is_active: `${prefix}DepartmentIsActive`,
         };
 
         for (const [field, messages] of Object.entries(errors)) {
             const inputId = fieldMap[field];
-            const errorId = `error${inputId.charAt(0).toUpperCase() + inputId.slice(1)}`;
+            const errorId = `error${
+                inputId.charAt(0).toUpperCase() + inputId.slice(1)
+            }`;
             const inputEl = document.getElementById(inputId);
             const errorEl = document.getElementById(errorId);
 
             if (errorEl) {
                 errorEl.innerText = messages[0];
-                errorEl.classList.remove('hidden');
+                errorEl.classList.remove("hidden");
             }
-            if (inputEl && inputEl.type !== 'checkbox') {
-                inputEl.classList.add('border-red-500', 'focus:ring-red-200');
+            if (inputEl && inputEl.type !== "checkbox") {
+                inputEl.classList.add("border-red-500", "focus:ring-red-200");
             }
         }
     }
 
-    const openAddDepartmentBtn = document.getElementById('open-department-modal');
+    // ==========================================
+    // 4. STATIC EVENT LISTENERS (Navigation & Modals)
+    // ==========================================
+    const openAddDepartmentBtn = document.getElementById(
+        "open-department-modal"
+    );
     if (openAddDepartmentBtn) {
-        openAddDepartmentBtn.addEventListener('click', () => {
+        openAddDepartmentBtn.addEventListener("click", () => {
             openModal(addDepartmentBackdrop, addDepartmentModal);
         });
     }
 
-    document.getElementById('CloseAddDepartmentX')?.addEventListener('click', () => closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm'));
-    document.getElementById('CloseAddDepartmentBtn')?.addEventListener('click', () => closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm'));
-    document.getElementById('CloseUpdateDepartmentX')?.addEventListener('click', () => closeModal(updateDepartmentBackdrop, updateDepartmentModal, 'UpdateDepartmentForm'));
-    document.getElementById('CloseUpdateDepartmentBtn')?.addEventListener('click', () => closeModal(updateDepartmentBackdrop, updateDepartmentModal, 'UpdateDepartmentForm'));
+    document
+        .getElementById("CloseAddDepartmentX")
+        ?.addEventListener("click", () =>
+            closeModal(
+                addDepartmentBackdrop,
+                addDepartmentModal,
+                "AddDepartmentForm"
+            )
+        );
+    document
+        .getElementById("CloseAddDepartmentBtn")
+        ?.addEventListener("click", () =>
+            closeModal(
+                addDepartmentBackdrop,
+                addDepartmentModal,
+                "AddDepartmentForm"
+            )
+        );
+    document
+        .getElementById("CloseUpdateDepartmentX")
+        ?.addEventListener("click", () =>
+            closeModal(
+                updateDepartmentBackdrop,
+                updateDepartmentModal,
+                "UpdateDepartmentForm"
+            )
+        );
+    document
+        .getElementById("CloseUpdateDepartmentBtn")
+        ?.addEventListener("click", () =>
+            closeModal(
+                updateDepartmentBackdrop,
+                updateDepartmentModal,
+                "UpdateDepartmentForm"
+            )
+        );
 
+    const departmentNavLink = document.querySelector(
+        '.nav-link[data-target="section-department"]'
+    );
+    if (departmentNavLink) {
+        departmentNavLink.addEventListener("click", () => {
+            document
+                .getElementById("section-deleted-departments")
+                .classList.add("hidden");
+            document
+                .getElementById("section-deleted-departments")
+                .classList.remove("block");
+            document
+                .getElementById("section-department")
+                .classList.remove("hidden");
+            document
+                .getElementById("section-department")
+                .classList.add("block");
+
+            listContainer.innerHTML = `<div class="text-center text-gray-500 py-4"><i class="ph ph-spinner animate-spin text-xl"></i> Loading...</div>`;
+            fetchDepartments();
+        });
+    }
+
+    if (viewDeletedBtn) {
+        viewDeletedBtn.addEventListener("click", () => {
+            document
+                .getElementById("section-department")
+                .classList.add("hidden");
+            document
+                .getElementById("section-department")
+                .classList.remove("block");
+            document
+                .getElementById("section-deleted-departments")
+                .classList.remove("hidden");
+            document
+                .getElementById("section-deleted-departments")
+                .classList.add("block");
+
+            deletedListContainer.innerHTML = `<div class="text-center text-gray-500 py-4"><i class="ph ph-spinner animate-spin text-xl"></i> Loading...</div>`;
+            fetchDeletedDepartments();
+        });
+    }
+
+    if (backToDeptBtn) {
+        backToDeptBtn.addEventListener("click", () => {
+            document
+                .getElementById("section-deleted-departments")
+                .classList.add("hidden");
+            document
+                .getElementById("section-deleted-departments")
+                .classList.remove("block");
+            document
+                .getElementById("section-department")
+                .classList.remove("hidden");
+            document
+                .getElementById("section-department")
+                .classList.add("block");
+
+            fetchDepartments();
+        });
+    }
+
+    // ==========================================
+    // 5. API FETCH FUNCTIONS
+    // ==========================================
     async function fetchDepartments() {
         try {
-            const response = await fetch('/departments', { headers: { 'Accept': 'application/json' } });
+            const response = await fetch("/departments", {
+                headers: { Accept: "application/json" },
+            });
             const result = await response.json();
-            if (response.ok && (result.status === 'success' || result.status === 200)) {
-                renderDepartments(result.data); 
+
+            if (response.ok) {
+                const departmentsData = Array.isArray(result)
+                    ? result
+                    : result.data || [];
+                renderDepartments(departmentsData);
             } else {
-                gridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium">No departments found.</div>`;
+                listContainer.innerHTML = `<div class="w-full text-center text-gray-500 py-6 font-medium bg-white rounded-xl border border-gray-100">Failed to load departments.</div>`;
             }
         } catch (error) {
-            gridContainer.innerHTML = `<div class="col-span-full text-center text-red-500 py-8 font-medium">Error loading data.</div>`;
+            console.error("Error fetching departments:", error);
+            listContainer.innerHTML = `<div class="w-full text-center text-red-500 py-6 font-medium bg-white rounded-xl border border-gray-100">Error loading data.</div>`;
         }
     }
 
     async function fetchDeletedDepartments() {
         try {
-            const response = await fetch('/departments/trashed', { headers: { 'Accept': 'application/json' } });
+            const response = await fetch("/departments/trashed", {
+                headers: { Accept: "application/json" },
+            });
             const result = await response.json();
-            if (response.ok && (result.status === 'success' || result.status === 200)) {
-                renderDeletedDepartments(result.data); 
+
+            if (response.ok) {
+                const deletedData = Array.isArray(result)
+                    ? result
+                    : result.data || [];
+                renderDeletedDepartments(deletedData);
             } else {
-                deletedGridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium">No deleted departments found.</div>`;
+                deletedListContainer.innerHTML = `<div class="w-full text-center text-gray-500 py-6 font-medium bg-white rounded-xl border border-gray-100">Failed to load deleted departments.</div>`;
             }
         } catch (error) {
-            deletedGridContainer.innerHTML = `<div class="col-span-full text-center text-red-500 py-8 font-medium">Error loading data.</div>`;
+            console.error("Error fetching deleted departments:", error);
+            deletedListContainer.innerHTML = `<div class="w-full text-center text-red-500 py-6 font-medium bg-white rounded-xl border border-gray-100">Error loading data.</div>`;
         }
     }
 
+    // ==========================================
+    // 6. UI RENDERING FUNCTIONS
+    // ==========================================
     function renderDepartments(departments) {
-        gridContainer.innerHTML = '';
+        listContainer.innerHTML = "";
         if (!departments || departments.length === 0) {
-            gridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium bg-white rounded-2xl border border-gray-100 shadow-sm">No active departments found.</div>`;
+            listContainer.innerHTML = `<div class="w-full text-center text-gray-500 py-6 font-medium bg-white rounded-xl border border-gray-100 shadow-sm">No active departments found.</div>`;
             return;
         }
 
-        departments.forEach(dept => {
+        departments.forEach((dept) => {
             const isActive = dept.is_active == 1;
-            const statusColor = isActive ? 'text-green-600 bg-green-50 border-green-100' : 'text-red-600 bg-red-50 border-red-100';
-            const statusText = isActive ? 'Active' : 'Inactive';
-            const typeFormatted = dept.type === 'sample_based' ? 'Sample Based' : 'Human Based';
+            const statusColor = isActive
+                ? "text-green-600 bg-green-50"
+                : "text-red-600 bg-red-50";
+            const statusText = isActive ? "Active" : "Inactive";
+            const typeFormatted =
+                dept.type === "sample_based" ? "Sample Based" : "Human Based";
             const testsCount = dept.tests_count || 0;
             const usersCount = dept.users_count || 0;
 
-            const card = `
-            <div class="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 rounded-[1.25rem] flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div class="h-20 bg-[#2d374d] w-full relative">
-                    <span class="absolute top-3 right-3 text-[9px] uppercase font-bold px-2.5 py-1 rounded-md border ${statusColor} tracking-wide">${statusText}</span>
-                </div>
-                <div class="mx-auto -mt-10 w-20 h-20 rounded-full border-4 border-[#2d374d] bg-gray-50 text-gray-600 flex items-center justify-center shadow-sm relative z-10">
-                    <i class="ph-duotone ph-buildings text-3xl"></i>
-                </div>
-                <div class="p-5 grow flex flex-col items-center text-center">
-                    <h4 class="font-extrabold text-gray-900 text-lg truncate w-full mb-4" title="${dept.name}">${dept.name}</h4>
-                    
-                    <div class="w-full flex justify-center gap-5 text-sm mb-2">
-                        <div class="flex flex-col items-center">
-                            <span class="text-gray-400 font-medium text-[11px] uppercase tracking-wide mb-0.5">Type</span>
-                            <span class="text-gray-800 font-bold text-xs bg-gray-50 px-2 py-1 rounded-md">${typeFormatted}</span>
-                        </div>
-                        <div class="w-px bg-gray-100"></div>
-                        <div class="flex flex-col items-center">
-                            <span class="text-gray-400 font-medium text-[11px] uppercase tracking-wide mb-0.5">Tests</span>
-                            <span class="text-gray-800 font-extrabold">${testsCount}</span>
-                        </div>
-                        <div class="w-px bg-gray-100"></div>
-                        <div class="flex flex-col items-center">
-                            <span class="text-gray-400 font-medium text-[11px] uppercase tracking-wide mb-0.5">Users</span>
-                            <span class="text-gray-800 font-extrabold">${usersCount}</span>
+            const row = `
+            <div class="w-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-blue-100 transition-colors">
+                
+                <div class="flex items-center gap-4 w-full sm:w-auto">
+                    <div class="w-10 h-10 rounded-lg bg-orange-50 border border-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                        <i class="ph-duotone ph-buildings text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-[15px] leading-tight" title="${dept.name}">${dept.name}</h4>
+                        <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-gray-600">${typeFormatted}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${statusColor}">${statusText}</span>
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center border-t border-gray-100 mt-auto bg-gray-50/50">
-                    <button class="flex-1 text-blue-600 hover:bg-blue-50 py-3.5 rounded-bl-[1.25rem] text-sm font-bold transition-colors cursor-pointer border-r border-gray-100" onclick="editDepartment(${dept.id})">Edit</button>
-                    <button class="flex-1 text-red-600 hover:bg-red-50 py-3.5 rounded-br-[1.25rem] text-sm font-bold transition-colors cursor-pointer" onclick="deleteDepartment(${dept.id})">Delete</button>
+                
+                <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto shrink-0">
+                    <div class="flex gap-4 sm:gap-6 text-sm text-center">
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Tests</span>
+                            <span class="font-bold text-gray-800">${testsCount}</span>
+                        </div>
+                        <div class="w-px bg-gray-200"></div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Users</span>
+                            <span class="font-bold text-gray-800">${usersCount}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 ml-2 sm:ml-4 border-l border-gray-100 pl-4 sm:pl-6">
+                                       <button class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-bold transition-colors cursor-pointer" onclick="editDepartment(${dept.id})" title="Edit">
+    Edit
+</button>
+
+<button class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-bold transition-colors cursor-pointer" onclick="deleteDepartment(${dept.id})" title="Delete">
+    Delete
+</button>
+                    </div>
                 </div>
             </div>`;
-            gridContainer.insertAdjacentHTML('beforeend', card);
+            listContainer.insertAdjacentHTML("beforeend", row);
         });
     }
 
     function renderDeletedDepartments(departments) {
-        deletedGridContainer.innerHTML = '';
+        deletedListContainer.innerHTML = "";
         if (!departments || departments.length === 0) {
-            deletedGridContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 font-medium bg-white rounded-2xl border border-gray-100 shadow-sm">No deleted departments found.</div>`;
+            deletedListContainer.innerHTML = `<div class="w-full text-center text-gray-500 py-6 font-medium bg-white rounded-xl border border-gray-100 shadow-sm">No deleted departments found.</div>`;
             return;
         }
 
-        departments.forEach(dept => {
-            const typeFormatted = dept.type === 'sample_based' ? 'Sample Based' : 'Human Based';
-            
-            const card = `
-            <div class="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 rounded-[1.25rem] flex flex-col overflow-hidden opacity-75 hover:opacity-100 transition-all duration-300">
-                <div class="h-16 bg-red-50 w-full border-b border-red-100"></div>
-                <div class="mx-auto -mt-8 w-16 h-16 rounded-full border-4 border-white bg-white text-red-400 flex items-center justify-center shadow-sm relative z-10">
-                    <i class="ph-duotone ph-trash text-2xl"></i>
+        departments.forEach((dept) => {
+            const typeFormatted =
+                dept.type === "sample_based" ? "Sample Based" : "Human Based";
+
+            const row = `
+            <div class="w-full bg-red-50/30 border border-red-100 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                
+                <div class="flex items-center gap-4 w-full sm:w-auto">
+                    <div class="w-10 h-10 rounded-lg bg-white border border-red-100 text-red-400 flex items-center justify-center shrink-0">
+                        <i class="ph-duotone ph-trash text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-800 text-[15px] leading-tight  opacity-80" title="${dept.name}">${dept.name}</h4>
+                        <div class="flex items-center gap-2 mt-1.5">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-white border border-gray-200 text-gray-500">${typeFormatted}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-5 grow flex flex-col items-center text-center">
-                    <h4 class="font-extrabold text-gray-900 text-base truncate w-full mb-1" title="${dept.name}">${dept.name}</h4>
-                    <span class="text-xs font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-md mt-1">${typeFormatted}</span>
-                </div>
-                <div class="flex items-center border-t border-gray-100 mt-auto">
-                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-3.5 rounded-b-[1.25rem] text-sm font-bold transition-colors cursor-pointer flex items-center justify-center gap-2" onclick="restoreDepartment(${dept.id})">
+                
+                <div class="flex items-center justify-end w-full sm:w-auto shrink-0">
+                    <button class="w-full sm:w-auto px-4 py-2 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer" onclick="restoreDepartment(${dept.id})">
                         Restore
                     </button>
                 </div>
             </div>`;
-            deletedGridContainer.insertAdjacentHTML('beforeend', card);
+            deletedListContainer.insertAdjacentHTML("beforeend", row);
         });
     }
 
-    document.getElementById('SaveDepartmentBtn')?.addEventListener('click', async () => {
-        const payload = {
-            name: document.getElementById('addDepartmentName').value,
-            type: document.getElementById('addDepartmentType').value,
-            is_active: document.getElementById('addDepartmentIsActive').checked ? 1 : 0
-        };
+    // ==========================================
+    // 7. CRUD ACTIONS & GLOBAL LISTENERS
+    // ==========================================
+    document
+        .getElementById("SaveDepartmentBtn")
+        ?.addEventListener("click", async () => {
+            const payload = {
+                name: document.getElementById("addDepartmentName").value,
+                type: document.getElementById("addDepartmentType").value,
+                is_active: document.getElementById("addDepartmentIsActive")
+                    .checked
+                    ? 1
+                    : 0,
+            };
 
-        const saveBtn = document.getElementById('SaveDepartmentBtn');
-        saveBtn.disabled = true;
-        saveBtn.innerText = 'Saving...';
+            const saveBtn = document.getElementById("SaveDepartmentBtn");
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Saving...";
 
+            try {
+                const response = await fetch("/departments", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    closeModal(
+                        addDepartmentBackdrop,
+                        addDepartmentModal,
+                        "AddDepartmentForm"
+                    );
+                    fetchDepartments();
+                } else if (response.status === 422) {
+                    showDepartmentErrors(result.errors, "add");
+                }
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Save Department";
+            }
+        });
+
+    window.editDepartment = async function (id) {
         try {
-            const response = await fetch('/departments', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify(payload)
+            const response = await fetch(`/departments/${id}`, {
+                headers: { Accept: "application/json" },
             });
             const result = await response.json();
 
             if (response.ok) {
-                closeModal(addDepartmentBackdrop, addDepartmentModal, 'AddDepartmentForm');
-                fetchDepartments();
-                fetchDeletedDepartments();
-            } else if (response.status === 422) {
-                showDepartmentErrors(result.errors, 'add');
-            }
-        } finally {
-            saveBtn.disabled = false;
-            saveBtn.innerText = 'Save Department';
-        }
-    });
+                const dept = result.data || result.department || result;
 
-    window.editDepartment = async function(id) {
-        try {
-            const response = await fetch(`/departments/${id}`, { headers: { 'Accept': 'application/json' } });
-            const result = await response.json();
-            
-            if (response.ok && (result.status === 'success' || result.status === 200)) {
-                const dept = result.data || result.department;
-                document.getElementById('updateDepartmentId').value = dept.id;
-                document.getElementById('updateDepartmentName').value = dept.name;
-                document.getElementById('updateDepartmentType').value = dept.type;
-                document.getElementById('updateDepartmentIsActive').checked = dept.is_active == 1;
-                
+                document.getElementById("updateDepartmentId").value = dept.id;
+                document.getElementById("updateDepartmentName").value =
+                    dept.name;
+                document.getElementById("updateDepartmentType").value =
+                    dept.type;
+                document.getElementById("updateDepartmentIsActive").checked =
+                    dept.is_active == 1 || dept.is_active === true;
+
                 openModal(updateDepartmentBackdrop, updateDepartmentModal);
+            } else {
+                console.error(
+                    "Failed to load department details. Status:",
+                    response.status
+                );
             }
-        } catch (error) {}
-    };
-
-    document.getElementById('UpdateDepartmentBtn')?.addEventListener('click', async () => {
-        const id = document.getElementById('updateDepartmentId').value;
-        const payload = {
-            name: document.getElementById('updateDepartmentName').value,
-            type: document.getElementById('updateDepartmentType').value,
-            is_active: document.getElementById('updateDepartmentIsActive').checked ? 1 : 0
-        };
-
-        const updateBtn = document.getElementById('UpdateDepartmentBtn');
-        updateBtn.disabled = true;
-        updateBtn.innerText = 'Updating...';
-
-        try {
-            const response = await fetch(`/departments/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-
-            if (response.ok) {
-                closeModal(updateDepartmentBackdrop, updateDepartmentModal, 'UpdateDepartmentForm');
-                fetchDepartments();
-            } else if (response.status === 422) {
-                showDepartmentErrors(result.errors, 'update');
-            }
-        } finally {
-            updateBtn.disabled = false;
-            updateBtn.innerText = 'Update Department';
+        } catch (error) {
+            console.error("Error fetching department for edit:", error);
         }
-    });
+    };
 
-    window.deleteDepartment = async function(id) {
+    document
+        .getElementById("UpdateDepartmentBtn")
+        ?.addEventListener("click", async () => {
+            const id = document.getElementById("updateDepartmentId").value;
+            const payload = {
+                name: document.getElementById("updateDepartmentName").value,
+                type: document.getElementById("updateDepartmentType").value,
+                is_active: document.getElementById("updateDepartmentIsActive")
+                    .checked
+                    ? 1
+                    : 0,
+            };
+
+            const updateBtn = document.getElementById("UpdateDepartmentBtn");
+            updateBtn.disabled = true;
+            updateBtn.innerText = "Updating...";
+
+            try {
+                const response = await fetch(`/departments/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    closeModal(
+                        updateDepartmentBackdrop,
+                        updateDepartmentModal,
+                        "UpdateDepartmentForm"
+                    );
+                    fetchDepartments();
+                } else if (response.status === 422) {
+                    showDepartmentErrors(result.errors, "update");
+                }
+            } finally {
+                updateBtn.disabled = false;
+                updateBtn.innerText = "Update Department";
+            }
+        });
+
+    window.deleteDepartment = async function (id) {
         try {
             const response = await fetch(`/departments/${id}`, {
-                method: 'DELETE',
-                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+                method: "DELETE",
+                headers: {
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                },
             });
-            
+
             if (response.ok) {
                 fetchDepartments();
-                fetchDeletedDepartments();
             }
         } catch (error) {}
     };
 
-    window.restoreDepartment = async function(id) {
+    window.restoreDepartment = async function (id) {
         try {
             const response = await fetch(`/departments/${id}/restore`, {
-                method: 'PUT',
-                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+                method: "PUT",
+                headers: {
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                },
             });
-            
+
             if (response.ok) {
                 fetchDeletedDepartments();
-                fetchDepartments();
             }
         } catch (error) {}
     };
-
-    fetchDepartments();
-    fetchDeletedDepartments();
 });

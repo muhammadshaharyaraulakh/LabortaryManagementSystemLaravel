@@ -8,165 +8,204 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class InventoryManagement extends Controller
 {
+    // =========================
+    // SHOW ALL INVENTORY ITEMS
+    // =========================
     public function index()
     {
         $stock = Inventory::simplePaginate(15);
 
         if ($stock->isEmpty()) {
             return response()->json([
-                'status' => 'success',
-                'message' => 'No Record for Inventory',
-                'data' => $stock
-            ], 200);
+                'success' => true,
+                'message' => 'No Item Exists in Inventory',
+                'data' => []
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Inventory Details Fetched Successfully',
             'data' => $stock
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
+    // =========================
+    // SHOW ALL TRASHED INVENTORY ITEMS
+    // =========================
     public function trashed()
     {
         $trashedStock = Inventory::onlyTrashed()->latest()->simplePaginate(15);
 
         if ($trashedStock->isEmpty()) {
             return response()->json([
-                'status' => 'success',
+                'success' => true,
                 'message' => 'No Trashed Records Found',
-                'data' => $trashedStock
-            ], 200);
+                'data' => []
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Trashed Inventory Fetched Successfully',
             'data' => $trashedStock
-        ], 200);
+        ], Response::HTTP_OK);
     }
-
+    // =========================
+    // RESTORE TRASHED INVENTORY ITEM
+    // =========================
     public function restoreItem($id)
     {
         $item = Inventory::onlyTrashed()->findOrFail($id);
         $item->restore();
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Item Restored Successfully',
-        ], 200);
+        ], Response::HTTP_OK);
     }
-
+    // =========================
+    // FORCE DELETE TRASHED INVENTORY ITEM
+    // =========================
     public function forceDeleteItem($id)
     {
         $item = Inventory::onlyTrashed()->findOrFail($id);
         $item->forceDelete();
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Item Permanently Deleted',
-        ], 200);
+        ], Response::HTTP_OK);
     }
-
+    // =========================
+    // SHOW INVENTORY LOGS
+    // =========================
     public function showLogs($id)
     {
-        $logs = Inventory::withTrashed()->with('logs')->findOrFail($id);
+        $inventory = Inventory::withTrashed()
+            ->with([
+                'logs' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                }
+            ])
+            ->findOrFail($id);
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Data Retrieved Successfully',
-            'data' => $logs
-        ], 200);
+            'data' => $inventory->logs
+        ], Response::HTTP_OK);
     }
-
+    // =========================
+    // SHOW INVENTORY ITEM
+    // =========================
     public function show($id)
     {
         $item = Inventory::findOrFail($id);
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Data Retrieved Successfully',
             'data' => $item
-        ], 200);
+        ], Response::HTTP_OK);
     }
-
     public function add(Request $request)
     {
-        $request->validate(
-            [
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('inventories', 'name')
-                ],
-                'unit' => 'required|string|max:255',
-                'initial_stock' => 'required|numeric',
-                'alert' => 'required|numeric'
+        $validations = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('inventories', 'name')
             ],
-            [
-                'name.unique' => 'This item name already exists in the active inventory or the trash. Please restore it or choose a different name.'
-            ]
-        );
+            'initial_stock' => ['required', 'numeric'],
+            'alert' => ['required', 'numeric',],
+            'unit' => ['required', 'string', 'max:255']
+        ], [
+            'name.unique' => 'This item name already exists in the active inventory or the trash. Please restore it or choose a different name.'
+        ]);
 
-        $item = DB::transaction(function () use ($request) {
-            $newItem = new Inventory();
-            $newItem->name = $request->name;
-            $newItem->unit = $request->unit;
-            $newItem->alert = $request->alert;
-            $newItem->current_stock = $request->initial_stock;
-            $newItem->save();
+        try {
+            DB::beginTransaction();
 
-            if ($request->initial_stock > 0) {
+            $inventory = Inventory::create([
+                'name' => $validations['name'],
+                'stock_quantity' => $validations['initial_stock'],
+                'current_stock' => $validations['initial_stock'],
+                'alert' => $validations['alert'],
+                'unit' => $validations['unit'],
+            ]);
+
+            if ($validations['initial_stock'] > 0) {
                 InventoryLog::create([
-                    'inventory_id' => $newItem->id,
+                    'inventory_id' => $inventory->id,
                     'type' => 'In',
-                    'quantity' => $request->initial_stock,
+                    'quantity' => $validations['initial_stock'],
                     'created_by' => auth()->id(),
                     'action' => 'Initial Stock Added'
                 ]);
             }
-            return $newItem;
-        });
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Item Added Successfully',
-            'data' => $item
-        ], 201);
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item added successfully',
+            ], Response::HTTP_CREATED);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add item',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     public function edit(Request $request, $id)
     {
         $editItem = Inventory::findOrFail($id);
 
-        $request->validate(
-            [
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('inventories', 'name')->ignore($editItem->id)
-                ],
-                'unit' => 'required|string|max:255',
-                'alert' => 'required|numeric',
-                'stock' => 'nullable|numeric'
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('inventories', 'name')->ignore($editItem->id)
             ],
-            [
-                'name.unique' => 'This item name already exists in the active inventory or the trash. Please restore it or choose a different name.'
-            ]
-        );
+            'unit' => ['required', 'string', 'max:255'],
+            'alert' => ['required', 'numeric'],
+            'stock' => ['nullable', 'numeric', 'min:0']
+        ], [
+            'name.unique' => 'This item name already exists in the active inventory or the trash. Please restore it or choose a different name.'
+        ]);
 
-        $item = DB::transaction(function () use ($request, $editItem) {
-            $editItem->name = $request->name;
-            $editItem->unit = $request->unit;
-            $editItem->alert = $request->alert;
+        try {
+            DB::beginTransaction();
 
-            if ($request->has('stock') && $request->stock != $editItem->current_stock) {
-                $difference = $request->stock - $editItem->current_stock;
+            $editItem->name = $validated['name'];
+            $editItem->unit = $validated['unit'];
+            $editItem->alert = $validated['alert'];
+
+            if (isset($validated['stock']) && $validated['stock'] != $editItem->current_stock) {
+
+                $newStock = $validated['stock'];
+                $difference = $newStock - $editItem->current_stock;
+                if ($newStock < 0) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Stock cannot be negative',
+                        'data' => null,
+                        'error' => null
+                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
 
                 InventoryLog::create([
                     'inventory_id' => $editItem->id,
@@ -176,84 +215,145 @@ class InventoryManagement extends Controller
                     'action' => 'Stock updated by editing Item'
                 ]);
 
-                $editItem->current_stock = $request->stock;
+                $editItem->current_stock = $newStock;
             }
 
             $editItem->save();
-            return $editItem;
-        });
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Item Updated Successfully',
-            'data' => $item
-        ], 200);
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item updated successfully',
+                'data' => $editItem,
+                'error' => null
+            ], Response::HTTP_OK);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update item',
+                'data' => null,
+                'error' => app()->environment('local') ? $e->getMessage() : null
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     public function addStock(Request $request, $id)
     {
-        $request->validate([
-            'stock' => 'required|numeric|min:1',
-            'action' => 'required|string|max:255'
+        $validated = $request->validate([
+            'stock' => ['required', 'numeric', 'min:1'],
+            'action' => ['required', 'string', 'max:255']
         ]);
 
-        $item = DB::transaction(function () use ($request, $id) {
-            $updateItem = Inventory::findOrFail($id);
-            $updateItem->increment('current_stock', $request->stock);
+        try {
+            DB::beginTransaction();
+
+            $item = Inventory::findOrFail($id);
+            if ($validated['stock'] <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stock must be greater than 0',
+                    'data' => null,
+                    'error' => null
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $item->increment('current_stock', $validated['stock']);
 
             InventoryLog::create([
-                'inventory_id' => $updateItem->id,
+                'inventory_id' => $item->id,
                 'type' => 'In',
-                'quantity' => $request->stock,
+                'quantity' => $validated['stock'],
                 'created_by' => auth()->id(),
-                'action' => $request->action
+                'action' => $validated['action']
             ]);
 
-            return $updateItem;
-        });
+            DB::commit();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Stock Added Successfully',
-            'data' => $item
-        ], 200);
+            return response()->json([
+                'success' => true,
+                'message' => 'Stock added successfully',
+                'data' => $item,
+                'error' => null
+            ], Response::HTTP_OK);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add stock',
+                'data' => null,
+                'error' => app()->environment('local') ? $e->getMessage() : null
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function deductStock(Request $request, $id)
     {
-        $request->validate([
-            'stock' => 'required|numeric|min:1',
-            'action' => 'required|string|max:255'
+        $validated = $request->validate([
+            'stock' => ['required', 'numeric', 'min:1'],
+            'action' => ['required', 'string', 'max:255']
         ]);
 
+        try {
+            DB::beginTransaction();
 
-        $item = DB::transaction(function () use ($request, $id) {
-            $updateItem = Inventory::findOrFail($id);
-            if ($request->stock > $updateItem->current_stock) {
+            $item = Inventory::findOrFail($id);
+            if ($validated['stock'] <= 0) {
                 return response()->json([
-                    'status' => 'error',
-                    'message' => 'Stock is not enough',
-                ], 400);
+                    'success' => false,
+                    'message' => 'Stock must be greater than 0',
+                    'data' => null,
+                    'error' => null
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-            $updateItem->decrement('current_stock', $request->stock);
+            if ($validated['stock'] > $item->current_stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stock is not enough',
+                    'data' => [
+                        'available_stock' => $item->current_stock
+                    ],
+                    'error' => null
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $item->decrement('current_stock', $validated['stock']);
 
             InventoryLog::create([
-                'inventory_id' => $updateItem->id,
+                'inventory_id' => $item->id,
                 'type' => 'Out',
-                'quantity' => $request->stock,
+                'quantity' => $validated['stock'],
                 'created_by' => auth()->id(),
-                'action' => $request->action
+                'action' => $validated['action']
             ]);
 
-            return $updateItem;
-        });
+            DB::commit();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Stock Deducted Successfully',
-            'data' => $item
-        ], 200);
+            return response()->json([
+                'success' => true,
+                'message' => 'Stock deducted successfully',
+                'data' => $item,
+                'error' => null
+            ], Response::HTTP_OK);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to deduct stock',
+                'data' => null,
+                'error' => app()->environment('local') ? $e->getMessage() : null
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     public function deleteItem($id)
     {
@@ -261,9 +361,9 @@ class InventoryManagement extends Controller
         $item->delete();
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Item Soft Deleted Successfully',
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
     public function alerts()
@@ -272,10 +372,10 @@ class InventoryManagement extends Controller
 
         if ($alerts->isEmpty()) {
             return response()->json([
-                'status' => 'success',
+                'status' => true,
                 'message' => 'No Alerts',
                 'data' => []
-            ], 200);
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
@@ -291,46 +391,27 @@ class InventoryManagement extends Controller
 
         if (empty($searchQuery)) {
             return response()->json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Search Query is Empty',
                 'data' => []
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $results = Inventory::where('name', 'like', '%' . $searchQuery . '%')->get();
 
         if ($results->isEmpty()) {
             return response()->json([
-                'status' => 'success',
+                'success' => true,
                 'message' => 'No Results Found',
                 'data' => []
-            ], 200);
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
-            'status' => 'success',
+            'status' => true,
             'message' => 'Search Results Fetched Successfully',
             'data' => $results
-        ], 200);
-    }
-
-    public function allHistory()
-    {
-        $history = InventoryLog::with('inventory', 'user')->latest()->get();
-
-        if ($history->isEmpty()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'No History',
-                'data' => []
-            ], 200);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'History Fetched Successfully',
-            'data' => $history
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
     public function exportStockasPdf()
@@ -338,9 +419,11 @@ class InventoryManagement extends Controller
         $stock = Inventory::withTrashed()->get();
         if ($stock->isEmpty()) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'No stock available to export.'
-            ], 404);
+                'success' => true,
+                'message' => 'No stock available to export.',
+                'data' => [],
+                'error' => null
+            ], Response::HTTP_OK);
         }
         $pdf = Pdf::loadView('StockReport', ['stock' => $stock]);
         return $pdf->download('LabInventoryReport.pdf');

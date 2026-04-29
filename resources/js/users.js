@@ -9,11 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     const updateUserModal = document.getElementById("UpdateUserModal");
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-    // ==========================================
-    // 2. DYNAMIC LOADING & NAVIGATION STATE
-    // ==========================================
-    // Track current view to refresh grids after adding/editing/deleting
     let currentActiveRole = null;
     let currentActiveGrid = null;
 
@@ -34,64 +29,61 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     };
 
-    // Listen for clicks on the inner navigation (Staff Hub cards) to trigger data fetch
-    document.querySelectorAll(".inner-nav-link").forEach((link) => {
-        link.addEventListener("click", (e) => {
-            const targetId = link.getAttribute("data-target");
+    // ==========================================
+    // 2. FETCH & POPULATE DEPARTMENTS (ON-DEMAND)
+    // ==========================================
+    async function populateDepartmentDropdowns() {
+        const addSelect = document.getElementById("addUserDepartment");
+        const updateSelect = document.getElementById("updateUserDepartment");
 
-            if (roleSectionMap[targetId]) {
-                currentActiveRole = roleSectionMap[targetId].role;
-                currentActiveGrid = roleSectionMap[targetId].gridId;
-                fetchUsersByRole(currentActiveRole, currentActiveGrid);
-            } else if (targetId === "section-deleted-users") {
-                currentActiveRole = "deleted";
-                currentActiveGrid = "grid-deleted-users";
-                fetchAndPopulateDeletedUsers();
-            } else {
-                // If navigating back to main hub, clear tracking
-                currentActiveRole = null;
-                currentActiveGrid = null;
-            }
-        });
-    });
+        // Brief loading state while fetching
+        if (addSelect)
+            addSelect.innerHTML = `<option value="" disabled selected>Loading departments...</option>`;
+        if (updateSelect)
+            updateSelect.innerHTML = `<option value="" disabled selected>Loading departments...</option>`;
 
-    // Fetch specific role
-    function fetchUsersByRole(role, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        // Show a loading spinner before data arrives
-        container.innerHTML = `
-            <div class="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-[1.25rem] border border-dashed border-gray-200">
-                <i class="ph-bold ph-spinner animate-spin text-4xl text-blue-500 mb-2"></i>
-                <p class="text-gray-500 font-medium">Loading...</p>
-            </div>`;
-
-        fetch(`/users/${role}`, { headers: { Accept: "application/json" } })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === "success" && data.users) {
-                    renderUserGrid(containerId, data.users);
-                } else {
-                    renderUserGrid(containerId, []);
-                }
-            })
-            .catch(() => {
-                renderUserGrid(containerId, []);
+        try {
+            const response = await fetch("/departments", {
+                headers: { Accept: "application/json" },
             });
-    }
+            const data = await response.json();
 
-    // Helper to refresh the grid you are currently looking at after a CRUD operation
-    function refreshCurrentGrid() {
-        if (currentActiveRole === "deleted") {
-            fetchAndPopulateDeletedUsers();
-        } else if (currentActiveRole) {
-            fetchUsersByRole(currentActiveRole, currentActiveGrid);
+            if (data.success && data.data) {
+                const optionsHTML = data.data
+                    .filter(
+                        (dept) => dept.is_active == 1 || dept.is_active === true
+                    )
+                    .map(
+                        (dept) =>
+                            `<option value="${dept.id}">${dept.name}</option>`
+                    )
+                    .join("");
+                if (addSelect) {
+                    addSelect.innerHTML = `
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="">General (No Department)</option>
+                        ${optionsHTML}
+                    `;
+                }
+
+                if (updateSelect) {
+                    updateSelect.innerHTML = `
+                        <option value="" disabled>Select Department</option>
+                        <option value="">General (No Department)</option>
+                        ${optionsHTML}
+                    `;
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching departments for dropdowns:", error);
+            const errorOption = `<option value="" disabled selected>Error loading departments</option>`;
+            if (addSelect) addSelect.innerHTML = errorOption;
+            if (updateSelect) updateSelect.innerHTML = errorOption;
         }
     }
 
     // ==========================================
-    // 3. MODAL & ERROR HANDLING
+    // 3. MODAL & ERROR HANDLING HELPERS
     // ==========================================
     function openModal(backdrop, modal) {
         backdrop.classList.remove("hidden");
@@ -178,13 +170,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Modal Trigger Listeners
     document.querySelectorAll(".open-user-modal-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
             const role = btn.getAttribute("data-role");
             if (role) {
                 document.getElementById("addUserRole").value = role;
             }
+            await populateDepartmentDropdowns();
+
             openModal(addUserBackdrop, addUserModal);
         });
     });
@@ -210,8 +203,87 @@ document.addEventListener("DOMContentLoaded", () => {
             closeModal(updateUserBackdrop, updateUserModal, "UpdateUserForm")
         );
 
+    // ==========================================
+    // 4. NAVIGATION & DATA FETCHING
+    // ==========================================
+    document.querySelectorAll(".inner-nav-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+            const targetId = link.getAttribute("data-target");
 
+            if (roleSectionMap[targetId]) {
+                currentActiveRole = roleSectionMap[targetId].role;
+                currentActiveGrid = roleSectionMap[targetId].gridId;
+                fetchUsersByRole(currentActiveRole, currentActiveGrid);
+            } else if (targetId === "section-deleted-users") {
+                currentActiveRole = "deleted";
+                currentActiveGrid = "grid-deleted-users";
+                fetchAndPopulateDeletedUsers();
+            } else {
+                currentActiveRole = null;
+                currentActiveGrid = null;
+            }
+        });
+    });
 
+    function fetchUsersByRole(role, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-[1.25rem] border border-dashed border-gray-200">
+                <i class="ph-bold ph-spinner animate-spin text-4xl text-blue-500 mb-2"></i>
+                <p class="text-gray-500 font-medium">Loading...</p>
+            </div>`;
+
+        fetch(`/users/${role}`, { headers: { Accept: "application/json" } })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success && data.data) {
+                    renderUserGrid(containerId, data.data);
+                } else {
+                    renderUserGrid(containerId, []);
+                }
+            })
+            .catch(() => {
+                renderUserGrid(containerId, []);
+            });
+    }
+
+    function fetchAndPopulateDeletedUsers() {
+        const container = document.getElementById("grid-deleted-users");
+        if (container) {
+            container.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-[1.25rem] border border-dashed border-gray-200">
+                    <i class="ph-bold ph-spinner animate-spin text-4xl text-red-500 mb-2"></i>
+                    <p class="text-gray-500 font-medium">Loading deleted staff...</p>
+                </div>`;
+        }
+
+        fetch("/deletedusers", { headers: { Accept: "application/json" } })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success && data.data) {
+                    renderDeletedUserGrid("grid-deleted-users", data.data);
+                } else {
+                    renderDeletedUserGrid("grid-deleted-users", []);
+                }
+            })
+            .catch((err) => {
+                renderDeletedUserGrid("grid-deleted-users", []);
+            });
+    }
+
+    function refreshCurrentGrid() {
+        if (currentActiveRole === "deleted") {
+            fetchAndPopulateDeletedUsers();
+        } else if (currentActiveRole) {
+            fetchUsersByRole(currentActiveRole, currentActiveGrid);
+        }
+    }
+
+    // ==========================================
+    // 5. UI RENDERING (GRIDS)
+    // ==========================================
     function renderUserGrid(containerId, users) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -227,7 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         container.innerHTML = users
             .map((user) => {
-                // Updated to point directly to the public folder
                 const imgTag = user.image
                     ? `<img src="/${user.image}" class="w-full h-full object-cover">`
                     : `<span class="text-2xl">${user.name
@@ -261,30 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("");
     }
 
-    function fetchAndPopulateDeletedUsers() {
-        const container = document.getElementById("grid-deleted-users");
-        if (container) {
-            container.innerHTML = `
-                <div class="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-[1.25rem] border border-dashed border-gray-200">
-                    <i class="ph-bold ph-spinner animate-spin text-4xl text-red-500 mb-2"></i>
-                    <p class="text-gray-500 font-medium">Loading deleted staff...</p>
-                </div>`;
-        }
-
-        fetch("/deletedusers", { headers: { Accept: "application/json" } })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === "success") {
-                    renderDeletedUserGrid("grid-deleted-users", data.users);
-                } else {
-                    renderDeletedUserGrid("grid-deleted-users", []);
-                }
-            })
-            .catch((err) => {
-                renderDeletedUserGrid("grid-deleted-users", []);
-            });
-    }
-
     function renderDeletedUserGrid(containerId, users) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -300,7 +347,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         container.innerHTML = users
             .map((user) => {
-                // Updated to point directly to the public folder
                 const imgTag = user.image
                     ? `<img src="/${user.image}" class="w-full h-full object-cover grayscale">`
                     : `<span class="text-2xl">${user.name
@@ -337,10 +383,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 5. CRUD OPERATIONS
+    // 6. CRUD OPERATIONS (Add, Edit, Delete)
     // ==========================================
 
-    // Add User
+    // ADD USER
     document
         .getElementById("SaveUserBtn")
         .addEventListener("click", async () => {
@@ -363,9 +409,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 const result = await response.json();
 
-                if (response.status === 201) {
+                if (response.ok || response.status === 201) {
                     closeModal(addUserBackdrop, addUserModal, "AddUserForm");
-                    refreshCurrentGrid(); // Re-fetch the currently viewed grid
+                    refreshCurrentGrid();
                 } else if (response.status === 422) {
                     showUserErrors(result.errors, "add");
                 }
@@ -375,7 +421,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-    // Edit User (Fetch data to fill form)
     window.editUser = async function (id) {
         try {
             const response = await fetch(`/user/${id}`, {
@@ -383,8 +428,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const data = await response.json();
 
-            if (data.status === "success") {
-                const user = data.user;
+            if (data.success) {
+                const user = data.data;
+                await populateDepartmentDropdowns();
+
                 document.getElementById("updateUserId").value = user.id;
                 document.getElementById("updateUserName").value = user.name;
                 document.getElementById("updateUserEmail").value = user.email;
@@ -399,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const iconEl = document.getElementById("updateUserCameraIcon");
 
                 if (user.image) {
-                    previewEl.src = "/" + user.image; // Updated to point directly to the public folder
+                    previewEl.src = "/" + user.image;
                     previewEl.classList.remove("hidden");
                     iconEl.classList.add("hidden");
                 } else {
@@ -413,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {}
     };
 
-    // Update User
+    // UPDATE USER
     document
         .getElementById("UpdateUserBtn")
         .addEventListener("click", async () => {
@@ -444,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         updateUserModal,
                         "UpdateUserForm"
                     );
-                    refreshCurrentGrid(); // Re-fetch the currently viewed grid
+                    refreshCurrentGrid();
                 } else if (response.status === 422) {
                     showUserErrors(result.errors, "update");
                 }
@@ -454,7 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-    // Soft Delete User
+    // SOFT DELETE USER
     window.deleteUser = async function (id, btnElement) {
         if (!btnElement.classList.contains("confirming-delete")) {
             const originalBg = btnElement.className;
@@ -499,7 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {}
     };
 
-    // Restore User
+    // RESTORE USER
     window.restoreUser = async function (id, btnElement) {
         const originalText = btnElement.innerText;
         btnElement.innerText = "Restoring";
@@ -526,7 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Force Delete User
+    // FORCE DELETE USER
     window.forceDeleteUser = async function (id, btnElement) {
         if (!btnElement.classList.contains("confirming-delete")) {
             const originalClasses = btnElement.className;
@@ -572,7 +619,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // ==========================================
-    // 6. FORM UI LOGIC (Images & Passwords)
+    // 7. FORM UI LOGIC (Images & Passwords)
     // ==========================================
     const addImageCircle = document.getElementById("addUserImageCircle");
     const addImageInput = document.getElementById("addUserImage");
@@ -651,6 +698,4 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePasswordInput,
             updateEyeIcon
         );
-
-
 });
