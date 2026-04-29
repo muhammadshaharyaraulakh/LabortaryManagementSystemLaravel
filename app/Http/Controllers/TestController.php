@@ -10,26 +10,36 @@ use App\Models\TestParameter;
 use App\Models\TestRequirement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class TestController extends Controller
 {
-    public function deprtmentTests($department)
+    public function deprtmentTests()
     {
-        $tests = Test::where('departmentId', $department)->get();
-
-        if ($tests->isNotEmpty()) {
+        $department = Auth::user()->department_id;
+        if (empty($department)) {
             return response()->json([
-                'status' => 200,
+                'status' => false,
+                'message' => 'Department not found',
+                'data' => []
+            ], Response::HTTP_BAD_REQUEST);
+        } else {
+            $tests = Test::where('departmentId', $department)->get();
+        }
+
+            if ($tests->isNotEmpty()) {
+            return response()->json([
+                'status' => true,
                 'message' => 'Tests found',
                 'data' => $tests
-            ]);
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
-            'status' => 404,
+            'status' => true,
             'message' => 'Tests not found',
             'data' => []
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function index()
@@ -40,16 +50,16 @@ class TestController extends Controller
 
         if ($tests->isNotEmpty()) {
             return response()->json([
-                'status' => 200,
+                'status' => true,
                 'message' => 'Tests found',
                 'data' => $tests
-            ]);
+            ], Response::HTTP_OK);
         }
         return response()->json([
-            'status' => 404,
+            'status' => true,
             'message' => 'Tests not found',
             'data' => []
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function add(Request $request)
@@ -109,7 +119,7 @@ class TestController extends Controller
             });
 
             return response()->json([
-                'status' => 200,
+                'status' => true,
                 'message' => 'Test configuration added successfully',
             ]);
 
@@ -230,20 +240,12 @@ class TestController extends Controller
 
     public function show($id)
     {
-        $test = Test::with(['parameters', 'requirements', 'department'])->find($id);
-
-        if (!$test) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Test not found',
-                'data' => []
-            ], 404);
-        }
+        $test = Test::with(['parameters', 'requirements', 'department'])->findOrFail($id);
 
         return response()->json([
-            'status' => 200,
+            'status' => true,
             'message' => 'Test retrieved successfully',
             'data' => $test
-        ]);
+        ], Response::HTTP_OK);
     }
 }

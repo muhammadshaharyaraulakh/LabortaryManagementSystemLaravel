@@ -49,14 +49,24 @@ Route::get('/resetPassword', function () {
 Route::get('/home', function () {
     return view('home');
 });
+Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
+    ->name('google.redirect');
 
+Route::get('/auth/google/callback', [SocialController::class, 'googleCallback'])
+    ->name('google.callback');
+
+Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
+    ->name('github.redirect');
+
+Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
+    ->name('github.callback');
 
 Route::post('login', [loginController::class, 'login'])->name('login');
 Route::get('/logout', [loginController::class, 'logout'])->name('logout');
 Route::get('/users', [profileController::class, 'allusers'])->name('users');
 
-Route::middleware(['auth', 'check.role'])->group(function () {
-    Route::view('/admin/dashboard', 'admin.dashboard')
+Route::middleware(['auth', 'check.role:admin'])->group(function () {
+    Route::view('/AdminDashboard', 'admin.dashboard')
         ->name('admin.adminstrator');
     Route::prefix('departments')->controller(DepartmentController::class)->group(function () {
         Route::get('/', 'index')->name('departments');
@@ -67,7 +77,6 @@ Route::middleware(['auth', 'check.role'])->group(function () {
         Route::delete('/{id}', 'delete')->name('departments.delete');
         Route::put('/{id}/restore', 'restore');
     });
-
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/users/{role}', 'users')->name('users.role');
         Route::get('/deletedusers', 'deletedUsers')->name('users.deleted');
@@ -78,7 +87,6 @@ Route::middleware(['auth', 'check.role'])->group(function () {
         Route::post('/restoreuser/{id}', 'restoreUser')->name('users.restore');
         Route::delete('/forcedeleteuser/{id}', 'forceDelete')->name('users.forceDelete');
     });
-
     Route::prefix('inventory')->controller(InventoryManagement::class)->group(function () {
         Route::get('/', 'index');
         Route::get('/trashed', 'trashed');
@@ -95,23 +103,13 @@ Route::middleware(['auth', 'check.role'])->group(function () {
         Route::post('/{id}/restore', 'restoreItem');
         Route::delete('/{id}/force', 'forceDeleteItem');
     });
-
     Route::get('/stats/monthly', [StatisticsController::class, 'fetchMonthlyDetails']);
     Route::post('/stats/search', [StatisticsController::class, 'Search']);
+});
+Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
 
 });
 
-Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
-    ->name('google.redirect');
-
-Route::get('/auth/google/callback', [SocialController::class, 'googleCallback'])
-    ->name('google.callback');
-
-Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
-    ->name('github.redirect');
-
-Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
-    ->name('github.callback');
 Route::middleware('auth')->group(function () {
     Route::get('/tests', [TestController::class, 'index']);
     Route::get('/tests/{id}', [TestController::class, 'show']);
@@ -129,14 +127,19 @@ Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignatur
 Route::get('/tests', [TestController::class, 'index']);
 Route::get('/tests/{id}', [TestController::class, 'show']);
 
+Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
+    Route::view('/receptionist', 'receptionist.receptionst')->name('receptionist');
+    Route::get('/orders', [OrderController::class, 'getOrders']);
+    Route::post('/orders', [OrderController::class, 'CreateOrder']);
+    Route::delete('/orders/{id}', [OrderController::class, 'delete']);
+    Route::get('/orders/search/{search}', [OrderController::class, 'SearchOrder']);
+    Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
+    Route::post('/dashboard/stats', [OrderController::class, 'SearchStats']);
+    Route::get('/tests', [TestController::class, 'index']);
+    Route::get('/tests/{id}', [TestController::class, 'show']);
+});
 
 
-Route::get('/orders', [OrderController::class, 'getOrders']);
-Route::post('/orders', [OrderController::class, 'CreateOrder']);
-Route::delete('/orders/{id}', [OrderController::class, 'delete']);
-Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
-Route::get('/orders/search/{search}', [OrderController::class, 'SearchOrder']);
-Route::post('/dashboard/stats', [OrderController::class, 'Search']);
 Route::get('/tests', [TestController::class, 'index']);
 Route::get('/tests/{id}', [TestController::class, 'show']);
 Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);

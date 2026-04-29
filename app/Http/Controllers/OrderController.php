@@ -9,6 +9,8 @@ use App\Models\Test;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use \Barryvdh\DomPDF\Facade\Pdf;
+use \Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
 
 class OrderController extends Controller
@@ -36,12 +38,12 @@ class OrderController extends Controller
             if ($discount > $subtotal) {
                 DB::rollBack();
                 return response()->json([
-                    'status' => 'error',
+                    'status' => false,
                     'message' => 'The given data was invalid.',
                     'errors' => [
                         'discount' => ['Discount cannot be greater than the subtotal amount.']
                     ]
-                ], 422);
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             $afterDiscount = $subtotal - $discount;
@@ -53,8 +55,8 @@ class OrderController extends Controller
                 Http::fake([
                     'api.fia.gov.pk/*' => Http::response([
                         'status' => 'success',
-                        'receipt_number' => 'FIA-TEST-' . rand(100000, 999999)
-                    ], 200)
+                        'receipt_number' => 'FIA-TEST-' . uniqid() . rand(100000, 999999)
+                    ], Response::HTTP_OK)
                 ]);
             }
 
@@ -95,39 +97,44 @@ class OrderController extends Controller
             DB::commit();
 
             return response()->json([
-                'status' => 200,
-                'message' => 'Order created and synced successfully!',
-                'tracking_id' => $trackingId,
-                'fia_receipt' => $fiaReceiptNo
-            ]);
+                'status' => true,
+                'message' => 'Order created successfully!',
+                'tracking_id' => $trackingId
+            ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'status' => 500,
-                'message' => 'Failed to create order: ' . $e->getMessage()
-            ], 500);
+                'status' => false,
+                'message' => 'Failed to create order',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     public function showSummary($trackingId)
     {
+        if (empty($trackingId)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Order ID is required',
+            ], Response::HTTP_BAD_REQUEST);
+        }
         $order = Order::withTrashed()->with('tests')->where('trackingId', $trackingId)->firstOrFail();
 
         return response()->json([
-            'status' => 'success',
+            'status' => true,
             'message' => 'Orders Fetched',
             'orders' => $order
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function delete($id)
     {
         if (empty($id)) {
             return response()->json([
-                'status' => 400,
+                'status' => false,
                 'message' => 'Order ID is required'
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $order = Order::findOrFail($id);
@@ -154,9 +161,9 @@ class OrderController extends Controller
             if (!$fiaResponse->successful()) {
                 DB::rollBack();
                 return response()->json([
-                    'status' => 400,
+                    'status' => false,
                     'message' => 'Failed to cancel tax receipt with FIA API.'
-                ], 400);
+                ], Response::HTTP_BAD_REQUEST);
             }
 
             $order->delete();
@@ -171,9 +178,9 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'status' => 500,
-                'message' => 'Failed to delete order: ' . $e->getMessage()
-            ], 500);
+                'status' => false,
+                'message' => 'Failed to delete order',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -195,9 +202,9 @@ class OrderController extends Controller
     {
         if (empty($search)) {
             return response()->json([
-                'status' => 400,
+                'status' => false,
                 'message' => 'Search parameter is required'
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
         $order = Order::withTrashed()
             ->with('tests')
@@ -206,19 +213,20 @@ class OrderController extends Controller
 
         if (empty($order)) {
             return response()->json([
-                'status' => 404,
-                'message' => 'No order found with this Tracking ID.'
-            ], 404);
+                'status' => true,
+                'message' => 'No order found with this Tracking ID.',
+                $order=>[]
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
-            'status' => 200,
+            'status' => true,
             'message' => 'Order found',
             'orders' => [$order]
-        ]);
+        ],Response::HTTP_OK);
     }
 
-    public function Search(Request $request)
+    public function SearchStats(Request $request)
     {
         $validation = $request->validate([
             'startDate' => 'required|date',
@@ -231,6 +239,12 @@ class OrderController extends Controller
         $orders = Order::where('userId', Auth::id())
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
+            if($orders->isEmpty()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No orders found with this date range'
+                ],Response::HTTP_OK);
+            }
 
         $totalOrders = $orders->count();
         $totalMoney = $orders->sum('grandTotal');
@@ -241,21 +255,23 @@ class OrderController extends Controller
             ->count();
 
         return response()->json([
-            'status' => 200,
+            'status' => true,
             'message' => 'Statistics calculated successfully',
             'data' => [
                 'orders_created' => $totalOrders,
                 'money_collected' => $totalMoney,
                 'deleted_orders' => $deletedOrders
             ]
-        ]);
+        ],Response::HTTP_OK);
     }
 
     public function downloadReport($trackingId, $testId)
     {
-        $order = Order::with(['tests' => function ($query) use ($testId) {
-            $query->where('tests.id', $testId);
-        }])->where('trackingId', $trackingId)->firstOrFail();
+        $order = Order::with([
+            'tests' => function ($query) use ($testId) {
+                $query->where('tests.id', $testId);
+            }
+        ])->where('trackingId', $trackingId)->firstOrFail();
 
         $test = $order->tests->first();
 
@@ -267,7 +283,7 @@ class OrderController extends Controller
             ->with('parameter')
             ->get();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('TestReport', compact('order', 'test', 'results'));
+        $pdf = Pdf::loadView('TestReport', compact('order', 'test', 'results'));
 
         return $pdf->download("Report-{$trackingId}-{$test->name}.pdf");
     }

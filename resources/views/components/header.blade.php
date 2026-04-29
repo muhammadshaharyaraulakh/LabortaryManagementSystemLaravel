@@ -4,8 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Labortary Management System</title>
+    <title>Laboratory Management System</title>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @auth
+    @if(Auth::user()->role == 'admin') @vite(['resources/js/admin.js'])
+    @endif
+    @endauth
+
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
@@ -13,7 +20,6 @@
     <meta name="user-id" content="{{ Auth::id() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <style>
         /* Customizing Flatpickr to match your Tailwind Theme */
         .flatpickr-calendar {
