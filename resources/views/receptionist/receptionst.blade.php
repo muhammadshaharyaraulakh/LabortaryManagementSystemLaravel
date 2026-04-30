@@ -178,7 +178,7 @@
                             <p class="text-gray-500 font-medium">Calculating Statistics</p>
                         </div>
 
-                        <div id="reportDataState" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in">
+                        <div id="reportDataState" class="hidden grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in">
                             <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 text-center">
                                 <p class="text-sm font-bold text-gray-500 mb-1">Orders Created</p>
                                 <h4 class="text-2xl font-black text-blue-600" id="res-orders">0</h4>
@@ -392,7 +392,7 @@
                     <div class="ml-auto">
                         <button id="btn-print-preview"
                             class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
-                            <i class="ph-bold ph-printer"></i> Print
+                            Print Receipt
                         </button>
                     </div>
                 </div>
@@ -404,12 +404,15 @@
                 </div>
             </div>
             <x-settings />
+            <div id="global-notification"
+                class="fixed top-5 right-5 z-9999 hidden px-6 py-4 rounded-xl shadow-lg text-white font-bold text-sm transition-all duration-300 opacity-0 translate-y-[-20px]">
+            </div>
+
 
         </main>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
             const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
@@ -430,13 +433,11 @@
                 const parent = inputElement.parentElement;
                 const existingMsg = parent.querySelector('.temp-msg');
                 if (existingMsg) existingMsg.remove();
-
                 const msgEl = document.createElement('p');
                 msgEl.className = `temp-msg text-xs mt-1 font-bold animate-fade-in ${isError ? 'text-red-500' : 'text-green-500'}`;
                 msgEl.innerText = message;
                 if (isError) inputElement.classList.add('border-red-500');
                 parent.appendChild(msgEl);
-
                 setTimeout(() => {
                     if (msgEl && msgEl.parentNode) msgEl.remove();
                     if (isError) inputElement.classList.remove('border-red-500');
@@ -459,9 +460,6 @@
                 return "Just now";
             }
 
-            // ==========================================
-            // SECTION NAVIGATION
-            // ==========================================
             const sections = document.querySelectorAll('.content-section');
             const headerTitle = document.getElementById('header-title');
 
@@ -470,21 +468,20 @@
                     sec.classList.add('hidden');
                     sec.classList.remove('block');
                 });
-
                 const targetSection = document.getElementById(targetId);
                 if (targetSection) {
                     targetSection.classList.remove('hidden');
                     targetSection.classList.add('block');
                 }
-
                 if (title && headerTitle) headerTitle.innerText = title;
-
                 if (targetId === 'section-manage-orders') {
-                    if (searchManageOrdersInput) searchManageOrdersInput.value = '';
+                    if (typeof searchManageOrdersInput !== 'undefined' && searchManageOrdersInput) searchManageOrdersInput.value = '';
                     fetchUserOrders();
                 }
-
                 if (targetId === 'section-dashboard') fetchDashboardTodayStats();
+                if (targetId === 'section-create-order' && allAvailableTests.length === 0) {
+                    loadAllTestsForSearch();
+                }
             }
 
             document.querySelectorAll('#sidebar-nav .nav-link').forEach(link => {
@@ -496,12 +493,10 @@
                         const icon = nav.querySelector('.nav-icon');
                         if (icon) icon.classList.replace('text-white', 'text-gray-400');
                     });
-
                     link.classList.add('bg-white/10', 'text-white', 'active-nav');
                     link.classList.remove('text-gray-300');
                     const activeIcon = link.querySelector('.nav-icon');
                     if (activeIcon) activeIcon.classList.replace('text-gray-400', 'text-white');
-
                     switchSection(link.getAttribute('data-target'), link.getAttribute('data-title'));
                     if (window.innerWidth < 768) toggleSidebar();
                 });
@@ -517,52 +512,49 @@
             document.getElementById('close-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             sidebarBackdrop?.addEventListener('click', toggleSidebar);
 
-            // ==========================================
-            // CREATE ORDER: CLIENT-SIDE TEST SEARCH
-            // ==========================================
             let allAvailableTests = [];
             let orderCart = [];
-
             const searchInput = document.getElementById('orderTestSearch');
             const searchResults = document.getElementById('testSearchResults');
             const tableBody = document.getElementById('orderTestsTable');
             const discountInput = document.getElementById('calcDiscount');
 
             async function loadAllTestsForSearch() {
+                if (!searchInput) return;
                 try {
+                    searchInput.placeholder = "Loading available tests...";
+                    searchInput.disabled = true;
                     const response = await fetch('/tests', { headers: fetchHeaders });
                     const result = await response.json();
                     if (result.status === true || result.status === 200) {
                         allAvailableTests = result.data;
                     }
                 } catch (error) {
-                    console.error("Failed to load tests for search", error);
+                    searchInput.placeholder = "Failed to load tests. Refresh page.";
+                } finally {
+                    searchInput.placeholder = "Start typing to search";
+                    searchInput.disabled = false;
                 }
             }
-            loadAllTestsForSearch();
 
             if (searchInput) {
                 searchInput.addEventListener('input', function (e) {
                     const query = e.target.value.toLowerCase().trim();
                     searchResults.innerHTML = '';
-
                     if (query.length === 0) {
                         searchResults.classList.add('hidden');
                         return;
                     }
-
                     const filtered = allAvailableTests.filter(test => {
                         const name = (test.testName || test.test_name || test.name || '').toLowerCase();
                         const code = (test.testCode || test.test_code || test.code || '').toLowerCase();
                         return name.includes(query) || code.includes(query);
                     });
-
                     if (filtered.length > 0) {
                         filtered.forEach(test => {
                             const testName = test.testName || test.test_name || test.name || 'Unnamed Test';
                             const testCode = test.testCode || test.test_code || test.code || 'N/A';
                             const testPrice = test.price || 0;
-
                             const item = document.createElement('div');
                             item.className = 'px-4 py-3 hover:bg-green-50 cursor-pointer border-b border-gray-100 last:border-0 flex justify-between items-center transition-colors';
                             item.innerHTML = `
@@ -573,7 +565,7 @@
                         <span class="text-sm font-bold text-green-600">Rs. ${testPrice}</span>
                     `;
                             item.addEventListener('click', () => {
-                                addTestToCart(test);
+                                fetchAndAddTestToCart(test.id);
                                 searchInput.value = '';
                                 searchResults.classList.add('hidden');
                             });
@@ -584,21 +576,27 @@
                     }
                     searchResults.classList.remove('hidden');
                 });
-
                 document.addEventListener('click', (e) => {
-                    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    if (searchInput && searchResults && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                         searchResults.classList.add('hidden');
                     }
                 });
             }
 
-            function addTestToCart(test) {
-                if (orderCart.find(t => t.id === test.id)) {
-                    displayTemporaryMessage(searchInput, 'This test is already added.', true);
-                    return;
-                }
-                orderCart.push(test);
-                renderCart();
+            async function fetchAndAddTestToCart(testId) {
+                try {
+                    const response = await fetch(`/tests/${testId}`, { headers: fetchHeaders });
+                    const result = await response.json();
+                    if (result.status === true || result.status === 200) {
+                        const freshTest = result.data || result.test;
+                        if (orderCart.find(t => t.id === freshTest.id)) {
+                            displayTemporaryMessage(searchInput, 'This test is already added.', true);
+                            return;
+                        }
+                        orderCart.push(freshTest);
+                        renderCart();
+                    }
+                } catch (error) { }
             }
 
             window.removeTestFromCart = function (testId) {
@@ -615,7 +613,6 @@
                         const testName = test.testName || test.test_name || test.name || 'Unnamed Test';
                         const testCode = test.testCode || test.test_code || test.code || 'N/A';
                         const testPrice = test.price || 0;
-
                         tableBody.innerHTML += `
                     <tr class="bg-white hover:bg-gray-50 transition-colors animate-fade-in">
                         <td class="px-4 py-3 text-gray-500 font-medium text-xs">${testCode}</td>
@@ -637,11 +634,9 @@
                 let subtotal = orderCart.reduce((sum, test) => sum + (parseFloat(test.price) || 0), 0);
                 let discount = parseFloat(discountInput?.value) || 0;
                 if (discount > subtotal) discount = subtotal;
-
                 let amountAfterDiscount = subtotal - discount;
                 let tax = amountAfterDiscount * 0.05;
                 let grandTotal = amountAfterDiscount + tax;
-
                 document.getElementById('calcSubtotal').innerText = subtotal.toFixed(2);
                 document.getElementById('calcTax').innerText = tax.toFixed(2);
                 document.getElementById('calcTotal').innerText = grandTotal.toFixed(2);
@@ -653,12 +648,11 @@
                 e.preventDefault();
                 const btn = e.submitter;
                 const originalHtml = btn.innerHTML;
-                btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin text-lg"></i> Processing...`;
+                btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin text-lg"></i>`;
                 btn.disabled = true;
 
                 const formData = new FormData(e.target);
                 let cleanPhone = (formData.get('phone') || '').replace(/[^0-9]/g, '');
-
                 const payload = {
                     name: formData.get('patient_name'), phone: cleanPhone, age: formData.get('age'),
                     gender: formData.get('gender'), email: formData.get('email'),
@@ -668,7 +662,6 @@
                 try {
                     const response = await fetch('/orders', { method: 'POST', headers: fetchHeaders, body: JSON.stringify(payload) });
                     const result = await response.json();
-
                     if (response.status === 422) {
                         for (const field in result.errors) {
                             let errorSpanId = field === 'name' ? 'error-patient_name' : `error-${field}`;
@@ -685,28 +678,22 @@
                         renderCart();
                         fetchDashboardTodayStats();
                         fetchUserOrders();
-                        switchSection('section-manage-orders', 'Manage Orders');
-                        loadOrderPreview(result.tracking_id); // Go straight to preview
+                        loadOrderPreview(result.tracking_id);
                     }
                 } catch (error) {
-                    console.error("Order creation failed", error);
                 } finally {
                     btn.innerHTML = originalHtml;
                     btn.disabled = false;
                 }
             });
 
-
-            // ==========================================
-            // MANAGE ORDERS
-            // ==========================================
             const manageOrdersTableBody = document.querySelector('#section-manage-orders tbody');
             const searchManageOrdersInput = document.getElementById('searchManageOrdersInput');
             let searchDebounceTimer;
 
             async function fetchUserOrders() {
                 if (!manageOrdersTableBody) return;
-                manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-blue-600"></i><p class="text-sm text-gray-500 mt-2">Loading your orders...</p></td></tr>`;
+                manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-blue-600"></i></td></tr>`;
                 try {
                     const response = await fetch('/orders', { headers: fetchHeaders });
                     const result = await response.json();
@@ -721,20 +708,15 @@
                     manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 font-medium">No orders found.</td></tr>`;
                     return;
                 }
-
                 orders.forEach(order => {
                     const timeAgoText = timeSince(order.created_at);
                     const isDeleted = order.deleted_at !== null;
-
                     let actionHtml = `<button data-tracking="${order.trackingId}" class="btn-view-order text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer mr-1">View</button>`;
-
                     if (!isDeleted && (new Date() - new Date(order.created_at)) < 3600000) {
                         actionHtml += `<button data-id="${order.id}" class="btn-delete-order text-red-600 hover:text-red-800 font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer">Delete</button>`;
                     }
-
                     const rowClass = isDeleted ? "bg-red-50/40 text-red-500 font-medium" : "bg-white hover:bg-gray-50 text-gray-800 font-medium";
                     const textClass = isDeleted ? "line-through opacity-70" : "";
-
                     manageOrdersTableBody.innerHTML += `
                 <tr class="border-b border-gray-100 ${rowClass}">
                     <td class="px-6 py-4 font-bold ${textClass}">${order.trackingId}</td>
@@ -752,7 +734,6 @@
                     clearTimeout(searchDebounceTimer);
                     const query = e.target.value.trim();
                     if (query === '') return fetchUserOrders();
-
                     searchDebounceTimer = setTimeout(async () => {
                         manageOrdersTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-blue-600"></i></td></tr>`;
                         try {
@@ -769,10 +750,6 @@
                 });
             }
 
-
-            // ==========================================
-            // INLINE ORDER PREVIEW LOGIC
-            // ==========================================
             const btnBackToOrders = document.getElementById('btn-back-to-orders');
             const orderPreviewContent = document.getElementById('order-preview-content');
             const btnPrintPreview = document.getElementById('btn-print-preview');
@@ -782,56 +759,86 @@
                 btnBackToOrders.addEventListener('click', () => switchSection('section-manage-orders', 'Manage Orders'));
             }
 
-            if (btnPrintPreview) {
-                btnPrintPreview.addEventListener('click', () => {
-                    if (currentPreviewTrackingId) window.open(`/orders/${currentPreviewTrackingId}/summary`, '_blank');
-                });
-            }
 
             async function loadOrderPreview(trackingId) {
                 switchSection('section-order-preview', 'Order Preview');
                 orderPreviewContent.innerHTML = `<div class="flex items-center justify-center h-full py-20"><i class="ph-bold ph-spinner animate-spin text-4xl text-blue-600"></i></div>`;
                 currentPreviewTrackingId = trackingId;
-
                 try {
                     const response = await fetch(`/orders/${trackingId}/summary`, { headers: fetchHeaders });
                     const result = await response.json();
-
                     if (result.status === true) {
                         const order = result.orders;
                         const orderDate = new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-
                         let testsHtml = '';
+                        let barcodesHtml = '';
                         order.tests.forEach(test => {
+                            const testName = test.name || test.testName || 'Lab Test';
                             testsHtml += `
                         <tr class="border-b border-gray-100">
-                            <td class="py-3">${test.name || test.testName || 'Lab Test'}</td>
+                            <td class="py-3">${testName}</td>
                             <td class="py-3 text-right">Rs. ${test.pivot.priceAtOrder || test.price}</td>
                         </tr>
                     `;
+                            barcodesHtml += `
+                        <div class="text-center border border-gray-200 p-4 rounded-xl break-inside-avoid w-full max-w-md mx-auto">
+                            <p class="font-bold text-xs mb-3 text-gray-800 uppercase tracking-wide truncate">${testName}</p>
+                            <div class="flex flex-col items-center justify-center [&>svg]:h-12 [&>svg]:w-auto [&>svg]:max-w-full">
+                                ${test.backend_barcode}
+                            </div>
+                        </div>
+                    `;
                         });
-
                         orderPreviewContent.innerHTML = `
                     <div class="text-center mb-6 pb-6 border-b-2 border-gray-800">
-                        <h1 class="text-2xl font-black uppercase tracking-widest">Medical Order Receipt</h1>
-                        <p class="text-gray-500">${order.trackingId} | ${order.fiaReceiptNo ? 'FIA Synced: ' + order.fiaReceiptNo : 'Local Receipt'}</p>
+                        <h1 class="text-2xl font-black ">Laboratory Management System Receipt</h1>
+                        <p class="text-gray-500 font-bold">Tracking ID:${order.trackingId}</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div><span class="font-bold">Patient Name:</span> ${order.name}</div>
-                        <div class="text-right"><span class="font-bold">Date:</span> ${orderDate}</div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-xl">
+                        <div>
+                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Patient Name</p>
+                            <p class="text-sm font-bold text-gray-900">${order.name}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Age / Gender</p>
+                            <p class="text-sm font-bold text-gray-900">${order.age} yrs / ${order.gender}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Phone</p>
+                            <p class="text-sm font-bold text-gray-900">${order.phone}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Email</p>
+                            <p class="text-sm font-bold text-gray-900 truncate" title="${order.email}">${order.email || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Date</p>
+                            <p class="text-sm font-bold text-gray-900">${orderDate}</p>
+                        </div>
                     </div>
+
                     <table class="w-full text-left border-collapse mb-6">
                         <thead>
-                            <tr class="border-b border-gray-300"><th class="py-2">Description</th><th class="py-2 text-right">Amount</th></tr>
+                            <tr class="border-b border-gray-300 text-xs uppercase tracking-wider text-gray-500 bg-gray-50">
+                                <th class="py-3 px-2">Description</th>
+                                <th class="py-3 px-2 text-right">Amount</th>
+                            </tr>
                         </thead>
                         <tbody>${testsHtml}</tbody>
                     </table>
                     <div class="flex flex-col items-end gap-2 text-right">
-                        <div class="w-48 flex justify-between"><span>Subtotal:</span> <span>Rs. ${order.subtotal}</span></div>
-                        <div class="w-48 flex justify-between"><span>Discount:</span> <span>- Rs. ${order.discount}</span></div>
-                        <div class="w-48 flex justify-between"><span>Gov Tax (5%):</span> <span>Rs. ${order.tax}</span></div>
-                        <div class="w-48 flex justify-between font-bold text-lg border-t border-gray-300 pt-2 mt-2">
+                        <div class="w-64 flex justify-between text-gray-600 font-bold"><span>Subtotal:</span> <span>Rs. ${order.subtotal}</span></div>
+                        <div class="w-64 flex justify-between text-gray-600 font-bold"><span>Discount:</span> <span>- Rs. ${order.discount}</span></div>
+                        <div class="w-64 flex justify-between text-gray-600 font-bold"><span>Gov Tax (5%):</span> <span>Rs. ${order.tax}</span></div>
+                        <div class="w-64 flex justify-between font-black text-xl border-t border-gray-300 pt-3 mt-3 text-gray-900">
                             <span>Total:</span> <span>Rs. ${order.grandTotal}</span>
+                        </div>
+                    </div>
+                    <div class="mt-12 pt-6 border-t-2 border-gray-800 border-dashed">
+                        <h3 class="text-center font-black text-gray-900 mb-6 uppercase tracking-widest text-sm bg-gray-100 py-2 rounded-lg"> For Laboratory Use Only</h3>
+                        <div class="flex flex-col items-center justify-center gap-6">
+                            <div class="grid grid-cols-1 gap-4 items-center justify-center">${barcodesHtml}</div>
                         </div>
                     </div>
                 `;
@@ -843,80 +850,219 @@
                 }
             }
 
+            if (btnPrintPreview) {
+                btnPrintPreview.addEventListener('click', () => {
+                    if (!currentPreviewTrackingId) return;
 
-            // ==========================================
-            // GLOBAL CLICK HANDLER (Table Actions)
-            // ==========================================
+                    window.location.href = `/orders/${currentPreviewTrackingId}/receipt/pdf`;
+                });
+            }
+            function showNotification(message, isError = true) {
+                let notif = document.getElementById('global-notification');
+
+                if (!notif) {
+                    notif = document.createElement('div');
+                    notif.id = 'global-notification';
+                    document.body.appendChild(notif);
+                }
+
+                notif.className = 'fixed top-10 left-1/2 transform -translate-x-1/2 px-6 py-4 rounded-xl shadow-2xl z-[100] font-bold text-sm flex items-center gap-3 transition-all duration-300 opacity-0 translate-y-[-20px]';
+                if (isError) {
+                    notif.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
+                    notif.innerHTML = `<i class="ph-bold ph-warning-circle text-xl"></i> <span>${message}</span>`;
+                } else {
+                    notif.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200');
+                    notif.innerHTML = `<i class="ph-bold ph-check-circle text-xl"></i> <span>${message}</span>`;
+                }
+
+                setTimeout(() => {
+                    notif.classList.remove('opacity-0', 'translate-y-[-20px]');
+                    notif.classList.add('opacity-100', 'translate-y-0');
+                }, 10);
+
+                setTimeout(() => {
+                    notif.classList.remove('opacity-100', 'translate-y-0');
+                    notif.classList.add('opacity-0', 'translate-y-[-20px]');
+
+                    setTimeout(() => {
+                        notif.remove();
+                    }, 300);
+                }, 2000);
+            }
+
+
+            // Global Click Listener
             document.addEventListener('click', async (e) => {
-                // Trigger Order Preview View
+                // 1. View Order Logic
                 const viewOrderBtn = e.target.closest('.btn-view-order');
                 if (viewOrderBtn) {
                     loadOrderPreview(viewOrderBtn.getAttribute('data-tracking'));
                 }
 
-                // Trigger Delete
+                // 2. Delete Order Logic
                 const deleteBtn = e.target.closest('.btn-delete-order');
                 if (deleteBtn) {
                     const orderId = deleteBtn.getAttribute('data-id');
                     const row = deleteBtn.closest('tr');
+                    const originalHtml = deleteBtn.innerHTML;
+
                     deleteBtn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i>`;
                     deleteBtn.disabled = true;
 
                     try {
-                        const response = await fetch(`/orders/${orderId}`, { method: 'DELETE', headers: fetchHeaders });
-                        if (response.ok) {
+                        const response = await fetch(`/orders/${orderId}`, {
+                            method: 'DELETE',
+                            headers: fetchHeaders
+                        });
+
+                        const result = await response.json();
+
+                        // FIX: Check for 200 OR true
+                        if (response.ok && (result.status === 200 || result.status === true)) {
                             row.classList.add('opacity-0');
-                            setTimeout(() => { fetchUserOrders(); fetchDashboardTodayStats(); }, 300);
+
+                            setTimeout(() => {
+                                row.remove();
+                                fetchUserOrders();
+                                fetchDashboardTodayStats();
+                            }, 300);
+
+                            showNotification("Order deleted successfully", false);
+
+                        } else {
+                            showNotification(result.message || "Unable to delete order", true);
+                            deleteBtn.innerHTML = originalHtml;
+                            deleteBtn.disabled = false;
                         }
-                    } catch (error) { }
+
+                    } catch (error) {
+                        showNotification("Network error occurred", true);
+                        deleteBtn.innerHTML = originalHtml;
+                        deleteBtn.disabled = false;
+                    }
                 }
             });
-
-            // ==========================================
-            // DASHBOARD STATS
-            // ==========================================
             const dateFilterForm = document.getElementById('DashboardDateFilterForm');
+
             async function fetchDashboardTodayStats() {
-                const today = new Date().toISOString().split('T')[0];
                 try {
-                    const response = await fetch('/dashboard/stats', { method: 'POST', headers: fetchHeaders, body: JSON.stringify({ startDate: today, endDate: today }) });
+                    const response = await fetch('/stats', { headers: fetchHeaders });
                     const result = await response.json();
-                    if (result.status === true) {
-                        document.getElementById('stat-orders-today').innerText = result.data.orders_created;
-                        document.getElementById('stat-money-today').innerText = `Rs. ${Number(result.data.money_collected).toLocaleString()}`;
-                        document.getElementById('stat-deleted-today').innerText = result.data.deleted_orders;
+                    if (result.success === true) {
+                        document.getElementById('stat-orders-today').innerText = result.data.orderCreatedToday;
+                        document.getElementById('stat-money-today').innerText = `Rs. ${Number(result.data.moneyCollectedToday).toLocaleString()}`;
+                        document.getElementById('stat-deleted-today').innerText = result.data.deletedOrders;
+                    } else {
+                        document.getElementById('stat-orders-today').innerText = "0";
+                        document.getElementById('stat-money-today').innerText = "Rs. 0";
+                        document.getElementById('stat-deleted-today').innerText = "0";
                     }
                 } catch (error) { }
             }
-            fetchDashboardTodayStats();
 
+            fetchDashboardTodayStats();
             if (dateFilterForm) {
                 dateFilterForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    const startInput = document.getElementById('filterStartDate').value;
-                    const endInput = document.getElementById('filterEndDate').value;
+                    const startInput = document.getElementById('filterStartDate');
+                    const endInput = document.getElementById('filterEndDate');
+                    const reportEmptyState = document.getElementById('reportEmptyState');
+                    const reportLoadingState = document.getElementById('reportLoadingState');
+                    const reportDataState = document.getElementById('reportDataState');
+                    const reportContainer = document.getElementById('DashboardReportResults');
+
+                    // Helper function to display errors in the center
+                    function showCenterError(message) {
+                        reportEmptyState.classList.add('hidden');
+                        reportLoadingState.classList.add('hidden');
+                        reportDataState.classList.add('hidden');
+
+                        let errState = document.getElementById('reportErrorState');
+                        if (!errState) {
+                            errState = document.createElement('div');
+                            errState.id = 'reportErrorState';
+                            errState.className = 'text-center py-8 text-red-500 font-bold animate-fade-in';
+                            reportContainer.appendChild(errState);
+                        }
+
+                        errState.innerHTML = `<i class="ph-duotone ph-warning-circle text-5xl mb-3 block"></i><p>${message}</p>`;
+                        errState.classList.remove('hidden');
+
+                        setTimeout(() => {
+                            errState.classList.add('hidden');
+                            reportEmptyState.classList.remove('hidden');
+                        }, 3000);
+                    }
+
+                    if (!startInput.value || !endInput.value) {
+                        showCenterError("Please select both Start and End dates.");
+                        return;
+                    }
+
+                    const start = new Date(startInput.value);
+                    const end = new Date(endInput.value);
+
+                    if (end < start) {
+                        showCenterError("End date cannot be earlier than start date.");
+                        return;
+                    }
+
                     const btn = e.submitter;
                     const originalHtml = btn.innerHTML;
                     btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i>`;
-                    document.getElementById('reportEmptyState').classList.add('hidden');
-                    document.getElementById('reportDataState').classList.add('hidden');
-                    document.getElementById('reportLoadingState').classList.remove('hidden');
+
+                    reportEmptyState.classList.add('hidden');
+                    reportDataState.classList.add('hidden');
+                    reportDataState.classList.remove('grid');
+                    reportLoadingState.classList.remove('hidden');
+
+                    let errState = document.getElementById('reportErrorState');
+                    if (errState) errState.classList.add('hidden');
 
                     try {
-                        const response = await fetch('/dashboard/stats', { method: 'POST', headers: fetchHeaders, body: JSON.stringify({ startDate: startInput, endDate: endInput }) });
+                        const response = await fetch('/search', {
+                            method: 'POST',
+                            headers: fetchHeaders,
+                            body: JSON.stringify({ startDate: startInput.value, endDate: endInput.value })
+                        });
+
                         const result = await response.json();
-                        if (result.status === true) {
-                            document.getElementById('res-orders').innerText = result.data.orders_created;
-                            document.getElementById('res-money').innerText = `Rs. ${Number(result.data.money_collected).toLocaleString()}`;
-                            document.getElementById('res-deleted').innerText = result.data.deleted_orders;
-                            document.getElementById('reportLoadingState').classList.add('hidden');
-                            document.getElementById('reportDataState').classList.remove('hidden');
+                        if (response.status === 422) {
+                            let backendError = "Validation failed.";
+                            if (result.errors) {
+                                // Grab the very first error message Laravel sent back
+                                const firstKey = Object.keys(result.errors)[0];
+                                backendError = result.errors[firstKey][0];
+                            }
+                            showCenterError(backendError);
+                            return;
                         }
-                    } catch (error) { }
-                    finally { btn.innerHTML = originalHtml; }
+
+                        if (result.success === true) {
+                            document.getElementById('res-orders').innerText = result.data.orderCreated;
+                            document.getElementById('res-money').innerText = `Rs. ${Number(result.data.moneyCollected).toLocaleString()}`;
+                            document.getElementById('res-deleted').innerText = result.data.deletedOrders;
+
+                            reportLoadingState.classList.add('hidden');
+                            reportDataState.classList.remove('hidden');
+                            reportDataState.classList.add('grid');
+                        } else {
+                            document.getElementById('res-orders').innerText = "0";
+                            document.getElementById('res-money').innerText = "Rs. 0";
+                            document.getElementById('res-deleted').innerText = "0";
+
+                            reportLoadingState.classList.add('hidden');
+                            reportDataState.classList.remove('hidden');
+                            reportDataState.classList.add('grid');
+                        }
+
+                    } catch (error) {
+                        showCenterError("A network error occurred.");
+                    } finally {
+                        btn.innerHTML = originalHtml;
+                    }
                 });
             }
-
         });
     </script>
 </body>

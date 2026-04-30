@@ -20,7 +20,7 @@
                 <div class="w-full">
                     <label class="text-sm font-bold text-gray-700 block mb-2">Email Address</label>
                     <div class="relative w-full">
-                        <input type="email" name="email" id="userEmailInput" value="{{ Auth::user()->email ?? '' }}"
+                        <input type="email" name="email" id="userEmailInput" value="{{ auth()->user()->email ?? '' }}"
                             placeholder="dr.smith@gmail.com"
                             class="w-full border border-gray-400 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors placeholder:text-gray-400">
                     </div>

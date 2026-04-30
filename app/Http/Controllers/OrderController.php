@@ -6,11 +6,13 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Test;
+use App\Models\Result;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use \Barryvdh\DomPDF\Facade\Pdf;
 use \Symfony\Component\HttpFoundation\Response;
+use Milon\Barcode\Facades\DNS1DFacade;
 use Carbon\Carbon;
 
 class OrderController extends Controller
@@ -18,14 +20,14 @@ class OrderController extends Controller
     public function CreateOrder(Request $request)
     {
         $validated = $request->validate([
-            "name" => "required|string|max:255",
-            "phone" => "required|regex:/^[0-9]{11}$/",
-            "email" => "required|email",
-            "age" => "required|integer|min:0|max:70",
-            "gender" => "required|in:Male,Female,Other",
-            "discount" => "nullable|numeric|min:0",
-            "tests" => "required|array|min:1",
-            "tests.*" => "exists:tests,id"
+            "name" => ["required", "string", "max:255"],
+            "phone" => ["required", "regex:/^[0-9]{11}$/"],
+            "email" => ["required", "email"],
+            "age" => ["required", "integer", "min:0", "max:70"],
+            "gender" => ["required", "in:Male,Female,Other"],
+            "discount" => ["nullable", "numeric", "min:0"],
+            "tests" => ["required", "array", "min:1"],
+            "tests.*" => ["exists:tests,id"]
         ]);
 
         try {
@@ -87,11 +89,19 @@ class OrderController extends Controller
                 'userId' => Auth()->user()->id
             ]);
 
+            $BarcodeData = [];
+
             foreach ($tests as $test) {
+                $vialBarcode = 'VIAL-' . $trackingId . '-' . $test->id . '-' . rand(1000, 9999);
                 $order->tests()->attach($test->id, [
                     'status' => 'Created',
-                    'priceAtOrder' => $test->price
+                    'priceAtOrder' => $test->price,
+                    'vialBarcode' => $vialBarcode
                 ]);
+                $BarcodeData[] = [
+                    'TestName' => $test->name,
+                    'VialBarcode' => $vialBarcode
+                ];
             }
 
             DB::commit();
@@ -99,7 +109,8 @@ class OrderController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Order created successfully!',
-                'tracking_id' => $trackingId
+                'tracking_id' => $trackingId,
+                'barcodeData' => $BarcodeData
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
@@ -107,6 +118,7 @@ class OrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to create order',
+                'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -120,6 +132,10 @@ class OrderController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
         $order = Order::withTrashed()->with('tests')->where('trackingId', $trackingId)->firstOrFail();
+        foreach ($order->tests as $test) {
+            $barcodeString = $test->pivot->vialBarcode;
+            $test->backend_barcode = DNS1DFacade::getBarcodeSVG($barcodeString, 'C128', 1, 25, 'black');
+        }
 
         return response()->json([
             'status' => true,
@@ -141,6 +157,17 @@ class OrderController extends Controller
 
         try {
             DB::beginTransaction();
+            if (
+                $order->tests->contains(fn($test) => $test->pivot->status !== 'Created') ||
+                $order->userId !== auth()->id() ||
+                $order->created_at < now()->subHour()
+            ) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Order is already in progress, older than 1 hour, or you are not authorized to delete this order.'
+                ], Response::HTTP_BAD_REQUEST);
+            }
 
             if (app()->environment('local')) {
                 Http::fake([
@@ -165,9 +192,7 @@ class OrderController extends Controller
                     'message' => 'Failed to cancel tax receipt with FIA API.'
                 ], Response::HTTP_BAD_REQUEST);
             }
-
             $order->delete();
-
             DB::commit();
 
             return response()->json([
@@ -189,6 +214,7 @@ class OrderController extends Controller
 
         $orders = Order::with('tests')
             ->where('created_at', '>=', Carbon::now()->subHour())
+            ->where('userId', auth()->user()->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -209,13 +235,14 @@ class OrderController extends Controller
         $order = Order::withTrashed()
             ->with('tests')
             ->where('trackingId', $search)
+            ->where('userId', auth()->user()->id)
             ->first();
 
         if (empty($order)) {
             return response()->json([
                 'status' => true,
                 'message' => 'No order found with this Tracking ID.',
-                $order=>[]
+                $order => []
             ], Response::HTTP_OK);
         }
 
@@ -223,46 +250,17 @@ class OrderController extends Controller
             'status' => true,
             'message' => 'Order found',
             'orders' => [$order]
-        ],Response::HTTP_OK);
+        ], Response::HTTP_OK);
     }
-
-    public function SearchStats(Request $request)
+    public function downloadReceiptPdf($trackingId)
     {
-        $validation = $request->validate([
-            'startDate' => 'required|date',
-            'endDate' => 'required|date|after_or_equal:startDate',
-        ]);
-
-        $startDate = Carbon::parse($validation['startDate'])->startOfDay();
-        $endDate = Carbon::parse($validation['endDate'])->endOfDay();
-
-        $orders = Order::where('userId', Auth::id())
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get();
-            if($orders->isEmpty()){
-                return response()->json([
-                    'status' => false,
-                    'message' => 'No orders found with this date range'
-                ],Response::HTTP_OK);
-            }
-
-        $totalOrders = $orders->count();
-        $totalMoney = $orders->sum('grandTotal');
-
-        $deletedOrders = Order::onlyTrashed()
-            ->where('userId', Auth::id())
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->count();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Statistics calculated successfully',
-            'data' => [
-                'orders_created' => $totalOrders,
-                'money_collected' => $totalMoney,
-                'deleted_orders' => $deletedOrders
-            ]
-        ],Response::HTTP_OK);
+        $order = Order::with('tests')->where('trackingId', $trackingId)->firstOrFail();
+        foreach ($order->tests as $test) {
+            $barcodeString = $test->pivot->vialBarcode;
+            $test->backend_barcode = \DNS1D::getBarcodePNG($barcodeString, 'C128', 1, 25, [0, 0, 0]);
+        }
+        $pdf = Pdf::loadView('ReceiptPdf', compact('order'));
+        return $pdf->download("Receipt-{$trackingId}.pdf");
     }
 
     public function downloadReport($trackingId, $testId)
@@ -279,7 +277,7 @@ class OrderController extends Controller
             abort(404, 'Report not ready or not found.');
         }
 
-        $results = \App\Models\Result::where('orderTestId', $test->pivot->id)
+        $results = Result::where('orderTestId', $test->pivot->id)
             ->with('parameter')
             ->get();
 

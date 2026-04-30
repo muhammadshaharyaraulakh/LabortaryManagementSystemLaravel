@@ -7,17 +7,18 @@
     <title>Laboratory Management System</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     @auth
-    @if(Auth::user()->role == 'admin') @vite(['resources/js/admin.js'])
-    @endif
+        @if(auth()->user()->role === 'admin')
+            @vite(['resources/js/admin.js'])
+        @endif
+
+        <meta name="user-id" content="{{ auth()->id() }}">
     @endauth
 
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="user-id" content="{{ Auth::id() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>

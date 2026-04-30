@@ -130,11 +130,13 @@ Route::get('/tests/{id}', [TestController::class, 'show']);
 Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
     Route::view('/receptionist', 'receptionist.receptionst')->name('receptionist');
     Route::get('/orders', [OrderController::class, 'getOrders']);
+    Route::get('/orders/{trackingId}/receipt/pdf', [OrderController::class, 'downloadReceiptPdf']);
     Route::post('/orders', [OrderController::class, 'CreateOrder']);
     Route::delete('/orders/{id}', [OrderController::class, 'delete']);
     Route::get('/orders/search/{search}', [OrderController::class, 'SearchOrder']);
     Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
-    Route::post('/dashboard/stats', [OrderController::class, 'SearchStats']);
+    Route::get('/stats', [StatisticsController::class, 'fetchDailyStats']);
+    Route::post('/search', [StatisticsController::class, 'SearchForReceptionist']);
     Route::get('/tests', [TestController::class, 'index']);
     Route::get('/tests/{id}', [TestController::class, 'show']);
 });

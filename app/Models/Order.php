@@ -29,7 +29,7 @@ class Order extends Model
     public function tests()
     {
         return $this->belongsToMany(Test::class, 'order_test', 'orderId', 'testId')
-            ->withPivot('id', 'status', 'priceAtOrder')
+            ->withPivot('id', 'status', 'priceAtOrder','vialBarcode')
             ->withTimestamps();
     }
 }
