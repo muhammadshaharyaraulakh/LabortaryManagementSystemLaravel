@@ -206,7 +206,6 @@
             </form>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sections = document.querySelectorAll('.content-section');
@@ -218,7 +217,6 @@
                     sec.classList.add('hidden');
                     sec.classList.remove('block');
                 });
-
                 const target = document.getElementById(targetId);
                 if (target) {
                     target.classList.remove('hidden');
@@ -238,12 +236,10 @@
                         const icon = l.querySelector('.nav-icon');
                         if (icon) icon.classList.replace('text-white', 'text-gray-400');
                     });
-
                     link.classList.add('bg-white/10', 'text-white', 'active-nav');
                     link.classList.remove('text-gray-300');
                     const activeIcon = link.querySelector('.nav-icon');
                     if (activeIcon) activeIcon.classList.replace('text-gray-400', 'text-white');
-
                     switchSection(link.getAttribute('data-target'), link.getAttribute('data-title'));
                     if (window.innerWidth < 768) toggleSidebar();
                 });
@@ -296,36 +292,35 @@
 
             async function fetchPendingOrders() {
                 if (!pendingQueueTableBody) return;
-                pendingQueueTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-orange-500"></i><p class="text-sm text-gray-500 mt-2">Loading queue...</p></td></tr>`;
-
                 try {
                     const response = await fetch('/PendingOrders', {
                         headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     });
                     const result = await response.json();
-
-                    if (response.ok && result.status === 200) {
+                    if (response.ok && result.status === true) {
                         allPendingOrders = result.data;
                         renderPendingOrders(allPendingOrders);
                         updateDashboardStats(allPendingOrders.length);
+                        return result.data;
                     } else {
-                        pendingQueueTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">${result.message || 'No pending collections found.'}</td></tr>`;
+                        allPendingOrders = [];
+                        renderPendingOrders([]);
                         updateDashboardStats(0);
+                        return [];
                     }
                 } catch (error) {
-                    pendingQueueTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-red-500 font-medium">Network error.</td></tr>`;
+                    console.error("Fetch error:", error);
+                    return [];
                 }
             }
 
             function renderPendingOrders(orders) {
                 if (!pendingQueueTableBody) return;
                 pendingQueueTableBody.innerHTML = '';
-
                 if (orders.length === 0) {
                     pendingQueueTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No patients waiting in queue.</td></tr>`;
                     return;
                 }
-
                 orders.forEach(order => {
                     const row = `
                 <tr class="hover:bg-gray-50 transition-colors animate-fade-in">
@@ -351,201 +346,106 @@
             document.addEventListener('click', (e) => {
                 const viewBtn = e.target.closest('.btn-view-details');
                 if (viewBtn) {
-                    const orderId = parseInt(viewBtn.getAttribute('data-id'));
-                    openOrderDetails(orderId);
+                    openOrderDetails(parseInt(viewBtn.getAttribute('data-id')));
                 }
-
-                const backBtn = e.target.closest('.btn-back-queue');
-                if (backBtn) {
+                if (e.target.closest('.btn-back-queue')) {
                     switchSection('section-pending', 'Pending Collections');
                 }
-
                 const collectBtn = e.target.closest('.btn-collect-test');
                 if (collectBtn) {
-                    const orderId = collectBtn.getAttribute('data-order-id');
-                    const testId = collectBtn.getAttribute('data-test-id');
-                    const testName = collectBtn.getAttribute('data-test-name');
-                    const patientName = collectBtn.getAttribute('data-patient-name');
-
-                    document.getElementById('modalPatientName').innerText = `${patientName} (${testName})`;
-                    document.getElementById('modalOrderId').value = orderId;
-                    document.getElementById('modalTestId').value = testId;
-
+                    document.getElementById('modalPatientName').innerText = `${collectBtn.getAttribute('data-patient-name')} (${collectBtn.getAttribute('data-test-name')})`;
+                    document.getElementById('modalOrderId').value = collectBtn.getAttribute('data-order-id');
+                    document.getElementById('modalTestId').value = collectBtn.getAttribute('data-test-id');
                     const vialInput = document.getElementById('vialIdInput');
                     vialInput.value = '';
-                    vialInput.classList.remove('border-red-500', 'focus:ring-red-100');
-                    vialInput.classList.add('border-gray-200', 'focus:ring-orange-100');
-
-                    const existingError = document.getElementById('vial-error');
-                    if (existingError) existingError.remove();
-
-                    const existingGeneralError = document.getElementById('general-error');
-                    if (existingGeneralError) existingGeneralError.remove();
-
+                    vialInput.classList.remove('border-red-500');
+                    if (document.getElementById('vial-error')) document.getElementById('vial-error').remove();
+                    if (document.getElementById('general-error')) document.getElementById('general-error').remove();
                     openModal('CollectModalBackdrop');
                 }
-
-                const closeBtn = e.target.closest('.close-modal-btn');
-                if (closeBtn) {
-                    closeModal(closeBtn.getAttribute('data-modal'));
+                if (e.target.closest('.close-modal-btn')) {
+                    closeModal(e.target.closest('.close-modal-btn').getAttribute('data-modal'));
                 }
             });
 
             function openOrderDetails(orderId) {
                 const order = allPendingOrders.find(o => o.id === orderId);
-                if (!order) return;
-
+                if (!order) {
+                    switchSection('section-pending', 'Pending Collections');
+                    return;
+                }
                 document.getElementById('detail-patient-name').innerText = order.name;
                 document.getElementById('detail-patient-info').innerText = `${order.gender}, ${order.age}y | ${order.phone}`;
                 document.getElementById('detail-order-id').innerText = order.trackingId;
-
                 orderDetailsTableBody.innerHTML = '';
                 order.tests.forEach(test => {
-                    const deptName = test.department ? test.department.name : 'Unknown';
                     const isCollected = test.pivot && test.pivot.status === 'Collected';
+                    const actionHtml = isCollected ?
+                        `<span class="text-green-600 font-bold text-xs"><i class="ph-fill ph-check-circle text-lg align-middle mr-1"></i> Collected</span>` :
+                        `<button class="btn-collect-test bg-sidebarBg text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-gray-800 transition-all cursor-pointer" data-order-id="${order.id}" data-test-id="${test.id}" data-test-name="${test.name}" data-patient-name="${order.name}">Mark Sample as Collected</button>`;
 
-                    let actionHtml = '';
-                    if (isCollected) {
-                        actionHtml = `<span class="text-green-600 font-bold text-xs"><i class="ph-fill ph-check-circle text-lg align-middle mr-1"></i> Collected</span>`;
-                    } else {
-                        actionHtml = `<button class="btn-collect-test bg-sidebarBg text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-gray-800 transition-all cursor-pointer" data-order-id="${order.id}" data-test-id="${test.id}" data-test-name="${test.name}" data-patient-name="${order.name}">Assign Barcode</button>`;
-                    }
-
-                    const row = `
+                    orderDetailsTableBody.innerHTML += `
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4 font-mono text-xs text-gray-500">${test.code}</td>
                     <td class="px-6 py-4 font-bold text-gray-800">${test.name}</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-orange-50 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold border border-orange-100">${deptName}</span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        ${actionHtml}
-                    </td>
-                </tr>
-            `;
-                    orderDetailsTableBody.innerHTML += row;
+                    <td class="px-6 py-4"><span class="bg-orange-50 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold border border-orange-100">${test.department?.name || 'Unknown'}</span></td>
+                    <td class="px-6 py-4 text-right">${actionHtml}</td>
+                </tr>`;
                 });
-
                 switchSection('section-order-details', 'Order Details');
-            }
-
-            if (searchQueueInput) {
-                searchQueueInput.addEventListener('input', (e) => {
-                    const query = e.target.value.toLowerCase().trim();
-                    const filteredOrders = allPendingOrders.filter(order => {
-                        return order.name.toLowerCase().includes(query) ||
-                            order.trackingId.toLowerCase().includes(query) ||
-                            order.phone.includes(query);
-                    });
-                    renderPendingOrders(filteredOrders);
-                });
-            }
-
-            function updateDashboardStats(count) {
-                const waitingStatEl = document.getElementById('stat-waiting');
-                if (waitingStatEl) waitingStatEl.innerText = count;
-            }
-
-            function showGeneralError(message) {
-                const btnContainer = document.getElementById('submitCollectionBtn').parentElement;
-                const existingGeneralError = document.getElementById('general-error');
-                if (existingGeneralError) existingGeneralError.remove();
-
-                const errorMsg = document.createElement('p');
-                errorMsg.id = 'general-error';
-                errorMsg.className = 'text-xs font-bold text-red-500 mb-4 w-full text-center animate-fade-in block';
-                errorMsg.innerText = message;
-                btnContainer.parentNode.insertBefore(errorMsg, btnContainer);
             }
 
             const collectionForm = document.getElementById('SampleCollectionForm');
             if (collectionForm) {
                 collectionForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-
                     const btn = document.getElementById('submitCollectionBtn');
                     const originalHtml = btn.innerHTML;
-
-                    const vialInput = document.getElementById('vialIdInput');
                     const orderId = document.getElementById('modalOrderId').value;
-                    const testId = document.getElementById('modalTestId').value;
-                    const vialNumber = vialInput.value.trim();
-
-                    const existingError = document.getElementById('vial-error');
-                    if (existingError) existingError.remove();
-
-                    const existingGeneralError = document.getElementById('general-error');
-                    if (existingGeneralError) existingGeneralError.remove();
-
-                    vialInput.classList.remove('border-red-500', 'focus:ring-red-100');
-                    vialInput.classList.add('border-gray-200', 'focus:ring-orange-100');
-
                     btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Processing...`;
                     btn.disabled = true;
 
                     try {
                         const response = await fetch('/CollectSample', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-                            },
-                            body: JSON.stringify({
-                                order_id: orderId,
-                                test_id: testId,
-                                vial_number: vialNumber
-                            })
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
+                            body: JSON.stringify({ order_id: orderId, test_id: document.getElementById('modalTestId').value, vial_number: document.getElementById('vialIdInput').value.trim() })
                         });
-
                         const result = await response.json();
-
-                        if (response.status === 422) {
-                            if (result.errors && result.errors.vial_number) {
-                                vialInput.classList.remove('border-gray-200', 'focus:ring-orange-100');
-                                vialInput.classList.add('border-red-500', 'focus:ring-red-100');
-
-                                const errorMsg = document.createElement('p');
-                                errorMsg.id = 'vial-error';
-                                errorMsg.className = 'text-xs font-bold text-red-500 mt-2 animate-fade-in block';
-                                errorMsg.innerText = result.errors.vial_number[0];
-
-                                vialInput.parentElement.parentElement.appendChild(errorMsg);
-                            } else if (result.message) {
-                                showGeneralError(result.message);
-                            }
-                        }
-                        else if (response.ok && result.status === 200) {
+                        if (response.ok && result.status === true) {
                             closeModal('CollectModalBackdrop');
-
-                            const msgEl = document.createElement('div');
-                            msgEl.className = 'fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold text-sm flex items-center gap-2';
-                            msgEl.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> ${result.message}`;
-                            document.body.appendChild(msgEl);
-
-                            setTimeout(() => {
-                                msgEl.style.opacity = '0';
-                                msgEl.style.transition = 'opacity 0.3s ease';
-                                setTimeout(() => msgEl.remove(), 300);
-                            }, 3000);
-
-                            await fetchPendingOrders();
-
-                            setTimeout(() => {
+                            const updatedOrders = await fetchPendingOrders();
+                            const stillExists = updatedOrders.find(o => o.id == orderId);
+                            if (!stillExists) {
+                                switchSection('section-pending', 'Pending Collections');
+                            } else {
                                 openOrderDetails(parseInt(orderId));
-                            }, 100);
+                            }
+                        } else {
+                            const errorMsg = document.createElement('p');
+                            errorMsg.id = 'general-error';
+                            errorMsg.className = 'text-xs font-bold text-red-500 mb-4 text-center';
+                            errorMsg.innerText = result.message || 'Error saving sample';
+                            btn.parentElement.parentNode.insertBefore(errorMsg, btn.parentElement);
                         }
-                        else {
-                            showGeneralError(result.message || 'An error occurred while saving the sample.');
-                        }
-
                     } catch (error) {
-                        showGeneralError('A network error occurred. Please try again.');
+                        console.error(error);
                     } finally {
                         btn.innerHTML = originalHtml;
                         btn.disabled = false;
                     }
                 });
+            }
+
+            if (searchQueueInput) {
+                searchQueueInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    renderPendingOrders(allPendingOrders.filter(o => o.name.toLowerCase().includes(query) || o.trackingId.toLowerCase().includes(query)));
+                });
+            }
+
+            function updateDashboardStats(count) {
+                if (document.getElementById('stat-waiting')) document.getElementById('stat-waiting').innerText = count;
             }
 
             fetchPendingOrders();

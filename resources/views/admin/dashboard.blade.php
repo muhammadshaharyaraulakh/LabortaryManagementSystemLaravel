@@ -105,7 +105,7 @@
                         class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 hidden z-50 transform origin-top-right dropdown-enter">
                         <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
                             <p class="text-sm font-bold text-gray-900">Administrator</p>
-                            <p class="text-xs text-gray-500 font-medium mt-0.5">{{ Auth::user()->name }}
+                            <p class="text-xs text-gray-500 font-medium mt-0.5">{{ auth()->user()->name }}
                             </p>
                         </div>
                         <div class="py-2">

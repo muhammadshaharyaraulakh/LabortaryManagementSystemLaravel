@@ -24,11 +24,11 @@ class SocialController extends Controller
                     ->with('error', 'Email Not Found');
             }
             Auth::login($user);
-            $role = strtolower(trim($user->role));
+            $role = strtolower($user->role);
 
             $routeMap = [
                 'admin' => 'admin.adminstrator',
-                'receptionist' => 'receptionist',
+                'receptionist' => 'receptionist.dashboard',
                 'pathologist' => 'pathologist.dashboard',
                 'samplecollector' => 'samplecollector.dashboard',
             ];

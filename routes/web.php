@@ -27,10 +27,12 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::view('/receptionist', 'receptionist.receptionst')->name('receptionist');
+
 
     Route::view('/pathologist/dashboard', 'pathologist.dashboard')
         ->name('pathologist.dashboard');
+
+
 
 
 });
@@ -106,9 +108,7 @@ Route::middleware(['auth', 'check.role:admin'])->group(function () {
     Route::get('/stats/monthly', [StatisticsController::class, 'fetchMonthlyDetails']);
     Route::post('/stats/search', [StatisticsController::class, 'Search']);
 });
-Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
 
-});
 
 Route::middleware('auth')->group(function () {
     Route::get('/tests', [TestController::class, 'index']);
@@ -140,7 +140,11 @@ Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
     Route::get('/tests', [TestController::class, 'index']);
     Route::get('/tests/{id}', [TestController::class, 'show']);
 });
-
+Route::middleware(['auth', 'check.role:samplecollector'])->group(function () {
+    Route::view('/SampleCollector', 'SampleCollector.dashboard')->name('samplecollector.dashboard');
+    Route::get('/PendingOrders', [SampleCollectorController::class, 'index'])->name('PendingOrders');
+    Route::post('/CollectSample', [SampleCollectorController::class, 'CollectSample'])->name('CollectSample');
+});
 
 Route::get('/tests', [TestController::class, 'index']);
 Route::get('/tests/{id}', [TestController::class, 'show']);
@@ -150,10 +154,7 @@ Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
 
 
 
-Route::view('/dashboard', 'SampleCollector.dashboard')
-    ->name('SampleCollector.dashboard');
-Route::get('/PendingOrders', [SampleCollectorController::class, 'index'])->name('PendingOrders');
-Route::post('/CollectSample', [SampleCollectorController::class, 'CollectSample'])->name('CollectSample');
+
 
 Route::view('/TechnicianDashboard', 'Technician.dashboard');
 Route::get('/TechnicianStats', [TechnicianController::class, 'getDashboardStats']);
@@ -185,5 +186,7 @@ Route::get('/getSpecialistPendingList', [ResultController::class, 'getPendingRes
 Route::get('/getSpecialistCompletedReports', [ResultController::class, 'getCompletedReports']); // Reuses pathologist logic
 
 Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class, 'downloadReport']);
-Route::view('/test', 'test');
-Route::view('/home', 'home');
+
+
+
+Route::get('/whoami', fn() => auth()->user());

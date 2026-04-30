@@ -61,12 +61,12 @@ class loginController extends Controller
 
             Session::forget(['LoginVerificationCode', 'LoginPendingUserId']);
 
-            $role = strtolower(trim($user->role));
+            $role = trim($user->role);
             $routeMap = [
                 'admin' => 'admin.adminstrator',
                 'receptionist' => '/receptionist',
                 'pathologist' => 'pathologist.dashboard',
-                'samplecollector' => 'samplecollector.dashboard',
+                'SampleCollector' => 'samplecollector.dashboard',
             ];
 
             $redirectUrl = array_key_exists($role, $routeMap) ? route($routeMap[$role]) : url('/');

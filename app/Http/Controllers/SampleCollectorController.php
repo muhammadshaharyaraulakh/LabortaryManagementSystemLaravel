@@ -8,6 +8,8 @@ use App\Models\Test;
 use App\Models\User;
 use App\Models\Department;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use \Symfony\Component\HttpFoundation\Response;
 class SampleCollectorController extends Controller
 {
     public function index()
@@ -29,30 +31,42 @@ class SampleCollectorController extends Controller
 
         if ($orders->isEmpty()) {
             return response()->json([
+                'status' => false,
                 'message' => 'No orders found',
-                'status' => 404
-            ]);
+                'data' => []
+            ], Response::HTTP_OK);
         }
 
         return response()->json([
+
+            'status' => true,
             'message' => 'Orders found',
-            'status' => 200,
             'data' => $orders
-        ]);
+        ], Response::HTTP_OK);
     }
     public function CollectSample(Request $request)
     {
         $request->validate([
             'order_id' => 'required|exists:orders,id',
             'test_id' => 'required|exists:tests,id',
-            'vial_number' => 'required|string|max:255|unique:order_test,vialBarcode',
-        ], [
-            'vial_number.unique' => 'This vial barcode has already been used.',
+            'vial_number' => 'required|string|max:255',
         ]);
 
-        $order = Order::findOrFail($request->order_id);
+        $order = Order::where('id', $request->order_id)
+            ->whereHas('tests', function ($query) use ($request) {
+                $query->where('tests.id', $request->test_id)
+                    ->where('vialBarcode', $request->vial_number);
+            })->first();
+
+        if (!$order) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid Barcode for this specific test.',
+                'data' => []
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         $order->tests()->updateExistingPivot($request->test_id, [
-            'vialBarcode' => $request->vial_number,
             'status' => 'Collected',
             'collectedAt' => now(),
             'collectedBy' => Auth::id(),
@@ -60,8 +74,8 @@ class SampleCollectorController extends Controller
 
         return response()->json([
             'message' => 'Sample collected successfully',
-            'status' => 200,
-            'data' => $order
-        ]);
+            'status' => true,
+        ], Response::HTTP_OK);
     }
+    
 }
