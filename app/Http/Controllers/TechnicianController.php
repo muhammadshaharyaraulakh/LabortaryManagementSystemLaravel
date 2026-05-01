@@ -211,12 +211,12 @@ class TechnicianController extends Controller
             $query->where('tests.departmentId', $user->department_id)
                 ->where('order_test.status', 'Created');
         })->with([
-            'tests' => function ($query) use ($user) {
-                $query->where('tests.departmentId', $user->department_id)
-                    ->where('order_test.status', 'Created')
-                    ->with(['parameters', 'requirements']);
-            }
-        ])->get();
+                    'tests' => function ($query) use ($user) {
+                        $query->where('tests.departmentId', $user->department_id)
+                            ->where('order_test.status', 'Created')
+                            ->with(['parameters', 'requirements']);
+                    }
+                ])->get();
 
         return response()->json([
             'status' => 200,
@@ -231,9 +231,9 @@ class TechnicianController extends Controller
         ]);
 
         $user = Auth::user();
-        
+
         $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
-        
+
         if (!$orderTest) {
             return response()->json(['status' => 404, 'message' => 'Test not found'], 404);
         }

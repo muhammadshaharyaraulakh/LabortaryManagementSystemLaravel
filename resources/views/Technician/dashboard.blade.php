@@ -71,12 +71,12 @@
             </div>
             <div class="flex items-center gap-4">
                 <div class="hidden md:flex flex-col items-end mr-4">
-                    <span class="text-sm font-bold text-gray-800">{{ Auth::user()->name }}</span>
+                    <span class="text-sm font-bold text-gray-800">{{ auth()->user()->name }}</span>
                     <span class="text-xs text-blue-500 font-bold">Technician</span>
                 </div>
                 <div
                     class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-200 uppercase">
-                    {{ substr(Auth::user()->name, 0, 2) }}
+                    {{ substr(auth()->user()->name, 0, 2) }}
                 </div>
             </div>
         </header>

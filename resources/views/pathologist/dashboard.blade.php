@@ -227,7 +227,8 @@
                             <input type="date" id="reportEndDate"
                                 class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white transition-colors font-medium text-gray-700">
                         </div>
-                        <button id="btnFilterReports" class="ml-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors cursor-pointer">
+                        <button id="btnFilterReports"
+                            class="ml-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors cursor-pointer">
                             Filter Reports
                         </button>
                     </div>
@@ -691,7 +692,7 @@
                                         alt="Signature Preview" />
                                     <div class="w-4/5 border-b-2 border-gray-800 z-0"></div>
                                     <span
-                                        class="text-xs text-gray-800 font-bold mt-2">{{ Auth::user()->name ?? 'Dr. Smith' }}</span>
+                                        class="text-xs text-gray-800 font-bold mt-2">{{ auth()->user()->name ?? 'Dr. Smith' }}</span>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <button type="button" id="btnChangeSig"
@@ -718,8 +719,8 @@
                         </div>
                         <form id="UpdateEmailForm" class="flex flex-col gap-2">
                             <label class="text-sm font-bold text-gray-700">Email Address</label>
-                            <input type="email" name="email" id="userEmailInput" value="{{ Auth::user()->email ?? '' }}"
-                                placeholder="dr.smith@gmail.com"
+                            <input type="email" name="email" id="userEmailInput"
+                                value="{{ auth()->user()->email ?? '' }}" placeholder="dr.smith@gmail.com"
                                 class="w-full border border-gray-400 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors placeholder:text-gray-400">
                             <button type="submit" id="btnSaveEmail"
                                 class="self-start bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
@@ -777,7 +778,8 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-extrabold text-gray-800">Verify Test Results</h3>
-                        <p class="text-xs text-gray-500 font-medium" id="verifyModalSubtitle">Patient: Ali Khan | Test: CBC</p>
+                        <p class="text-xs text-gray-500 font-medium" id="verifyModalSubtitle">Patient: Ali Khan | Test:
+                            CBC</p>
                     </div>
                 </div>
                 <button id="CloseVerifyTestX"
@@ -1212,11 +1214,11 @@
                 }
             });
 
-            document.getElementById('clinicalRemarksTemplate')?.addEventListener('change', function() {
+            document.getElementById('clinicalRemarksTemplate')?.addEventListener('change', function () {
                 document.getElementById('verifyRemarks').value = this.value;
             });
 
-            document.getElementById('BtnVerifyAndSign')?.addEventListener('click', async function() {
+            document.getElementById('BtnVerifyAndSign')?.addEventListener('click', async function () {
                 const form = document.getElementById('VerifyTestForm');
                 const orderTestId = form.dataset.orderTestId;
                 const rows = document.querySelectorAll('#verifyResultsTbody tr[data-result-id]');
@@ -1578,7 +1580,7 @@
                 try {
                     const response = await fetch('/getPathologistStats', { headers: fetchHeaders });
                     const stats = await response.json();
-                    
+
                     document.getElementById('pending-approvals-count').innerText = stats.pendingApprovals || 0;
                     document.getElementById('completed-today-count').innerText = stats.completedToday || 0;
                     document.getElementById('critical-results-count').innerText = stats.criticalResults || 0;
@@ -1590,7 +1592,7 @@
             async function fetchCompletedReports() {
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
-                
+
                 try {
                     const url = new URL('/getCompletedReports', window.location.origin);
                     if (startDate) url.searchParams.append('startDate', startDate);
@@ -1654,7 +1656,7 @@
             // ==========================================
             // 11. SETTINGS & PROFILE MANAGEMENT
             // ==========================================
-            
+
             // Self-contained error helper specifically for these forms
             function showFormErrors(form, errors) {
                 // Clear previous errors
@@ -1707,7 +1709,7 @@
                         headers: { 'Accept': 'application/json' }
                     });
                     const data = await res.json();
-                    
+
                     hasSignature = !!(data.status === 200 && data.signature);
 
                     if (data.status === 200 && data.signature) {
