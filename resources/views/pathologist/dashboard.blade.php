@@ -275,7 +275,7 @@
                         <div class="relative w-full sm:w-96">
                             <i
                                 class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                            <input type="text" placeholder="Search test name or code..."
+                            <input type="text" id="test-search-input" placeholder="Search test name or code..."
                                 class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-100 bg-gray-50/50 focus:bg-white transition-colors text-sm font-medium">
                         </div>
                     </div>
@@ -394,25 +394,45 @@
 
                         <div id="add-parameters-container" class="space-y-4">
                             <div
-                                class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row">
+                                class="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row">
+                                <div class="w-36">
+                                    <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
+                                    <select name="parameter_type[]"
+                                        class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white cursor-pointer">
+                                        <option value="Quantitative">Quantitative </option>
+                                        <option value="Qualitative">Qualitative</option>
+                                        <option value="Observational">Observational </option>
+                                        <option value="Image">Image</option>
+                                    </select>
+                                </div>
+
                                 <div class="flex-1">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
-                                    <input type="text" placeholder="e.g. Hemoglobin" name="parameter_name[]"
+                                    <input type="text" placeholder="e.g. Hemoglobin or Result" name="parameter_name[]"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
-                                <div class="w-24">
+
+                                <div class="w-24 param-number-fields">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
                                     <input type="text" placeholder="g/dL" name="parameter_unit[]"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
-                                <div class="flex-1">
+
+                                <div class="flex-1 param-number-fields">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
                                     <input type="text" placeholder="13.8 - 17.2" name="parameter_range[]"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
-                                <div>
-                                    <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"
-                                        title="Remove Parameter"><i class="ph-bold ph-trash"></i></button>
+
+                                <div class="flex-1 param-dropdown-fields hidden">
+                                    <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma
+                                        separated)</label>
+                                    <input type="text" placeholder="e.g. Positive, Negative" name="parameter_options[]"
+                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
+                                </div>
+
+                                <div class="pt-6">
+
                                 </div>
                             </div>
                         </div>
@@ -450,8 +470,7 @@
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
                                 <div>
-                                    <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"
-                                        title="Remove Item"><i class="ph-bold ph-trash"></i></button>
+
                                 </div>
                             </div>
                         </div>
@@ -657,16 +676,72 @@
                     </div>
                     <div>
                         <h2 class="text-2xl font-extrabold text-gray-800">Settings</h2>
-                        <p class="text-sm text-gray-500 font-medium">Manage signature, email, and password</p>
+                        <p class="text-sm text-gray-500 font-medium">Manage email, password, and signature</p>
                     </div>
                 </div>
 
                 <div class="flex flex-col w-full gap-10">
+
+                    <div class="flex flex-col w-full gap-10">
+                        <div class="flex flex-col gap-4 border-b border-gray-300 pb-10">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                <h3 class="text-lg font-bold text-gray-800">Update Email</h3>
+                            </div>
+                            <form id="UpdateEmailForm" class="flex flex-col gap-2">
+                                <div class="w-full">
+                                    <label class="text-sm font-bold text-gray-700 block mb-2">Email Address</label>
+                                    <div class="relative w-full">
+                                        <input type="email" name="email" id="userEmailInput"
+                                            value="{{ auth()->user()->email ?? '' }}" placeholder="dr.smith@gmail.com"
+                                            class="w-full border border-gray-400 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors placeholder:text-gray-400">
+                                    </div>
+                                </div>
+                                <button type="submit" id="btnSaveEmail"
+                                    class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
+                                    Save Email
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="flex flex-col gap-4 pb-10">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                <h3 class="text-lg font-bold text-gray-800">Update Password</h3>
+                            </div>
+                            <form id="UpdatePasswordForm" class="flex flex-col gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700">Current Password</label>
+                                    <div class="relative w-full">
+                                        <input type="password" name="password" placeholder="••••••••"
+                                            class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
+                                        <i
+                                            class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700">New Password</label>
+                                    <div class="relative w-full">
+                                        <input type="password" name="newPassword" placeholder="••••••••"
+                                            class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
+                                        <i
+                                            class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
+                                    </div>
+                                </div>
+                                <button type="submit" id="btnSavePassword"
+                                    class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
+                                    Update Password
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                     <div class="flex flex-col gap-4 border-b border-gray-300 pb-10">
                         <div class="flex items-center gap-2">
                             <span
-                                class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
-                            <h3 class="text-lg font-bold text-gray-800">Upload & Display Signature</h3>
+                                class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                            <h3 class="text-lg font-bold text-gray-800">Update Signature</h3>
                         </div>
                         <p class="text-xs sm:text-sm text-gray-500">This signature will be stamped on verified lab
                             reports.</p>
@@ -709,56 +784,6 @@
                             <input type="file" class="hidden" id="signatureFileInput" name="signature"
                                 accept="image/png, image/jpeg">
                         </div>
-                    </div>
-
-                    <div class="flex flex-col gap-4 border-b border-gray-300 pb-10">
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                            <h3 class="text-lg font-bold text-gray-800">Update Email</h3>
-                        </div>
-                        <form id="UpdateEmailForm" class="flex flex-col gap-2">
-                            <label class="text-sm font-bold text-gray-700">Email Address</label>
-                            <input type="email" name="email" id="userEmailInput"
-                                value="{{ auth()->user()->email ?? '' }}" placeholder="dr.smith@gmail.com"
-                                class="w-full border border-gray-400 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors placeholder:text-gray-400">
-                            <button type="submit" id="btnSaveEmail"
-                                class="self-start bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
-                                Save Email
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="flex flex-col gap-4 pb-10">
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span>
-                            <h3 class="text-lg font-bold text-gray-800">Update Password</h3>
-                        </div>
-                        <form id="UpdatePasswordForm" class="flex flex-col gap-4">
-                            <div class="flex flex-col gap-2">
-                                <label class="text-sm font-bold text-gray-700">Current Password</label>
-                                <div class="relative">
-                                    <input type="password" name="password" placeholder="••••••••"
-                                        class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
-                                    <i
-                                        class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <label class="text-sm font-bold text-gray-700">New Password</label>
-                                <div class="relative">
-                                    <input type="password" name="newPassword" placeholder="••••••••"
-                                        class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
-                                    <i
-                                        class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
-                                </div>
-                            </div>
-                            <button type="submit" id="btnSavePassword"
-                                class="self-start bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
-                                Update Password
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -938,6 +963,7 @@
             };
 
             let inventoryItemsList = [];
+            let allTests = []; // Global variable to store all tests for client-side search
             let hasSignature = false;
 
             // ==========================================
@@ -981,7 +1007,7 @@
                 if (inventoryItemsList.length === 0) {
                     return '<option value="" disabled selected>No inventory items found...</option>';
                 }
-                // IMPORTANT FIX: Added value="" to the default option
+
                 let html = '<option value="" disabled selected>Select an item...</option>';
                 inventoryItemsList.forEach(item => {
                     const itemName = item.name || item.item_name || item.itemName || 'Unnamed Item';
@@ -992,10 +1018,10 @@
 
             async function loadInventoryItems() {
                 try {
-                    const response = await fetch('/inventory', { headers: fetchHeaders });
+                    const response = await fetch('/InventoryItems', { headers: fetchHeaders });
                     const result = await response.json();
 
-                    if (result.status === 'success' || result.status === 200) {
+                    if (result.success === true) {
                         inventoryItemsList = result.data || [];
                         const html = getInventoryOptionsHTML();
 
@@ -1013,22 +1039,18 @@
             // ==========================================
             // 4. FETCH & RENDER TESTS (READ ALL)
             // ==========================================
-            // ==========================================
-            // 4. FETCH & RENDER TESTS (READ ALL)
-            // ==========================================
             async function fetchTests() {
                 try {
-                    const response = await fetch('/tests', { headers: fetchHeaders });
+                    const response = await fetch('/deprtmentTests', { headers: fetchHeaders });
                     const result = await response.json();
 
                     const tbody = document.getElementById('department-tests-table');
                     if (!tbody) return;
 
-                    if (response.ok && result.status === 200 && result.data && result.data.length > 0) {
-                        // Tests found, render them
-                        renderTestsTable(result.data);
+                    if (response.ok && result.status === true && result.data) {
+                        allTests = result.data; // Store all tests globally
+                        renderTestsTable(allTests);
                     } else {
-                        // No tests found in the database, show an empty state message
                         tbody.innerHTML = `
                     <tr>
                         <td colspan="6" class="px-6 py-8 text-center text-gray-500 font-medium">
@@ -1043,10 +1065,23 @@
                     console.error('Error fetching tests:', error);
                 }
             }
+
             function renderTestsTable(tests) {
                 const tbody = document.getElementById('department-tests-table');
                 if (!tbody) return;
                 tbody.innerHTML = '';
+
+                if (tests.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-500 font-medium">
+                                <i class="ph-duotone ph-magnifying-glass text-4xl mb-2 text-gray-400"></i>
+                                <p>No matching tests found.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
 
                 tests.forEach(test => {
                     const statusBadge = test.isActive
@@ -1054,7 +1089,7 @@
                         : '<span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-bold">Inactive</span>';
 
                     const row = `
-                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
+                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
                     <td class="px-6 py-4">${test.name}</td>
                     <td class="px-6 py-4 text-gray-500">${test.code}</td>
                     <td class="px-6 py-4">Rs. ${test.price}</td>
@@ -1070,6 +1105,18 @@
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
             }
+
+            // Search Filter Logic
+            document.getElementById('test-search-input')?.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                
+                const filteredTests = allTests.filter(test => 
+                    (test.name && test.name.toLowerCase().includes(query)) || 
+                    (test.code && test.code.toLowerCase().includes(query))
+                );
+                
+                renderTestsTable(filteredTests);
+            });
 
             // ==========================================
             // 5. UI NAVIGATION & SIDEBAR
@@ -1093,48 +1140,42 @@
             document.querySelectorAll('#sidebar-nav .nav-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
+
                     document.querySelectorAll('#sidebar-nav .nav-link').forEach(nav => {
                         nav.classList.remove('bg-white/10', 'text-white', 'active-nav');
                         nav.classList.add('text-gray-300');
                         const icon = nav.querySelector('.nav-icon');
                         if (icon) icon.classList.replace('text-white', 'text-gray-400');
                     });
+
                     link.classList.add('bg-white/10', 'text-white', 'active-nav');
                     link.classList.remove('text-gray-300');
                     const activeIcon = link.querySelector('.nav-icon');
                     if (activeIcon) activeIcon.classList.replace('text-gray-400', 'text-white');
 
-                    switchSection(link.getAttribute('data-target'), link.getAttribute('data-title'));
-                    if (link.getAttribute('data-target') === 'section-completed-reports') {
+                    const targetId = link.getAttribute('data-target');
+                    switchSection(targetId, link.getAttribute('data-title'));
+
+                    // ==========================================
+                    // CALL THE RELEVANT API BASED ON THE TAB
+                    // ==========================================
+                    if (targetId === 'section-dashboard') {
+                        fetchPathologistStats();
+                    } else if (targetId === 'section-pending-tests') {
+                        fetchPendingResults();
+                    } else if (targetId === 'section-completed-reports') {
                         fetchCompletedReports();
+                    } else if (targetId === 'section-manage-tests') {
+                        fetchTests();
+                    } else if (targetId === 'section-add-test') {
+                        loadInventoryItems();
+                    } else if (targetId === 'section-settings') {
+                        loadSignature();
                     }
+
                     if (window.innerWidth < 768) toggleSidebar();
                 });
             });
-
-            const sidebar = document.getElementById('sidebar');
-            const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-            function toggleSidebar() {
-                sidebar?.classList.toggle('-translate-x-full');
-                sidebarBackdrop?.classList.toggle('hidden');
-            }
-            document.getElementById('open-mobile-sidebar')?.addEventListener('click', toggleSidebar);
-            document.getElementById('close-mobile-sidebar')?.addEventListener('click', toggleSidebar);
-            sidebarBackdrop?.addEventListener('click', toggleSidebar);
-
-            const profileBtn = document.getElementById('profile-btn');
-            const profileMenu = document.getElementById('profile-menu');
-            if (profileBtn && profileMenu) {
-                profileBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    profileMenu.classList.toggle('hidden');
-                });
-                document.addEventListener('click', (e) => {
-                    if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
-                        profileMenu.classList.add('hidden');
-                    }
-                });
-            }
 
             // ==========================================
             // 6. MODALS
@@ -1164,7 +1205,6 @@
                     backdrop.classList.add('hidden');
                 }, 300);
             }
-
 
             document.addEventListener('click', async (e) => {
                 if (e.target.closest('.btn-open-verify')) {
@@ -1271,6 +1311,7 @@
                     this.disabled = false;
                 }
             });
+
             document.getElementById('CloseVerifyTestX')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
             document.getElementById('CloseVerifyTestBtn')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
             document.getElementById('BtnRejectSample')?.addEventListener('click', () => openModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
@@ -1283,6 +1324,9 @@
             // ==========================================
             // 7. DYNAMIC FORM FIELDS
             // ==========================================
+            // ==========================================
+            // 7. DYNAMIC FORM FIELDS
+            // ==========================================
             function setupDynamicFields(containerId, addBtnId, isUpdate) {
                 const container = document.getElementById(containerId);
                 const addBtn = document.getElementById(addBtnId);
@@ -1292,40 +1336,63 @@
                 const isParameter = containerId.includes('parameters');
 
                 addBtn.addEventListener('click', () => {
-                    const templateHTML = isParameter ? `
-                <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
-                        <input type="text" name="parameter_name[]" placeholder="e.g. Test" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                    </div>
-                    <div class="w-24">
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
-                        <input type="text" name="parameter_unit[]" placeholder="unit" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
-                        <input type="text" name="parameter_range[]" placeholder="range" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                    </div>
-                    <div>
-                        <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
-                    </div>
-                </div>` : `
-                <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row animate-fade-in">
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
-                        <select name="inventory_item[]" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white cursor-pointer">
-                            ${getInventoryOptionsHTML()} 
-                        </select>
-                    </div>
-                    <div class="w-32">
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
-                        <input type="number" name="inventory_quantity[]" value="1" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                    </div>
-                    <div>
-                        <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
-                    </div>
-                </div>`;
-                    container.insertAdjacentHTML('beforeend', templateHTML);
+                    if (isParameter) {
+                        const firstSelect = container.querySelector('.parameter-type-select');
+                        const currentType = firstSelect ? firstSelect.value : 'Quantitative';
+
+                        const numberHidden = currentType === 'Quantitative' ? '' : 'hidden';
+                        const dropdownHidden = currentType === 'Qualitative' ? '' : 'hidden';
+
+                        const templateHTML = `
+                        <div class="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
+                            <div class="w-36">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
+                                <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed text-gray-500" disabled>
+                                    <option value="${currentType}">${currentType}</option>
+                                </select>
+                                <input type="hidden" name="parameter_type[]" value="${currentType}">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
+                                <input type="text" name="parameter_name[]" placeholder="e.g. Parameter" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                            </div>
+                            <div class="w-24 param-number-fields ${numberHidden}">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
+                                <input type="text" name="parameter_unit[]" placeholder="unit" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                            </div>
+                            <div class="flex-1 param-number-fields ${numberHidden}">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
+                                <input type="text" name="parameter_range[]" placeholder="range" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                            </div>
+                            <div class="flex-1 param-dropdown-fields ${dropdownHidden}">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma separated)</label>
+                                <input type="text" placeholder="e.g. Positive, Negative" name="parameter_options[]"
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                            </div>
+                            <div class="pt-6">
+                                <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
+                            </div>
+                        </div>`;
+                        container.insertAdjacentHTML('beforeend', templateHTML);
+                    } else {
+                        const templateHTML = `
+                        <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row animate-fade-in">
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
+                                <select name="inventory_item[]" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white cursor-pointer">
+                                    ${getInventoryOptionsHTML()} 
+                                </select>
+                            </div>
+                            <div class="w-32">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
+                                <input type="number" name="inventory_quantity[]" value="1" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                            </div>
+                            <div>
+                                <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
+                            </div>
+                        </div>`;
+                        container.insertAdjacentHTML('beforeend', templateHTML);
+                    }
                 });
 
                 container.addEventListener('click', (e) => {
@@ -1335,13 +1402,52 @@
                         if (row) row.remove();
                     }
                 });
+
+                container.addEventListener('focusin', (e) => {
+                    if (e.target.classList.contains('parameter-type-select')) {
+                        e.target.dataset.prev = e.target.value;
+                    }
+                });
+
+                container.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('parameter-type-select')) {
+                        const allRows = container.querySelectorAll('.parameter-row');
+
+                        if (allRows.length > 1) {
+                            if (!confirm('Changing the Test Type will delete all other parameters. Continue?')) {
+                                e.target.value = e.target.dataset.prev;
+                                return;
+                            }
+                            for (let i = 1; i < allRows.length; i++) {
+                                allRows[i].remove();
+                            }
+                        }
+
+                        e.target.dataset.prev = e.target.value;
+                        const row = e.target.closest('.parameter-row');
+                        const val = e.target.value;
+
+                        const numberFields = row.querySelectorAll('.param-number-fields');
+                        const dropdownFields = row.querySelector('.param-dropdown-fields');
+
+                        if (val === 'Quantitative') {
+                            numberFields.forEach(f => f.classList.remove('hidden'));
+                            if (dropdownFields) dropdownFields.classList.add('hidden');
+                        } else if (val === 'Qualitative') {
+                            numberFields.forEach(f => f.classList.add('hidden'));
+                            if (dropdownFields) dropdownFields.classList.remove('hidden');
+                        } else if (val === 'Observational' || val === 'Image') {
+                            numberFields.forEach(f => f.classList.add('hidden'));
+                            if (dropdownFields) dropdownFields.classList.add('hidden');
+                        }
+                    }
+                });
             }
 
             setupDynamicFields('add-parameters-container', 'btn-add-parameter', false);
             setupDynamicFields('add-requirements-container', 'btn-add-item', false);
             setupDynamicFields('update-parameters-container', 'btn-update-add-parameter', true);
             setupDynamicFields('update-requirements-container', 'btn-update-add-item', true);
-
             // ==========================================
             // 8. FORM BUTTON ACTIONS
             // ==========================================
@@ -1366,13 +1472,18 @@
             // 9. CRUD OPERATIONS
             // ==========================================
 
-            // --- CREATE ---
             const btnSaveTest = document.querySelector('#AddTestFormSection button.bg-sidebarBg');
+
             if (btnSaveTest) {
                 btnSaveTest.addEventListener('click', async () => {
                     const form = document.getElementById('AddTestFormSection');
                     const formData = new FormData(form);
+
                     clearValidationErrors(form);
+
+                    const originalText = btnSaveTest.innerText;
+                    btnSaveTest.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Saving...';
+                    btnSaveTest.disabled = true;
 
                     try {
                         const response = await fetch('/tests/add', {
@@ -1380,29 +1491,33 @@
                             headers: fetchHeaders,
                             body: formData
                         });
+
                         const result = await response.json();
 
                         if (response.status === 422) {
                             displayValidationErrors(form, result.errors);
-                            return;
+                            const firstError = form.querySelector('.border-red-500');
+                            if (firstError) {
+                                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
                         }
-
-                        if (response.ok && result.status === 200) {
-                            alert('Test added successfully!');
+                        else if (response.ok && (result.status === true || response.status === 201)) {
                             backToTestsList();
                             fetchTests();
-                        } else {
-                            alert(result.message || 'Error adding test.');
+                        }
+                        else {
+                            console.error('Backend Error:', result.message);
                         }
                     } catch (error) {
-                        console.error('Error in Add:', error);
+                        console.error('Error in Add API Call:', error);
+                    } finally {
+                        btnSaveTest.innerText = originalText;
+                        btnSaveTest.disabled = false;
                     }
                 });
             }
 
-            // --- READ (EDIT) & DELETE ---
             document.getElementById('department-tests-table')?.addEventListener('click', async (e) => {
-                // EDIT
                 if (e.target.closest('.btn-edit-test')) {
                     const testId = e.target.closest('.btn-edit-test').dataset.id;
                     const form = document.getElementById('UpdateTestFormSection');
@@ -1413,7 +1528,7 @@
                         const response = await fetch(`/tests/${testId}`, { headers: fetchHeaders });
                         const result = await response.json();
 
-                        if (result.status === 200) {
+                        if (result.status === true) {
                             const test = result.data;
                             form.querySelector('input[name="name"]').value = test.name || '';
                             form.querySelector('input[name="code"]').value = test.code || '';
@@ -1471,29 +1586,34 @@
                             }
                             switchSection('section-update-test', 'Update Test');
                         } else {
-                            alert('Failed to fetch test details.');
+                            console.error('Fetch Error:', result.message);
                         }
                     } catch (error) {
                         console.error('Error fetching test:', error);
                     }
                 }
 
-                // DELETE
                 if (e.target.closest('.btn-delete-test')) {
-                    const testId = e.target.closest('.btn-delete-test').dataset.id;
-                    if (confirm('Are you sure you want to delete this test?')) {
-                        try {
-                            const response = await fetch(`/tests/${testId}`, { method: 'DELETE', headers: fetchHeaders });
-                            if ((await response.json()).status === 200) fetchTests();
-                            else alert('Failed to delete test.');
-                        } catch (error) {
-                            console.error('Error deleting test:', error);
+                    const btn = e.target.closest('.btn-delete-test');
+                    const testId = btn.dataset.id;
+                    const row = btn.closest('tr');
+
+                    try {
+                        const response = await fetch(`/tests/${testId}`, { method: 'DELETE', headers: fetchHeaders });
+                        const result = await response.json();
+                        if (result.status === true) {
+                            // Update global allTests array
+                            allTests = allTests.filter(t => t.id != testId);
+                            
+                            row.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
+                            setTimeout(() => row.remove(), 300);
                         }
+                    } catch (error) {
+                        console.error('Error deleting test:', error);
                     }
                 }
             });
 
-            // --- UPDATE ---
             const btnUpdateSubmit = document.querySelector('#UpdateTestFormSection button.bg-teal-600');
             if (btnUpdateSubmit) {
                 btnUpdateSubmit.addEventListener('click', async () => {
@@ -1502,7 +1622,7 @@
                     if (!testId) return alert('No Test ID found.');
 
                     const formData = new FormData(form);
-                    formData.append('_method', 'PUT'); // Spoof PUT 
+                    formData.append('_method', 'PUT');
                     clearValidationErrors(form);
 
                     try {
@@ -1518,12 +1638,11 @@
                             return;
                         }
 
-                        if (response.ok && (result.status === 200 || result.status === 'success')) {
-                            alert('Test updated successfully!');
+                        if (result.status === true) {
                             backToTestsList();
                             fetchTests();
                         } else {
-                            alert(result.message || 'Error updating test.');
+                            console.error('Update Error:', result.message);
                         }
                     } catch (error) {
                         console.error('Error updating test:', error);
@@ -1648,95 +1767,70 @@
             // ==========================================
             // 10. INITIALIZATION CALLS
             // ==========================================
-            loadInventoryItems();
-            fetchTests();
-            fetchPendingResults();
             fetchPathologistStats();
-            fetchCompletedReports();
+
             // ==========================================
             // 11. SETTINGS & PROFILE MANAGEMENT
             // ==========================================
+            function displaySignatureMessage(message, isError = false) {
+                let msgContainer = document.getElementById('signature-message');
 
-            // Self-contained error helper specifically for these forms
-            function showFormErrors(form, errors) {
-                // Clear previous errors
-                form.querySelectorAll('.text-red-500').forEach(el => el.remove());
-                form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
-
-                for (const [key, messages] of Object.entries(errors)) {
-                    const input = form.querySelector(`[name="${key}"]`);
-                    if (input) {
-                        input.classList.add('border-red-500');
-                        const err = document.createElement('p');
-                        err.className = 'text-red-500 text-xs mt-1 font-bold animate-fade-in';
-                        err.innerText = messages[0];
-
-                        // Append exactly after the input wrapper
-                        input.parentElement.appendChild(err);
-                    }
+                if (!msgContainer) {
+                    msgContainer = document.createElement('div');
+                    msgContainer.id = 'signature-message';
+                    const sigUploadSection = document.getElementById('sigUploadState').parentElement;
+                    sigUploadSection.insertBefore(msgContainer, sigUploadSection.firstChild);
                 }
+
+                msgContainer.className = 'w-full mb-4 px-4 py-2 rounded-lg text-sm font-bold text-center animate-fade-in';
+
+                if (isError) {
+                    msgContainer.classList.add('bg-red-50', 'text-red-600', 'border', 'border-red-200');
+                } else {
+                    msgContainer.classList.add('bg-green-50', 'text-green-600', 'border', 'border-green-200');
+                }
+
+                msgContainer.innerText = message;
+                msgContainer.style.display = 'block';
+
+                setTimeout(() => {
+                    msgContainer.style.display = 'none';
+                }, 5000);
             }
 
-            // --- 1. Toggle Password Visibility ---
-            document.querySelectorAll('.toggle-password').forEach(icon => {
-                icon.addEventListener('click', function () {
-                    const input = this.previousElementSibling;
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        this.classList.replace('ph-eye', 'ph-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        this.classList.replace('ph-eye-slash', 'ph-eye');
-                    }
-                });
-            });
-
-            if (!userId) {
-                console.warn('User ID meta tag not found. Settings page features will not work.');
-                return; // Stop execution to prevent errors if not logged in
-            }
-
-            // --- 2. Signature Management ---
             const sigUploadState = document.getElementById('sigUploadState');
             const sigPreviewState = document.getElementById('sigPreviewState');
             const sigPreviewImage = document.getElementById('sigPreviewImage');
             const signatureFileInput = document.getElementById('signatureFileInput');
 
-            // Fetch and display existing signature
             async function loadSignature() {
                 try {
                     const res = await fetch(`/user/${userId}/signature`, {
                         headers: { 'Accept': 'application/json' }
                     });
-                    const data = await res.json();
+                    const responseData = await res.json();
 
-                    hasSignature = !!(data.status === 200 && data.signature);
-
-                    if (data.status === 200 && data.signature) {
-                        // Prevent broken image paths by ensuring leading slash
-                        sigPreviewImage.src = '/' + data.signature.replace(/^\//, '');
+                    if (responseData.success && responseData.data && responseData.data.signature) {
+                        hasSignature = true;
+                        sigPreviewImage.src = '/' + responseData.data.signature.replace(/^\//, '');
                         sigUploadState.classList.add('hidden');
                         sigPreviewState.classList.remove('hidden');
                         sigPreviewState.classList.add('flex');
                     } else {
-                        // Ensure upload state is shown if no signature exists
+                        hasSignature = false;
                         sigUploadState.classList.remove('hidden');
                         sigPreviewState.classList.add('hidden');
                         sigPreviewState.classList.remove('flex');
                     }
                 } catch (e) {
                     console.error('Error loading signature:', e);
+                    displaySignatureMessage('Failed to connect to the server to load signature.', true);
                 }
             }
 
-            // Initial Load
-            loadSignature();
-
-            // Bind Upload Buttons
             document.getElementById('btnUploadNewSig')?.addEventListener('click', () => signatureFileInput.click());
             document.getElementById('btnChangeSig')?.addEventListener('click', () => signatureFileInput.click());
 
-            // Handle File Selection & Upload
             signatureFileInput?.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1748,6 +1842,9 @@
                 const originalText = btn ? btn.innerText : 'Upload';
                 if (btn) btn.innerText = 'Uploading...';
 
+                const msgContainer = document.getElementById('signature-message');
+                if (msgContainer) msgContainer.style.display = 'none';
+
                 try {
                     const response = await fetch(`/user/${userId}/signature`, {
                         method: 'POST',
@@ -1759,24 +1856,27 @@
                     });
 
                     const result = await response.json();
-                    if (response.ok && result.status === 200) {
-                        loadSignature(); // Refresh the image preview automatically
-                    } else {
-                        alert(result.message || 'Error uploading signature.');
+
+                    if (response.status === 422) {
+                        displaySignatureMessage(result.errors.signature[0], true);
+                    }
+                    else if (response.ok && result.success) {
+                        displaySignatureMessage(result.message || 'Signature updated successfully!', false);
+                        loadSignature();
+                    }
+                    else {
+                        displaySignatureMessage(result.message || 'Error uploading signature.', true);
                     }
                 } catch (error) {
                     console.error('Upload Error:', error);
-                    alert('A network error occurred while uploading.');
+                    displaySignatureMessage('A network error occurred while uploading.', true);
                 } finally {
                     if (btn) btn.innerText = originalText;
-                    signatureFileInput.value = ''; // Reset input to allow re-uploading the same file if needed
+                    signatureFileInput.value = '';
                 }
             });
 
-            // Handle Delete Signature
             document.getElementById('btnDeleteSig')?.addEventListener('click', async () => {
-                if (!confirm('Are you sure you want to permanently delete your signature?')) return;
-
                 try {
                     const response = await fetch(`/user/${userId}/signature`, {
                         method: 'DELETE',
@@ -1786,112 +1886,21 @@
                         }
                     });
 
-                    if (response.ok) {
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        displaySignatureMessage(result.message || 'Signature deleted successfully.', false);
                         sigPreviewImage.src = '';
                         sigPreviewState.classList.add('hidden');
                         sigPreviewState.classList.remove('flex');
                         sigUploadState.classList.remove('hidden');
+                        hasSignature = false;
                     } else {
-                        alert('Failed to delete signature.');
+                        displaySignatureMessage(result.message || 'Failed to delete signature.', true);
                     }
                 } catch (e) {
                     console.error('Delete Error:', e);
-                }
-            });
-
-            // --- 3. Update Email ---
-            document.getElementById('UpdateEmailForm')?.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const form = e.target;
-                const btn = document.getElementById('btnSaveEmail');
-                const originalText = btn.innerText;
-
-                // UI Loading State
-                btn.innerText = 'Saving...';
-                btn.disabled = true;
-
-                const formData = new FormData(form);
-                formData.append('_method', 'PUT');
-
-                try {
-                    const response = await fetch(`/user/${userId}/email`, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: formData
-                    });
-
-                    const result = await response.json();
-
-                    if (response.status === 422) {
-                        showFormErrors(form, result.errors);
-                    } else if (response.ok && result.status === 200) {
-                        // Clear errors on success
-                        form.querySelectorAll('.text-red-500').forEach(el => el.remove());
-                        form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
-                        alert('Email updated successfully!');
-                    } else {
-                        alert(result.message || 'Failed to update email.');
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert('A network error occurred.');
-                } finally {
-                    // Restore UI
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                }
-            });
-
-            // --- 4. Update Password ---
-            document.getElementById('UpdatePasswordForm')?.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const form = e.target;
-                const btn = document.getElementById('btnSavePassword');
-                const originalText = btn.innerText;
-
-                // UI Loading State
-                btn.innerText = 'Updating...';
-                btn.disabled = true;
-
-                const formData = new FormData(form);
-                formData.append('_method', 'PUT');
-
-                try {
-                    const response = await fetch(`/user/${userId}/password`, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: formData
-                    });
-
-                    const result = await response.json();
-
-                    if (response.status === 422) {
-                        showFormErrors(form, result.errors);
-                    } else if (result.status === 400) {
-                        // Manual error mapping for incorrect current password matching our backend logic
-                        showFormErrors(form, { 'password': [result.message] });
-                    } else if (response.ok && result.status === 200) {
-                        // Clear errors and reset fields
-                        form.querySelectorAll('.text-red-500').forEach(el => el.remove());
-                        form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
-                        form.reset(); // Empty the password fields
-                        alert('Password updated successfully!');
-                    } else {
-                        alert(result.message || 'Failed to update password.');
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert('A network error occurred.');
-                } finally {
-                    // Restore UI
-                    btn.innerText = originalText;
-                    btn.disabled = false;
+                    displaySignatureMessage('A network error occurred while deleting.', true);
                 }
             });
         });

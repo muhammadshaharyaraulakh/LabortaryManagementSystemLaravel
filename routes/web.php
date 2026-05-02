@@ -116,8 +116,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/tests/add', [TestController::class, 'add']);
     Route::put('/tests/{id}', [TestController::class, 'update']);
     Route::delete('/tests/{id}', [TestController::class, 'destroy']);
-    Route::get('/inventory', [InventoryManagement::class, 'index']);
-});
+    Route::get('/deprtmentTests',[TestController::class,'deprtmentTests']);
+}); 
 Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
 Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
 Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
@@ -190,3 +190,5 @@ Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class,
 
 
 Route::get('/whoami', fn() => auth()->user());
+
+Route::get('/InventoryItems', [TestController::class, 'inventoryItems']);

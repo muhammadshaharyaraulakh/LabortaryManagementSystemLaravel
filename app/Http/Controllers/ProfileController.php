@@ -325,32 +325,21 @@ class ProfileController extends Controller
     // =========================
     public function addSignature(Request $request, $id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found',
-                'data' => null
-            ], Response::HTTP_NOT_FOUND);
-        }
-
+        $user = User::findOrFail($id);
         $request->validate([
-            'signature' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'signature' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048']
         ]);
 
-        if ($request->hasFile('signature')) {
-            if (!empty($user->signature) && file_exists(public_path($user->signature))) {
-                unlink(public_path($user->signature));
-            }
-
-            $file = $request->file('signature');
-            $signatureName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('Signatures'), $signatureName);
-
-            $user->signature = 'Signatures/' . $signatureName;
-            $user->save();
+        if (!empty($user->signature) && file_exists(public_path($user->signature))) {
+            unlink(public_path($user->signature));
         }
+
+        $file = $request->file('signature');
+        $signatureName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('Signatures'), $signatureName);
+
+        $user->signature = 'Signatures/' . $signatureName;
+        $user->save();
 
         return response()->json([
             'success' => true,
@@ -363,15 +352,7 @@ class ProfileController extends Controller
     // =========================
     public function getSignature(Request $request, $id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found',
-                'data' => null
-            ], Response::HTTP_NOT_FOUND);
-        }
+        $user = User::findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -411,15 +392,7 @@ class ProfileController extends Controller
     // =========================
     public function deleteSignature($id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found',
-                'data' => null
-            ], Response::HTTP_NOT_FOUND);
-        }
+        $user = User::findOrFail($id);
 
         if ($user->signature && file_exists(public_path($user->signature))) {
             unlink(public_path($user->signature));
