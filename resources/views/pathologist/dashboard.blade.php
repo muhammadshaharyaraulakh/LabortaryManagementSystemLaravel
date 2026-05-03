@@ -29,13 +29,7 @@
                 <span class="ml-3 nav-text whitespace-nowrap">Dashboard</span>
             </a>
 
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-pending-tests" data-title="Pending Tests">
-                <i
-                    class="ph-duotone ph-flask text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Pending Tests</span>
-            </a>
+
 
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
@@ -126,68 +120,24 @@
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
 
             <div id="section-dashboard" class="content-section block animate-fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full max-w-7xl mx-auto">
-                    <div
-                        class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
-                        <div
-                            class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-hourglass text-2xl"></i>
-                        </div>
-                        <h3 id="pending-approvals-count" class="text-3xl font-extrabold text-black mb-1">0</h3>
-                        <p class="text-gray-500 font-medium">Pending Approvals</p>
-                    </div>
-
-                    <div
-                        class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
-                        <div
-                            class="w-12 h-12 rounded-lg bg-green-50 text-green-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-check-circle text-2xl"></i>
-                        </div>
-                        <h3 id="completed-today-count" class="text-3xl font-extrabold text-black mb-1">0</h3>
-                        <p class="text-gray-500 font-medium">Reports Completed (Today)</p>
-                    </div>
-
-                    <div
-                        class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
-                        <div class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-warning-circle text-2xl"></i>
-                        </div>
-                        <h3 id="critical-results-count" class="text-3xl font-extrabold text-black mb-1">0</h3>
-                        <p class="text-gray-500 font-medium">Critical/Abnormal Results</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="section-pending-tests" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
                             <i class="ph-duotone ph-flask text-2xl"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl font-extrabold text-gray-800">Pending Tests</h2>
-                            <p class="text-sm text-gray-500 font-medium">Review, edit, and verify results entered by
-                                technicians</p>
+                            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Department Dashboard</h2>
+                            <p class="text-sm text-gray-500 font-medium mt-1">Review and verify pending results for your department</p>
                         </div>
                     </div>
                 </div>
 
-                <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
-                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4">
-                        <div class="relative w-full sm:w-96">
-                            <i
-                                class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                            <input type="text" placeholder="Search by Patient ID or Test Name..."
-                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50/50 focus:bg-white transition-colors text-sm font-medium">
-                        </div>
-                    </div>
-
+                <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th scope="col" class="px-6 py-4">Test ID</th>
+                                    <th scope="col" class="px-6 py-4"><b>Receipt</b> ID</th>
                                     <th scope="col" class="px-6 py-4">Patient Name</th>
                                     <th scope="col" class="px-6 py-4">Test Name</th>
                                     <th scope="col" class="px-6 py-4">Sample Type</th>
@@ -200,6 +150,8 @@
                     </div>
                 </div>
             </div>
+
+
 
             <div id="section-completed-reports" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -216,32 +168,16 @@
 
                 <div
                     class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
-                    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row items-center gap-4">
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">From</label>
-                            <input type="date" id="reportStartDate"
-                                class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white transition-colors font-medium text-gray-700">
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">To</label>
-                            <input type="date" id="reportEndDate"
-                                class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white transition-colors font-medium text-gray-700">
-                        </div>
-                        <button id="btnFilterReports"
-                            class="ml-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors cursor-pointer">
-                            Filter Reports
-                        </button>
-                    </div>
+
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th scope="col" class="px-6 py-4">Report ID</th>
+                                    <th scope="col" class="px-6 py-4 text-gray-400 font-medium"><b>Receipt</b> ID</th>
                                     <th scope="col" class="px-6 py-4">Patient Name</th>
-                                    <th scope="col" class="px-6 py-4">Test Name</th>
-                                    <th scope="col" class="px-6 py-4">Completion Date</th>
-                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                                    <th scope="col" class="px-6 py-4">Tests Count</th>
+                                    <th scope="col" class="px-6 py-4 text-right">Completion Status</th>
                                 </tr>
                             </thead>
                             <tbody id="completed-reports-table">
@@ -319,6 +255,9 @@
                 <div
                     class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full p-6 md:p-8 mb-8">
                     <form id="AddTestFormSection" class="space-y-6">
+                        <div
+                            class="form-general-error hidden bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 mb-6 font-bold text-sm">
+                        </div>
 
                         <div class="border-b border-gray-100 pb-4 mb-4">
                             <h3 class="text-lg font-bold text-gray-800"><i
@@ -392,6 +331,8 @@
                             <p class="text-xs text-gray-500 mt-1">Define the values to be checked within this test.</p>
                         </div>
 
+                        <div class="parameter-error-summary"></div>
+
                         <div id="add-parameters-container" class="space-y-4">
                             <div
                                 class="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row">
@@ -451,6 +392,8 @@
                                 is performed.</p>
                         </div>
 
+                        <div class="inventory-error-summary"></div>
+
                         <div id="add-requirements-container" class="space-y-4">
                             <div
                                 class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row">
@@ -506,6 +449,9 @@
                 <div
                     class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full p-6 md:p-8 mb-8">
                     <form id="UpdateTestFormSection" class="space-y-6">
+                        <div
+                            class="form-general-error hidden bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 mb-6 font-bold text-sm">
+                        </div>
                         <div class="border-b border-gray-100 pb-4 mb-4">
                             <h3 class="text-lg font-bold text-gray-800">
                                 <i class="ph-duotone ph-info text-teal-600 mr-2"></i>1. Basic Information
@@ -515,7 +461,7 @@
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Test Name <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="name" value="Complete Blood Count (CBC)"
+                            <input type="text" name="name" placeholder="e.g. Complete Blood Count"
                                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-gray-50/50 transition-colors">
                         </div>
 
@@ -523,13 +469,13 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Test Code <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" name="code" value="HEM-001"
+                                <input type="text" name="code" placeholder="CBC-01"
                                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-gray-50/50 transition-colors">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Price (Rs.) <span
                                         class="text-red-500">*</span></label>
-                                <input type="number" step="0.01" name="price" value="800"
+                                <input type="number" step="0.01" name="price" placeholder="800"
                                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-gray-50/50 transition-colors">
                             </div>
                         </div>
@@ -537,7 +483,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Sample Type</label>
-                                <input type="text" name="type" value="Blood (EDTA)"
+                                <input type="text" name="type" placeholder="e.g. Blood, Urine"
                                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-gray-50/50 transition-colors">
                             </div>
                             <div>
@@ -551,7 +497,8 @@
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Instructions for User</label>
                             <textarea name="instructions" rows="3"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-gray-50/50 resize-none transition-colors"></textarea>
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-gray-50/50 resize-none transition-colors"
+                                placeholder="e.g. Fasting required for 12 hours"></textarea>
                         </div>
 
                         <div class="pt-2">
@@ -560,7 +507,8 @@
                                 <div
                                     class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-teal-500 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
                                 </div>
-                                <span class="text-sm font-bold text-gray-700">Test is Active</span>
+                                <span class="text-sm font-bold text-gray-700">Test is Active (Visible to
+                                    Reception)</span>
                             </label>
                         </div>
 
@@ -575,37 +523,13 @@
                                     <i class="ph-bold ph-plus"></i> Add Parameter
                                 </button>
                             </div>
+                            <p class="text-xs text-gray-500 mt-1">Define the values to be checked within this test.</p>
                         </div>
 
+                        <div class="parameter-error-summary"></div>
+
                         <div id="update-parameters-container" class="space-y-4">
-                            <div
-                                class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row">
-
-                                <div class="flex-1">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
-                                    <input type="text" name="parameter_name[]" value="Hemoglobin"
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-
-                                <div class="w-24">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
-                                    <input type="text" name="parameter_unit[]" value="g/dL"
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-
-                                <div class="flex-1">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
-                                    <input type="text" name="parameter_range[]" value="13.8 - 17.2"
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-
-                                <div>
-                                    <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row">
-                                        <i class="ph-bold ph-trash"></i>
-                                    </button>
-                                </div>
-
-                            </div>
+                            <!-- Populated dynamically via JS -->
                         </div>
 
                         <!-- Inventory -->
@@ -619,34 +543,14 @@
                                     <i class="ph-bold ph-plus"></i> Add Item
                                 </button>
                             </div>
+                            <p class="text-xs text-gray-500 mt-1">Select items to be deducted from stock when this test
+                                is performed.</p>
                         </div>
 
+                        <div class="inventory-error-summary"></div>
+
                         <div id="update-requirements-container" class="space-y-4">
-                            <div
-                                class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row">
-
-                                <div class="flex-1">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
-                                    <select name="inventory_item[]"
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer">
-                                        <option>5cc Syringe</option>
-                                        <option selected>EDTA Tube</option>
-                                    </select>
-                                </div>
-
-                                <div class="w-32">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
-                                    <input type="number" name="inventory_quantity[]" value="1"
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-
-                                <div>
-                                    <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row">
-                                        <i class="ph-bold ph-trash"></i>
-                                    </button>
-                                </div>
-
-                            </div>
+                            <!-- Populated dynamically via JS -->
                         </div>
 
                         <!-- Buttons -->
@@ -972,10 +876,24 @@
             function clearValidationErrors(form) {
                 form.querySelectorAll('.validation-error').forEach(el => el.remove());
                 form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+                const formAlert = form.querySelector('.form-general-error');
+                if (formAlert) {
+                    formAlert.classList.add('hidden');
+                    formAlert.innerHTML = '';
+                }
             }
 
             function displayValidationErrors(form, errors) {
                 clearValidationErrors(form);
+
+                const paramEntries = [];
+                const inventoryEntries = [];
+                const generalMessages = [];
+
+                // Identify summary containers
+                const paramSummary = form.querySelector('.parameter-error-summary');
+                const inventorySummary = form.querySelector('.inventory-error-summary');
+                const formAlert = form.querySelector('.form-general-error');
 
                 for (const [key, messages] of Object.entries(errors)) {
                     let inputElement = null;
@@ -988,15 +906,84 @@
                         inputElement = form.querySelector(`[name="${key}"]`);
                     }
 
-                    if (inputElement) {
-                        inputElement.classList.add('border-red-500');
-                        const errorText = document.createElement('p');
-                        errorText.className = 'text-red-500 text-xs mt-1 font-bold validation-error animate-fade-in';
-                        errorText.innerText = messages[0];
-                        inputElement.parentNode.appendChild(errorText);
+                    if (key.startsWith('parameter_')) {
+                        messages.forEach(msg => {
+                            paramEntries.push({ element: inputElement, message: msg, key: key });
+                        });
+                        if (inputElement) inputElement.classList.add('border-red-500');
+                    } else if (key.startsWith('inventory_')) {
+                        messages.forEach(msg => {
+                            inventoryEntries.push({ element: inputElement, message: msg, key: key });
+                        });
+                        if (inputElement) inputElement.classList.add('border-red-500');
                     } else {
-                        console.warn(`Validation error for field not in DOM: ${key}`, messages);
+                        if (inputElement) {
+                            inputElement.classList.add('border-red-500');
+                            messages.forEach(msg => {
+                                const errorText = document.createElement('p');
+                                errorText.className = 'text-red-500 text-xs mt-1 font-bold validation-error animate-fade-in';
+                                errorText.innerText = msg;
+                                inputElement.parentNode.appendChild(errorText);
+                            });
+                        } else {
+                            messages.forEach(msg => generalMessages.push(msg));
+                        }
                     }
+                }
+
+                const sortEntries = (entries) => {
+                    return entries.sort((a, b) => {
+                        if (!a.element) return -1;
+                        if (!b.element) return 1;
+                        return a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+                    });
+                };
+
+                const cleanMsg = (msg, key) => {
+                    if (key.includes('.')) {
+                        const [field, index] = key.split('.');
+                        const rowNum = parseInt(index) + 1;
+                        const readableField = field.replace('parameter_', '').replace('inventory_', '').replace('_', ' ');
+                        const rawField = `${field}.${index}`;
+                        let newMsg = msg.replace(rawField, readableField).replace(field, readableField);
+                        return `Row ${rowNum}: ${newMsg}`;
+                    }
+                    return msg;
+                };
+
+                // Handle Parameter errors universal paragraph
+                if (paramEntries.length > 0 && paramSummary) {
+                    sortEntries(paramEntries);
+                    const p = document.createElement('p');
+                    p.className = 'text-red-500 text-sm font-bold validation-error animate-fade-in mb-4 bg-red-50 p-3 rounded-xl border border-red-100';
+                    p.innerHTML = paramEntries.map(e => `• ${cleanMsg(e.message, e.key)}`).join('<br>');
+                    paramSummary.appendChild(p);
+
+                    // Remove after 3 seconds
+                    setTimeout(() => {
+                        if (p.parentNode) p.classList.add('opacity-0');
+                        setTimeout(() => { if (p.parentNode) p.remove(); }, 300);
+                    }, 3000);
+                }
+
+                // Handle Inventory errors distinctly
+                if (inventoryEntries.length > 0 && inventorySummary) {
+                    sortEntries(inventoryEntries);
+                    const p = document.createElement('p');
+                    p.className = 'text-red-500 text-sm font-bold validation-error animate-fade-in mb-4 bg-red-50 p-3 rounded-xl border border-red-100';
+                    p.innerHTML = inventoryEntries.map(e => `• ${cleanMsg(e.message, e.key)}`).join('<br>');
+                    inventorySummary.appendChild(p);
+
+                    // Remove after 3 seconds
+                    setTimeout(() => {
+                        if (p.parentNode) p.classList.add('opacity-0');
+                        setTimeout(() => { if (p.parentNode) p.remove(); }, 300);
+                    }, 3000);
+                }
+
+                if (generalMessages.length > 0 && formAlert) {
+                    formAlert.classList.remove('hidden');
+                    formAlert.innerHTML = generalMessages.map(msg => `• ${msg}`).join('<br>');
                 }
             }
 
@@ -1017,6 +1004,8 @@
             }
 
             async function loadInventoryItems() {
+                if (inventoryItemsList.length > 0) return; // Use already fetched data
+
                 try {
                     const response = await fetch('/InventoryItems', { headers: fetchHeaders });
                     const result = await response.json();
@@ -1109,12 +1098,12 @@
             // Search Filter Logic
             document.getElementById('test-search-input')?.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase().trim();
-                
-                const filteredTests = allTests.filter(test => 
-                    (test.name && test.name.toLowerCase().includes(query)) || 
+
+                const filteredTests = allTests.filter(test =>
+                    (test.name && test.name.toLowerCase().includes(query)) ||
                     (test.code && test.code.toLowerCase().includes(query))
                 );
-                
+
                 renderTestsTable(filteredTests);
             });
 
@@ -1160,8 +1149,6 @@
                     // CALL THE RELEVANT API BASED ON THE TAB
                     // ==========================================
                     if (targetId === 'section-dashboard') {
-                        fetchPathologistStats();
-                    } else if (targetId === 'section-pending-tests') {
                         fetchPendingResults();
                     } else if (targetId === 'section-completed-reports') {
                         fetchCompletedReports();
@@ -1298,7 +1285,6 @@
                         alert('Verified successfully!');
                         closeModal('VerifyTestModalBackdrop', 'VerifyTestModal');
                         fetchPendingResults();
-                        fetchPathologistStats();
                         fetchCompletedReports();
                     } else {
                         alert(res.message || 'Verification failed');
@@ -1481,6 +1467,39 @@
 
                     clearValidationErrors(form);
 
+                    // Client-side Validation
+                    const paramRows = form.querySelectorAll('.parameter-row');
+                    const invRows = form.querySelectorAll('.requirement-row');
+                    const validationErrors = {};
+
+                    if (paramRows.length === 0) {
+                        validationErrors['parameter_general'] = ['At least one medical parameter is required.'];
+                    } else {
+                        paramRows.forEach((row, i) => {
+                            const nameInput = row.querySelector('input[name="parameter_name[]"]');
+                            if (!nameInput.value.trim()) {
+                                validationErrors[`parameter_name.${i}`] = ['Parameter name is required.'];
+                            }
+                        });
+                    }
+
+                    if (invRows.length === 0) {
+                        validationErrors['inventory_general'] = ['At least one inventory item is required.'];
+                    } else {
+                        invRows.forEach((row, i) => {
+                            const itemSelect = row.querySelector('select[name="inventory_item[]"]');
+                            const qtyInput = row.querySelector('input[name="inventory_quantity[]"]');
+                            if (!itemSelect.value || !qtyInput.value || qtyInput.value <= 0) {
+                                validationErrors[`inventory_row.${i}`] = ['Please select an item and enter a valid quantity.'];
+                            }
+                        });
+                    }
+
+                    if (Object.keys(validationErrors).length > 0) {
+                        displayValidationErrors(form, validationErrors);
+                        return;
+                    }
+
                     const originalText = btnSaveTest.innerText;
                     btnSaveTest.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Saving...';
                     btnSaveTest.disabled = true;
@@ -1506,7 +1525,7 @@
                             fetchTests();
                         }
                         else {
-                            console.error('Backend Error:', result.message);
+                            displayValidationErrors(form, { general: [result.message || 'A server error occurred. Please try again.'] });
                         }
                     } catch (error) {
                         console.error('Error in Add API Call:', error);
@@ -1523,6 +1542,9 @@
                     const form = document.getElementById('UpdateTestFormSection');
                     form.dataset.testId = testId;
                     clearValidationErrors(form);
+
+                    // Ensure inventory is loaded
+                    await loadInventoryItems();
 
                     try {
                         const response = await fetch(`/tests/${testId}`, { headers: fetchHeaders });
@@ -1541,23 +1563,49 @@
                             const paramsContainer = document.getElementById('update-parameters-container');
                             paramsContainer.innerHTML = '';
                             if (test.parameters?.length) {
-                                test.parameters.forEach(param => {
+                                test.parameters.forEach((param, index) => {
+                                    const type = param.parameterType || 'Quantitative';
+                                    const numberHidden = type === 'Quantitative' ? '' : 'hidden';
+                                    const dropdownHidden = type === 'Qualitative' ? '' : 'hidden';
+
+                                    const typeSelectHTML = index === 0
+                                        ? `<select name="parameter_type[]" class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer">
+                                            <option value="Quantitative" ${type === 'Quantitative' ? 'selected' : ''}>Quantitative</option>
+                                            <option value="Qualitative" ${type === 'Qualitative' ? 'selected' : ''}>Qualitative</option>
+                                            <option value="Observational" ${type === 'Observational' ? 'selected' : ''}>Observational</option>
+                                            <option value="Image" ${type === 'Image' ? 'selected' : ''}>Image</option>
+                                          </select>`
+                                        : `<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed text-gray-500" disabled>
+                                            <option value="${type}">${type}</option>
+                                          </select>
+                                          <input type="hidden" name="parameter_type[]" value="${type}">`;
+
                                     paramsContainer.insertAdjacentHTML('beforeend', `
-                            <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row">
-                                <div class="flex-1">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
-                                    <input type="text" name="parameter_name[]" value="${param.parameterName}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-                                <div class="w-24">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
-                                    <input type="text" name="parameter_unit[]" value="${param.unit || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-                                <div class="flex-1">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
-                                    <input type="text" name="parameter_range[]" value="${param.normalRange || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-                                <div><button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button></div>
-                            </div>`);
+                                    <div class="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
+                                        <div class="w-36">
+                                            <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
+                                            ${typeSelectHTML}
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
+                                            <input type="text" name="parameter_name[]" value="${param.parameterName}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
+                                        </div>
+                                        <div class="w-24 param-number-fields ${numberHidden}">
+                                            <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
+                                            <input type="text" name="parameter_unit[]" value="${param.unit || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
+                                        </div>
+                                        <div class="flex-1 param-number-fields ${numberHidden}">
+                                            <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
+                                            <input type="text" name="parameter_range[]" value="${param.normalRange || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
+                                        </div>
+                                        <div class="flex-1 param-dropdown-fields ${dropdownHidden}">
+                                            <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma separated)</label>
+                                            <input type="text" name="parameter_options[]" value="${param.options || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
+                                        </div>
+                                        <div class="pt-6">
+                                            <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
+                                        </div>
+                                    </div>`);
                                 });
                             }
 
@@ -1566,19 +1614,19 @@
                             if (test.requirements?.length) {
                                 test.requirements.forEach(req => {
                                     reqContainer.insertAdjacentHTML('beforeend', `
-                            <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row">
-                                <div class="flex-1">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
-                                    <select name="inventory_item[]" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer" data-selected="${req.inventoryId}">
-                                        ${getInventoryOptionsHTML()}
-                                    </select>
-                                </div>
-                                <div class="w-32">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
-                                    <input type="number" name="inventory_quantity[]" value="${req.quantityUsed}" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                </div>
-                                <div><button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button></div>
-                            </div>`);
+                                    <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row animate-fade-in">
+                                        <div class="flex-1">
+                                            <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
+                                            <select name="inventory_item[]" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer" data-selected="${req.inventoryId}">
+                                                ${getInventoryOptionsHTML()}
+                                            </select>
+                                        </div>
+                                        <div class="w-32">
+                                            <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
+                                            <input type="number" name="inventory_quantity[]" value="${req.quantityUsed}" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
+                                        </div>
+                                        <div><button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button></div>
+                                    </div>`);
                                 });
                                 reqContainer.querySelectorAll('select').forEach(select => {
                                     if (select.dataset.selected) select.value = select.dataset.selected;
@@ -1604,7 +1652,7 @@
                         if (result.status === true) {
                             // Update global allTests array
                             allTests = allTests.filter(t => t.id != testId);
-                            
+
                             row.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
                             setTimeout(() => row.remove(), 300);
                         }
@@ -1619,11 +1667,48 @@
                 btnUpdateSubmit.addEventListener('click', async () => {
                     const form = document.getElementById('UpdateTestFormSection');
                     const testId = form.dataset.testId;
-                    if (!testId) return alert('No Test ID found.');
+                    if (!testId) return;
 
                     const formData = new FormData(form);
                     formData.append('_method', 'PUT');
                     clearValidationErrors(form);
+
+                    // Client-side Validation
+                    const paramRows = form.querySelectorAll('.parameter-row');
+                    const invRows = form.querySelectorAll('.requirement-row');
+                    const validationErrors = {};
+
+                    if (paramRows.length === 0) {
+                        validationErrors['parameter_general'] = ['At least one medical parameter is required.'];
+                    } else {
+                        paramRows.forEach((row, i) => {
+                            const nameInput = row.querySelector('input[name="parameter_name[]"]');
+                            if (!nameInput.value.trim()) {
+                                validationErrors[`parameter_name.${i}`] = ['Parameter name is required.'];
+                            }
+                        });
+                    }
+
+                    if (invRows.length === 0) {
+                        validationErrors['inventory_general'] = ['At least one inventory item is required.'];
+                    } else {
+                        invRows.forEach((row, i) => {
+                            const itemSelect = row.querySelector('select[name="inventory_item[]"]');
+                            const qtyInput = row.querySelector('input[name="inventory_quantity[]"]');
+                            if (!itemSelect.value || !qtyInput.value || qtyInput.value <= 0) {
+                                validationErrors[`inventory_row.${i}`] = ['Please select an item and enter a valid quantity.'];
+                            }
+                        });
+                    }
+
+                    if (Object.keys(validationErrors).length > 0) {
+                        displayValidationErrors(form, validationErrors);
+                        return;
+                    }
+
+                    const originalText = btnUpdateSubmit.innerText;
+                    btnUpdateSubmit.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Updating...';
+                    btnUpdateSubmit.disabled = true;
 
                     try {
                         const response = await fetch(`/tests/${testId}`, {
@@ -1635,17 +1720,23 @@
 
                         if (response.status === 422) {
                             displayValidationErrors(form, result.errors);
-                            return;
+                            const firstError = form.querySelector('.border-red-500');
+                            if (firstError) {
+                                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
                         }
-
-                        if (result.status === true) {
+                        else if (response.ok && result.status === true) {
                             backToTestsList();
                             fetchTests();
                         } else {
-                            console.error('Update Error:', result.message);
+                            displayValidationErrors(form, { general: [result.message || 'A server error occurred. Please try again.'] });
                         }
                     } catch (error) {
                         console.error('Error updating test:', error);
+                        displayValidationErrors(form, { general: ['A network error occurred. Please check your connection.'] });
+                    } finally {
+                        btnUpdateSubmit.innerText = originalText;
+                        btnUpdateSubmit.disabled = false;
                     }
                 });
             }
@@ -1659,20 +1750,27 @@
 
                     tbody.innerHTML = '';
 
-                    if (response.ok && result.status === 200 && result.data && result.data.length > 0) {
+                    if (response.ok && result.status === true && result.data && result.data.length > 0) {
                         result.data.forEach(order => {
                             order.tests.forEach(test => {
                                 const row = `
-                                    <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
-                                        <td class="px-6 py-4">TST-${test.pivot.id}</td>
+                                    <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+                                                <span class="text-xs text-gray-400"><b class="text-gray-600">Receipt</b>-${test.pivot.id}</span>
+                                            </div>
+                                        </td>
                                         <td class="px-6 py-4">${order.name}</td>
-                                        <td class="px-6 py-4">${test.name}</td>
-                                        <td class="px-6 py-4">${test.sampleType || 'N/A'}</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">${test.name}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">${test.sampleType || 'N/A'}</span>
+                                        </td>
                                         <td class="px-6 py-4 text-right">
                                             <button data-order-test-id="${test.pivot.id}"
                                                 data-patient-name="${order.name}"
                                                 data-test-name="${test.name}"
-                                                class="btn-open-verify bg-sidebarBg hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm cursor-pointer">
+                                                class="btn-open-verify bg-sidebarBg hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md cursor-pointer active:scale-95">
                                                 Verify Results
                                             </button>
                                         </td>
@@ -1683,9 +1781,14 @@
                     } else {
                         tbody.innerHTML = `
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-500 font-medium">
-                                    <i class="ph-duotone ph-checks text-4xl mb-2 text-gray-400"></i>
-                                    <p>No pending results found.</p>
+                                <td colspan="5" class="px-6 py-20 text-center">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mb-4">
+                                            <i class="ph-duotone ph-flask text-4xl text-orange-400 animate-pulse"></i>
+                                        </div>
+                                        <h3 class="text-lg font-bold text-gray-900">No Pending Tests</h3>
+                                        <p class="text-gray-500 text-sm mt-1 max-w-xs mx-auto">There are currently no tests awaiting your review. Great job!</p>
+                                    </div>
                                 </td>
                             </tr>
                         `;
@@ -1695,54 +1798,35 @@
                 }
             }
 
-            async function fetchPathologistStats() {
-                try {
-                    const response = await fetch('/getPathologistStats', { headers: fetchHeaders });
-                    const stats = await response.json();
-
-                    document.getElementById('pending-approvals-count').innerText = stats.pendingApprovals || 0;
-                    document.getElementById('completed-today-count').innerText = stats.completedToday || 0;
-                    document.getElementById('critical-results-count').innerText = stats.criticalResults || 0;
-                } catch (error) {
-                    console.error('Error fetching stats:', error);
-                }
-            }
-
             async function fetchCompletedReports() {
-                const startDate = document.getElementById('reportStartDate').value;
-                const endDate = document.getElementById('reportEndDate').value;
-
                 try {
-                    const url = new URL('/getCompletedReports', window.location.origin);
-                    if (startDate) url.searchParams.append('startDate', startDate);
-                    if (endDate) url.searchParams.append('endDate', endDate);
-
-                    const response = await fetch(url, { headers: fetchHeaders });
+                    const response = await fetch('/getCompletedReports', { headers: fetchHeaders });
                     const result = await response.json();
                     const tbody = document.getElementById('completed-reports-table');
                     if (!tbody) return;
 
                     tbody.innerHTML = '';
 
-                    if (response.ok && result.status === 200 && result.data && result.data.length > 0) {
-                        result.data.forEach(report => {
-                            const date = new Date(report.completionDate).toLocaleDateString('en-US', {
-                                month: 'short', day: 'numeric', year: 'numeric'
-                            });
+                    if (response.ok && result.status === true && result.data && result.data.length > 0) {
+                        result.data.forEach(order => {
+                            const testsCount = order.tests ? order.tests.length : 0;
                             const row = `
-                                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium">
-                                    <td class="px-6 py-4">REP-${report.id}</td>
-                                    <td class="px-6 py-4">${report.patientName}</td>
-                                    <td class="px-6 py-4">${report.testName}</td>
-                                    <td class="px-6 py-4">${date}</td>
+                                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-green-400"></span>
+                                            <span class="text-xs text-gray-400"><b class="text-gray-600">Receipt</b>-${order.id}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">${order.name}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="font-bold text-gray-700">${testsCount}</span>
+                                        <span class="text-xs text-gray-400 ml-1">Tests</span>
+                                    </td>
                                     <td class="px-6 py-4 text-right">
-                                        <button data-order-test-id="${report.id}"
-                                            class="btn-view-report text-blue-500 hover:text-blue-700 p-1 transition-colors mr-2 cursor-pointer">
-                                            <i class="ph-duotone ph-eye text-xl"></i>
-                                        </button>
-                                        <button class="text-gray-500 hover:text-gray-800 p-1 transition-colors cursor-pointer">
-                                            <i class="ph-duotone ph-printer text-xl"></i>
-                                        </button>
+                                        <span class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-bold border border-green-100">
+                                            Completed
+                                        </span>
                                     </td>
                                 </tr>`;
                             tbody.insertAdjacentHTML('beforeend', row);
@@ -1750,24 +1834,24 @@
                     } else {
                         tbody.innerHTML = `
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-500 font-medium">
-                                    <i class="ph-duotone ph-file-dashed text-4xl mb-2 text-gray-400"></i>
-                                    <p>No completed reports found.</p>
+                                <td colspan="4" class="px-6 py-20 text-center">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-4">
+                                            <i class="ph-duotone ph-check-circle text-4xl text-green-500"></i>
+                                        </div>
+                                        <h3 class="text-lg font-bold text-gray-900">No Completed Reports</h3>
+                                        <p class="text-gray-500 text-sm mt-1 max-w-xs mx-auto">You haven't completed any reports today. Once you verify tests, they will appear here.</p>
+                                    </div>
                                 </td>
                             </tr>
                         `;
                     }
                 } catch (error) {
-                    console.error('Error fetching reports:', error);
+                    console.error('Error fetching completed reports:', error);
                 }
             }
 
-            document.getElementById('btnFilterReports')?.addEventListener('click', fetchCompletedReports);
-
-            // ==========================================
-            // 10. INITIALIZATION CALLS
-            // ==========================================
-            fetchPathologistStats();
+            fetchPendingResults();
 
             // ==========================================
             // 11. SETTINGS & PROFILE MANAGEMENT

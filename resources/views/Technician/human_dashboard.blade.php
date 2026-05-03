@@ -71,12 +71,12 @@
             </div>
             <div class="flex items-center gap-4">
                 <div class="hidden md:flex flex-col items-end mr-4">
-                    <span class="text-sm font-bold text-gray-800">{{ Auth::user()->name }}</span>
+                    <span class="text-sm font-bold text-gray-800">{{ auth()->user()->name }}</span>
                     <span class="text-xs text-blue-500 font-bold">Technician</span>
                 </div>
                 <div
                     class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-200 uppercase">
-                    {{ substr(Auth::user()->name, 0, 2) }}
+                    {{ substr(auth()->user()->name, 0, 2) }}
                 </div>
             </div>
         </header>
@@ -249,13 +249,17 @@
                         <h4 class="font-bold text-gray-800 mb-2">Attachments & Remarks (Optional)</h4>
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Upload File (Image/PDF)</label>
-                            <input type="file" id="resultAttachment" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                            <input type="file" id="resultAttachment"
+                                class="w-full border border-gray-300 rounded-lg p-2 text-sm">
                             <input type="hidden" id="uploadedAttachmentPath">
                             <p id="uploadStatus" class="text-xs text-blue-600 mt-1"></p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Remarks / Preliminary Report</label>
-                            <textarea id="resultRemarks" rows="3" class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Enter remarks..."></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Remarks / Preliminary
+                                Report</label>
+                            <textarea id="resultRemarks" rows="3"
+                                class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-200 outline-none"
+                                placeholder="Enter remarks..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -357,16 +361,19 @@
                 }, 300);
             }
 
-            
+
             async function fetchStats() {
                 try {
                     const response = await fetch('/HumanTechnicianStats');
                     if (response.ok) {
-                        const data = await response.json();
-                        document.getElementById('stat-pending-patients').innerText = data.pendingTests || 0;
-                        document.getElementById('stat-tests-progress').innerText = data.testsInProgress || 0;
-                        document.getElementById('stat-pending-verif').innerText = data.pendingVerification || 0;
-                        document.getElementById('stat-completed-today').innerText = data.completedToday || 0;
+                        const result = await response.json();
+                        if (result.status === true) {
+                            const data = result.data;
+                            document.getElementById('stat-pending-patients').innerText = data.pendingTests || 0;
+                            document.getElementById('stat-tests-progress').innerText = data.testsInProgress || 0;
+                            document.getElementById('stat-pending-verif').innerText = data.pendingVerification || 0;
+                            document.getElementById('stat-completed-today').innerText = data.completedToday || 0;
+                        }
                     }
                 } catch (error) {
                     console.error(error);
@@ -378,7 +385,7 @@
                     const response = await fetch('/HumanTechnicianPendingWorklist');
                     if (response.ok) {
                         const result = await response.json();
-                        if (result.status === 200) {
+                        if (result.status === true) {
                             renderPendingPatients(result.data);
                         }
                     }
@@ -389,9 +396,9 @@
 
             function renderPendingPatients(orders) {
                 const tbody = document.getElementById('pendingPatientsTableBody');
-                if(!tbody) return;
+                if (!tbody) return;
                 tbody.innerHTML = '';
-                
+
                 let count = 0;
                 if (!orders || orders.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 font-medium">No pending patients.</td></tr>`;
@@ -428,7 +435,7 @@
                 if (e.target.closest('.btn-start-test')) {
                     const btn = e.target.closest('.btn-start-test');
                     const orderTestId = btn.getAttribute('data-order-test-id');
-                    
+
                     const originalHtml = btn.innerHTML;
                     btn.innerHTML = 'Starting...';
                     btn.disabled = true;
@@ -444,7 +451,7 @@
                             body: JSON.stringify({ orderTestId })
                         });
                         const data = await res.json();
-                        if (res.ok && data.status === 200) {
+                        if (res.ok && data.status === true) {
                             fetchStats();
                             fetchPendingPatients();
                             fetchWorklist();
@@ -461,17 +468,17 @@
             });
 
             const attachmentInput = document.getElementById('resultAttachment');
-            if(attachmentInput) {
+            if (attachmentInput) {
                 attachmentInput.addEventListener('change', async (e) => {
                     const file = e.target.files[0];
-                    if(!file) return;
-                    
+                    if (!file) return;
+
                     const formData = new FormData();
                     formData.append('file', file);
-                    
+
                     const status = document.getElementById('uploadStatus');
                     status.innerText = 'Uploading...';
-                    
+
                     try {
                         const res = await fetch('/uploadHumanResultFile', {
                             method: 'POST',
@@ -481,8 +488,8 @@
                             body: formData
                         });
                         const data = await res.json();
-                        if(res.ok && data.status === 200) {
-                            document.getElementById('uploadedAttachmentPath').value = data.path;
+                        if (res.ok && data.status === true) {
+                            document.getElementById('uploadedAttachmentPath').value = data.data.path;
                             status.innerText = 'Uploaded successfully!';
                             status.classList.remove('text-blue-600', 'text-red-600');
                             status.classList.add('text-green-600');
@@ -490,7 +497,7 @@
                             status.innerText = 'Upload failed: ' + data.message;
                             status.classList.add('text-red-600');
                         }
-                    } catch(err) {
+                    } catch (err) {
                         status.innerText = 'Network error during upload.';
                         status.classList.add('text-red-600');
                     }
@@ -518,7 +525,7 @@
                     const response = await fetch('/TechnicianWorklist');
                     if (response.ok) {
                         const result = await response.json();
-                        if (result.status === 200) {
+                        if (result.status === true) {
                             renderWorklist(result.data);
                         }
                     }
@@ -573,7 +580,7 @@
                 badge.innerText = `${testCount} Tests`;
             }
 
-            
+
 
             document.addEventListener('click', (e) => {
                 const enterBtn = e.target.closest('.btn-enter-results');
@@ -718,7 +725,7 @@
                         });
                     });
 
-                                        const payload = {
+                    const payload = {
                         orderTestId: orderTestId,
                         trackingId: trackingId,
                         remarks: document.getElementById('resultRemarks').value,
@@ -772,7 +779,7 @@
                     const response = await fetch('/getPendingVerifications');
                     if (response.ok) {
                         const result = await response.json();
-                        if (result.status === 200) {
+                        if (result.status === true) {
                             renderPendingVerifications(result.data);
                         }
                     }

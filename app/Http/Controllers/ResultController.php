@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\Response;
 
 class ResultController extends Controller
 {
@@ -29,7 +30,7 @@ class ResultController extends Controller
         DB::beginTransaction();
         try {
             $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
-            
+
             if (!empty($request->results)) {
                 foreach ($request->results as $res) {
                     Result::create([
@@ -51,7 +52,7 @@ class ResultController extends Controller
                     'remarks' => $request->remarks ?? null,
                 ]);
             }
-            
+
             $requirements = DB::table('test_requirements')->where('testId', $orderTest->testId)->get();
 
             foreach ($requirements as $requirement) {
@@ -94,7 +95,6 @@ class ResultController extends Controller
     public function getPendingResultList()
     {
         $user = Auth::user();
-
         $orders = Order::whereHas('tests', function ($query) use ($user) {
             $query->where('tests.departmentId', $user->department_id)
                 ->where('order_test.status', 'Unverified');
@@ -106,9 +106,10 @@ class ResultController extends Controller
                 ])->get();
 
         return response()->json([
-            'status' => 200,
+            'status' => true,
+            'message' => 'Pending Results Fetched Successfully',
             'data' => $orders
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function getResultsByOrderTestId($id)
@@ -175,71 +176,19 @@ class ResultController extends Controller
         }
     }
 
-    public function getPathologistStats()
-    {
-        $user = Auth::user();
-        $departmentId = $user->department_id;
-
-        $pendingApprovals = DB::table('order_test')
-            ->join('tests', 'order_test.testId', '=', 'tests.id')
-            ->where('tests.departmentId', $departmentId)
-            ->where('order_test.status', 'Unverified')
-            ->count();
-
-        $completedToday = DB::table('order_test')
-            ->join('results', 'order_test.id', '=', 'results.orderTestId')
-            ->where('results.verifiedBy', $user->name)
-            ->whereDate('order_test.updated_at', Carbon::today())
-            ->distinct('order_test.id')
-            ->count('order_test.id');
-
-        $criticalResults = DB::table('order_test')
-            ->join('results', 'order_test.id', '=', 'results.orderTestId')
-            ->where('results.verifiedBy', $user->name)
-            ->where('results.alertPatient', true)
-            ->distinct('order_test.id')
-            ->count('order_test.id');
-
-        return response()->json([
-            'pendingApprovals' => $pendingApprovals,
-            'completedToday' => $completedToday,
-            'criticalResults' => $criticalResults
-        ]);
-    }
-
     public function getCompletedReports(Request $request)
     {
         $user = Auth::user();
-        $startDate = $request->startDate;
-        $endDate = $request->endDate;
 
-        $query = DB::table('order_test')
-            ->join('orders', 'order_test.orderId', '=', 'orders.id')
-            ->join('tests', 'order_test.testId', '=', 'tests.id')
-            ->select('order_test.*', 'orders.name as patientName', 'tests.name as testName', 'order_test.updated_at as completionDate')
-            ->where('order_test.status', 'Completed')
-            ->whereExists(function ($query) use ($user) {
-                $query->select(DB::raw(1))
-                    ->from('results')
-                    ->whereRaw('results.orderTestId = order_test.id')
-                    ->where('results.verifiedBy', $user->name);
-            });
-
-        if ($startDate && $endDate) {
-            $query->whereBetween(DB::raw('DATE(order_test.updated_at)'), [$startDate, $endDate]);
-        } elseif ($startDate) {
-            $query->whereDate('order_test.updated_at', '>=', $startDate);
-        } elseif ($endDate) {
-            $query->whereDate('order_test.updated_at', '<=', $endDate);
-        } else {
-            $query->whereDate('order_test.updated_at', Carbon::today());
-        }
-
-        $reports = $query->get();
-
+        $completedReports = Order::whereHas('tests', function ($query) use ($user) {
+            $query->where('tests.departmentId', $user->department_id)
+                ->where('order_test.status', 'Completed')
+                ->whereDate('order_test.updated_at', today());
+        })->get();
         return response()->json([
-            'status' => 200,
-            'data' => $reports
-        ]);
+            'status' => true,
+            'message' => 'Completed Reports Fetched Successfully',
+            'data' => $completedReports
+        ], Response::HTTP_OK);
     }
 }

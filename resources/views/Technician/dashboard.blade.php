@@ -165,11 +165,7 @@
                                 class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-md text-xs font-bold">0
                                 Tests</span>
                         </div>
-                        <div class="relative w-full sm:w-72">
-                            <input type="text" id="searchWorklist" placeholder="Search Barcode or Patient..."
-                                class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 bg-white">
-                            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
-                        </div>
+
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm whitespace-nowrap">
@@ -309,7 +305,14 @@
                     const activeIcon = link.querySelector('.nav-icon');
                     if (activeIcon) activeIcon.classList.replace('text-gray-400', 'text-white');
 
-                    switchSection(link.getAttribute('data-target'), link.getAttribute('data-title'));
+                    const target = link.getAttribute('data-target');
+                    const title = link.getAttribute('data-title');
+                    switchSection(target, title);
+
+                    if (target === 'section-dashboard') fetchStats();
+                    if (target === 'section-worklist') fetchWorklist();
+                    if (target === 'section-completed') fetchPendingVerifications();
+
                     if (window.innerWidth < 768) toggleSidebar();
                 });
             });
@@ -372,7 +375,7 @@
                     const response = await fetch('/TechnicianWorklist');
                     if (response.ok) {
                         const result = await response.json();
-                        if (result.status === 200) {
+                        if (result.status === true) {
                             renderWorklist(result.data);
                         }
                     }
@@ -388,7 +391,18 @@
                 let testCount = 0;
 
                 if (!orders || orders.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No samples in active worklist.</td></tr>`;
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="px-6 py-20 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-flask text-4xl text-blue-400"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900">Your Worklist is Empty</h3>
+                                    <p class="text-gray-500 text-sm mt-1 max-w-xs mx-auto">Scan a sample barcode on the dashboard to start a test.</p>
+                                </div>
+                            </td>
+                        </tr>`;
                     badge.innerText = `0 Tests`;
                     return;
                 }
@@ -459,12 +473,11 @@
 
                         const result = await response.json();
 
-                        if (response.ok && result.status === 200) {
+                        if (response.ok && result.status === true) {
                             successMsg.innerText = result.message;
                             successMsg.classList.remove('hidden');
                             input.value = '';
                             fetchStats();
-                            fetchWorklist();
                             setTimeout(() => successMsg.classList.add('hidden'), 3000);
                         } else {
                             errorMsg.innerText = result.message || 'Failed to process barcode.';
@@ -648,9 +661,7 @@
 
                         if (response.ok && resData.status === 200) {
                             closeModal('ResultEntryModalBackdrop');
-                            fetchStats();
                             fetchWorklist();
-                            fetchPendingVerifications();
 
                             const msgEl = document.createElement('div');
                             msgEl.className = 'fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold text-sm flex items-center gap-2';
@@ -679,7 +690,7 @@
                     const response = await fetch('/getPendingVerifications');
                     if (response.ok) {
                         const result = await response.json();
-                        if (result.status === 200) {
+                        if (result.status === true) {
                             renderPendingVerifications(result.data);
                         }
                     }
@@ -693,7 +704,18 @@
                 tbody.innerHTML = '';
 
                 if (!orders || orders.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 font-medium">No tests pending verification.</td></tr>`;
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="px-6 py-20 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-clipboard-text text-4xl text-purple-400"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900">No Pending Verifications</h3>
+                                    <p class="text-gray-500 text-sm mt-1 max-w-xs mx-auto">Tests you complete will appear here until the pathologist verifies them.</p>
+                                </div>
+                            </td>
+                        </tr>`;
                     return;
                 }
 
@@ -716,8 +738,6 @@
             }
 
             fetchStats();
-            fetchWorklist();
-            fetchPendingVerifications();
         });
     </script>
 </body>
