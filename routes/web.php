@@ -117,15 +117,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/tests/{id}', [TestController::class, 'update']);
     Route::delete('/tests/{id}', [TestController::class, 'destroy']);
     Route::get('/deprtmentTests',[TestController::class,'deprtmentTests']);
+    
+    Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
+    Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
+    Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
+    Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
+    Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
 }); 
-Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
-Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
-Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
 
-
-
-Route::get('/tests', [TestController::class, 'index']);
-Route::get('/tests/{id}', [TestController::class, 'show']);
 
 Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
     Route::view('/receptionist', 'receptionist.receptionst')->name('receptionist');
@@ -146,10 +145,7 @@ Route::middleware(['auth', 'check.role:samplecollector'])->group(function () {
     Route::post('/CollectSample', [SampleCollectorController::class, 'CollectSample'])->name('CollectSample');
 });
 
-Route::get('/tests', [TestController::class, 'index']);
-Route::get('/tests/{id}', [TestController::class, 'show']);
-Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
-Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
+
 
 
 
@@ -162,7 +158,6 @@ Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
 Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
 Route::get('/getPendingVerifications', [TechnicianController::class, 'getPendingVerificationList']);
 
-// Human-Based Technician Routes
 Route::view('/HumanTechnicianDashboard', 'Technician.human_dashboard');
 Route::get('/HumanTechnicianStats', [TechnicianController::class, 'getHumanDashboardStats']);
 Route::get('/HumanTechnicianPendingWorklist', [TechnicianController::class, 'HumanTechnicianPendingWorklist']);

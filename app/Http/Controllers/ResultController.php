@@ -179,7 +179,7 @@ class ResultController extends Controller
     public function getCompletedReports(Request $request)
     {
         $user = Auth::user();
-
+        
         $completedReports = Order::whereHas('tests', function ($query) use ($user) {
             $query->where('tests.departmentId', $user->department_id)
                 ->where('order_test.status', 'Completed')

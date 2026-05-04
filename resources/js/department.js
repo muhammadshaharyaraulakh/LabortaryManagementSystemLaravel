@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. MODAL MANAGEMENT HELPERS
     // ==========================================
     function openModal(backdrop, modal) {
+        if (!backdrop || !modal) return;
         backdrop.classList.remove("hidden");
         backdrop.classList.add("flex");
         setTimeout(() => {
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function closeModal(backdrop, modal, formId) {
+        if (!backdrop || !modal) return;
         backdrop.classList.remove("opacity-100");
         backdrop.classList.add("opacity-0");
         modal.classList.remove("scale-100");
@@ -47,7 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
             backdrop.classList.add("hidden");
             backdrop.classList.remove("flex");
             if (formId) {
-                document.getElementById(formId).reset();
+                const form = document.getElementById(formId);
+                if (form) form.reset();
                 clearDepartmentErrors(
                     formId === "AddDepartmentForm" ? "add" : "update"
                 );
@@ -160,58 +163,56 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (departmentNavLink) {
         departmentNavLink.addEventListener("click", () => {
-            document
-                .getElementById("section-deleted-departments")
-                .classList.add("hidden");
-            document
-                .getElementById("section-deleted-departments")
-                .classList.remove("block");
-            document
-                .getElementById("section-department")
-                .classList.remove("hidden");
-            document
-                .getElementById("section-department")
-                .classList.add("block");
+            const secDeleted = document.getElementById("section-deleted-departments");
+            const secDept = document.getElementById("section-department");
+            if (secDeleted) {
+                secDeleted.classList.add("hidden");
+                secDeleted.classList.remove("block");
+            }
+            if (secDept) {
+                secDept.classList.remove("hidden");
+                secDept.classList.add("block");
+            }
 
-            listContainer.innerHTML = `<div class="text-center text-gray-500 py-4"><i class="ph ph-spinner animate-spin text-xl"></i> Loading...</div>`;
+            if (listContainer) {
+                listContainer.innerHTML = `<div class="text-center text-gray-500 py-4"><i class="ph ph-spinner animate-spin text-xl"></i> Loading...</div>`;
+            }
             fetchDepartments();
         });
     }
 
     if (viewDeletedBtn) {
         viewDeletedBtn.addEventListener("click", () => {
-            document
-                .getElementById("section-department")
-                .classList.add("hidden");
-            document
-                .getElementById("section-department")
-                .classList.remove("block");
-            document
-                .getElementById("section-deleted-departments")
-                .classList.remove("hidden");
-            document
-                .getElementById("section-deleted-departments")
-                .classList.add("block");
+            const secDeleted = document.getElementById("section-deleted-departments");
+            const secDept = document.getElementById("section-department");
+            if (secDept) {
+                secDept.classList.add("hidden");
+                secDept.classList.remove("block");
+            }
+            if (secDeleted) {
+                secDeleted.classList.remove("hidden");
+                secDeleted.classList.add("block");
+            }
 
-            deletedListContainer.innerHTML = `<div class="text-center text-gray-500 py-4"><i class="ph ph-spinner animate-spin text-xl"></i> Loading...</div>`;
+            if (deletedListContainer) {
+                deletedListContainer.innerHTML = `<div class="text-center text-gray-500 py-4"><i class="ph ph-spinner animate-spin text-xl"></i> Loading...</div>`;
+            }
             fetchDeletedDepartments();
         });
     }
 
     if (backToDeptBtn) {
         backToDeptBtn.addEventListener("click", () => {
-            document
-                .getElementById("section-deleted-departments")
-                .classList.add("hidden");
-            document
-                .getElementById("section-deleted-departments")
-                .classList.remove("block");
-            document
-                .getElementById("section-department")
-                .classList.remove("hidden");
-            document
-                .getElementById("section-department")
-                .classList.add("block");
+            const secDeleted = document.getElementById("section-deleted-departments");
+            const secDept = document.getElementById("section-department");
+            if (secDeleted) {
+                secDeleted.classList.add("hidden");
+                secDeleted.classList.remove("block");
+            }
+            if (secDept) {
+                secDept.classList.remove("hidden");
+                secDept.classList.add("block");
+            }
 
             fetchDepartments();
         });
@@ -497,8 +498,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 fetchDepartments();
+            } else {
+                alert("Failed to delete department.");
             }
-        } catch (error) {}
+        } catch (error) {
+            console.error("Error deleting department:", error);
+            alert("An error occurred while deleting the department.");
+        }
     };
 
     window.restoreDepartment = async function (id) {
@@ -513,7 +519,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 fetchDeletedDepartments();
+            } else {
+                alert("Failed to restore department.");
             }
-        } catch (error) {}
+        } catch (error) {
+            console.error("Error restoring department:", error);
+            alert("An error occurred while restoring the department.");
+        }
     };
 });

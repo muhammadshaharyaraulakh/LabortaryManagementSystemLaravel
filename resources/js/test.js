@@ -228,7 +228,6 @@ document.addEventListener("DOMContentLoaded", function () {
     testNavLinks.forEach((link) => {
         link.addEventListener("click", () => {
             if (!testsLoaded) {
-                console.log("Loading tests for the first time...");
                 fetchDirectoryTests();
                 testsLoaded = true;
             }

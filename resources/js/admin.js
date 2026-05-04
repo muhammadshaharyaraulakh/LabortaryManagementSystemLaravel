@@ -119,44 +119,58 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleDesktopBtn.addEventListener("click", () => {
             isCollapsed = !isCollapsed;
             if (isCollapsed) {
-                sidebar.classList.remove("w-64");
-                sidebar.classList.add("w-20");
-                brandText.classList.add("hidden");
+                if (sidebar) {
+                    sidebar.classList.remove("w-64");
+                    sidebar.classList.add("w-20");
+                }
+                if (brandText) brandText.classList.add("hidden");
                 navTexts.forEach((text) => text.classList.add("hidden"));
-                desktopToggleIcon.classList.remove("ph-caret-double-left");
-                desktopToggleIcon.classList.add("ph-caret-double-right");
+                if (desktopToggleIcon) {
+                    desktopToggleIcon.classList.remove("ph-caret-double-left");
+                    desktopToggleIcon.classList.add("ph-caret-double-right");
+                }
             } else {
-                sidebar.classList.remove("w-20");
-                sidebar.classList.add("w-64");
+                if (sidebar) {
+                    sidebar.classList.remove("w-20");
+                    sidebar.classList.add("w-64");
+                }
                 setTimeout(() => {
-                    brandText.classList.remove("hidden");
+                    if (brandText) brandText.classList.remove("hidden");
                     navTexts.forEach((text) => text.classList.remove("hidden"));
                 }, 150);
-                desktopToggleIcon.classList.remove("ph-caret-double-right");
-                desktopToggleIcon.classList.add("ph-caret-double-left");
+                if (desktopToggleIcon) {
+                    desktopToggleIcon.classList.remove("ph-caret-double-right");
+                    desktopToggleIcon.classList.add("ph-caret-double-left");
+                }
             }
         });
     }
 
     function openMobileSidebar() {
         isCollapsed = false;
-        sidebar.classList.remove("w-20");
-        sidebar.classList.add("w-64");
-        brandText.classList.remove("hidden");
+        if (sidebar) {
+            sidebar.classList.remove("w-20");
+            sidebar.classList.add("w-64");
+            sidebar.classList.remove("-translate-x-full");
+        }
+        if (brandText) brandText.classList.remove("hidden");
         navTexts.forEach((text) => text.classList.remove("hidden"));
         if (desktopToggleIcon) {
             desktopToggleIcon.classList.remove("ph-caret-double-right");
             desktopToggleIcon.classList.add("ph-caret-double-left");
         }
-        sidebar.classList.remove("-translate-x-full");
-        sidebarBackdrop.classList.remove("hidden");
-        setTimeout(() => sidebarBackdrop.classList.add("opacity-100"), 10);
+        if (sidebarBackdrop) {
+            sidebarBackdrop.classList.remove("hidden");
+            setTimeout(() => sidebarBackdrop.classList.add("opacity-100"), 10);
+        }
     }
 
     function closeMobileSidebar() {
-        sidebar.classList.add("-translate-x-full");
-        sidebarBackdrop.classList.remove("opacity-100");
-        setTimeout(() => sidebarBackdrop.classList.add("hidden"), 300);
+        if (sidebar) sidebar.classList.add("-translate-x-full");
+        if (sidebarBackdrop) {
+            sidebarBackdrop.classList.remove("opacity-100");
+            setTimeout(() => sidebarBackdrop.classList.add("hidden"), 300);
+        }
     }
 
     if (openMobileBtn)
@@ -165,10 +179,12 @@ document.addEventListener("DOMContentLoaded", () => {
         closeMobileBtn.addEventListener("click", closeMobileSidebar);
     if (sidebarBackdrop)
         sidebarBackdrop.addEventListener("click", closeMobileSidebar);
-});
-document.addEventListener("DOMContentLoaded", function () {
-    flatpickr("#filterStartDate", { dateFormat: "Y-m-d" });
-    flatpickr("#filterEndDate", { dateFormat: "Y-m-d" });
+
+    // --- Dashboard Stats Logic ---
+    const filterStartDate = document.getElementById("filterStartDate");
+    const filterEndDate = document.getElementById("filterEndDate");
+    if (filterStartDate) flatpickr("#filterStartDate", { dateFormat: "Y-m-d" });
+    if (filterEndDate) flatpickr("#filterEndDate", { dateFormat: "Y-m-d" });
 
     const errorMsg = document.getElementById("dateErrorMsg");
     const emptyState = document.getElementById("reportEmptyState");
@@ -176,34 +192,43 @@ document.addEventListener("DOMContentLoaded", function () {
     const dataState = document.getElementById("reportDataState");
 
     const updateMonthlyUI = (data) => {
-        document.getElementById("stat-orders-today").innerText =
-            data.activeOrders;
-        document.getElementById("stat-completed-today").innerText =
-            data.completedTests;
-        document.getElementById("stat-pending-today").innerText =
-            data.pendingTests;
-        document.getElementById(
-            "stat-money-today"
-        ).innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
-        document.getElementById(
-            "stat-tax-today"
-        ).innerText = `Rs. ${data.totalTax.toLocaleString()}`;
-        document.getElementById("stat-deleted-today").innerText =
-            data.deletedOrders;
+        const oToday = document.getElementById("stat-orders-today");
+        if (oToday) oToday.innerText = data.activeOrders;
+        
+        const cToday = document.getElementById("stat-completed-today");
+        if (cToday) cToday.innerText = data.completedTests;
+
+        const pToday = document.getElementById("stat-pending-today");
+        if (pToday) pToday.innerText = data.pendingTests;
+
+        const mToday = document.getElementById("stat-money-today");
+        if (mToday) mToday.innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
+
+        const tToday = document.getElementById("stat-tax-today");
+        if (tToday) tToday.innerText = `Rs. ${data.totalTax.toLocaleString()}`;
+
+        const dToday = document.getElementById("stat-deleted-today");
+        if (dToday) dToday.innerText = data.deletedOrders;
     };
 
     const updateSearchUI = (data) => {
-        document.getElementById("res-orders").innerText = data.activeOrders;
-        document.getElementById("res-completed").innerText =
-            data.completedTests;
-        document.getElementById("res-pending").innerText = data.pendingTests;
-        document.getElementById(
-            "res-money"
-        ).innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
-        document.getElementById(
-            "res-tax"
-        ).innerText = `Rs. ${data.totalTax.toLocaleString()}`;
-        document.getElementById("res-deleted").innerText = data.deletedOrders;
+        const rOrders = document.getElementById("res-orders");
+        if (rOrders) rOrders.innerText = data.activeOrders;
+
+        const rCompleted = document.getElementById("res-completed");
+        if (rCompleted) rCompleted.innerText = data.completedTests;
+
+        const rPending = document.getElementById("res-pending");
+        if (rPending) rPending.innerText = data.pendingTests;
+
+        const rMoney = document.getElementById("res-money");
+        if (rMoney) rMoney.innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
+
+        const rTax = document.getElementById("res-tax");
+        if (rTax) rTax.innerText = `Rs. ${data.totalTax.toLocaleString()}`;
+
+        const rDeleted = document.getElementById("res-deleted");
+        if (rDeleted) rDeleted.innerText = data.deletedOrders;
     };
 
     const fetchMonthlyStats = async () => {
@@ -218,16 +243,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    document
-        .getElementById("DashboardDateFilterForm")
-        .addEventListener("submit", async (e) => {
+    const dashboardFilterForm = document.getElementById("DashboardDateFilterForm");
+    if (dashboardFilterForm) {
+        dashboardFilterForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            errorMsg.classList.add("hidden");
-            errorMsg.innerText = "";
-            emptyState.classList.add("hidden");
-            dataState.classList.add("hidden");
-            loadingState.classList.remove("hidden");
+            if (errorMsg) {
+                errorMsg.classList.add("hidden");
+                errorMsg.innerText = "";
+            }
+            if (emptyState) emptyState.classList.add("hidden");
+            if (dataState) dataState.classList.add("hidden");
+            if (loadingState) loadingState.classList.remove("hidden");
 
             const startDate = document.getElementById("filterStartDate").value;
             const endDate = document.getElementById("filterEndDate").value;
@@ -269,12 +296,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error(result.message || "Something went wrong.");
                 }
             } catch (error) {
-                loadingState.classList.add("hidden");
-                emptyState.classList.remove("hidden");
-                errorMsg.innerText = error.message;
-                errorMsg.classList.remove("hidden");
+                if (loadingState) loadingState.classList.add("hidden");
+                if (emptyState) emptyState.classList.remove("hidden");
+                if (errorMsg) {
+                    errorMsg.innerText = error.message;
+                    errorMsg.classList.remove("hidden");
+                }
             }
         });
+    }
 
     fetchMonthlyStats();
 });

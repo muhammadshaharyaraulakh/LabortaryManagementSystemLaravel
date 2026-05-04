@@ -257,7 +257,7 @@ class TechnicianController extends Controller
     public function StartHumanTest(Request $request)
     {
         $request->validate([
-            'orderTestId' => 'required|exists:order_test,id',
+            'barcode' => 'required|string',
         ]);
 
         $user = Auth::user();
@@ -270,12 +270,17 @@ class TechnicianController extends Controller
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
+        $orderTest = DB::table('order_test')
+            ->join('tests', 'order_test.testId', '=', 'tests.id')
+            ->select('order_test.*')
+            ->where('tests.departmentId', $department->id)
+            ->where('order_test.vialBarcode', $request->barcode)
+            ->first();
 
         if (!$orderTest) {
             return response()->json([
                 'status' => false,
-                'message' => 'Test not found'
+                'message' => 'Test not found for this barcode.'
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -286,7 +291,7 @@ class TechnicianController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        DB::table('order_test')->where('id', $request->orderTestId)->update([
+        DB::table('order_test')->where('id', $orderTest->id)->update([
             'status' => 'InProgress',
             'testedBy' => $user->id,
             'updated_at' => Carbon::now()
@@ -301,26 +306,29 @@ class TechnicianController extends Controller
     public function uploadHumanResultFile(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|max:10240', // max 10MB
+            'files.*' => 'required|file|max:10240', // max 10MB per file
         ]);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('public/results', $filename);
+        if ($request->hasFile('files')) {
+            $paths = [];
+            foreach ($request->file('files') as $file) {
+                $filename = time() . '_' . rand(1000, 9999) . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('public/results', $filename);
+                $paths[] = '/storage/results/' . $filename;
+            }
 
             return response()->json([
                 'status' => true,
-                'message' => 'File uploaded successfully',
+                'message' => 'Files uploaded successfully',
                 'data' => [
-                    'path' => '/storage/results/' . $filename
+                    'paths' => $paths
                 ]
             ], Response::HTTP_OK);
         }
 
         return response()->json([
             'status' => false,
-            'message' => 'No file uploaded'
+            'message' => 'No files uploaded'
         ], Response::HTTP_BAD_REQUEST);
     }
 }

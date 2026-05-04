@@ -127,8 +127,11 @@
 
                 <div
                     class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 p-8 mb-8 relative overflow-hidden">
-                    <div class="flex items-center gap-2 mb-4">
+                    <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold text-gray-800">Pending Patients (Waiting for Test)</h3>
+                        <button id="btn-open-barcode-modal" class="bg-sidebarBg text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-gray-800 transition-colors flex items-center gap-2 cursor-pointer">
+                            <i class="ph-bold ph-barcode"></i> Add Test
+                        </button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm whitespace-nowrap">
@@ -248,8 +251,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-4">
                         <h4 class="font-bold text-gray-800 mb-2">Attachments & Remarks (Optional)</h4>
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Upload File (Image/PDF)</label>
-                            <input type="file" id="resultAttachment"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Upload File (Image/PDF) - Multiple Supported</label>
+                            <input type="file" id="resultAttachment" multiple
                                 class="w-full border border-gray-300 rounded-lg p-2 text-sm">
                             <input type="hidden" id="uploadedAttachmentPath">
                             <p id="uploadStatus" class="text-xs text-blue-600 mt-1"></p>
@@ -276,6 +279,38 @@
                             <i class="ph-bold ph-check-circle"></i> Save & Submit
                         </button>
                     </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="BarcodeEntryModalBackdrop"
+        class="fixed inset-0 bg-black/60 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="BarcodeEntryModal"
+            class="bg-white w-full max-w-md rounded-[1.25rem] shadow-2xl transform scale-95 transition-all duration-300 flex flex-col overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-sidebarBg text-white">
+                <h3 class="font-black text-lg flex items-center gap-2">
+                    <i class="ph-bold ph-barcode"></i> Add Test
+                </h3>
+                <button class="close-modal-btn text-gray-300 hover:text-white transition-colors cursor-pointer"
+                    data-modal="BarcodeEntryModalBackdrop">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+            </div>
+            <form id="BarcodeEntryForm" class="p-6">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Scan or Enter Barcode</label>
+                    <input type="text" id="humanBarcodeScannerInput" placeholder="Enter barcode..." required
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-100 outline-none font-mono tracking-wider text-center">
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button"
+                        class="close-modal-btn px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer"
+                        data-modal="BarcodeEntryModalBackdrop">Cancel</button>
+                    <button type="submit" id="btn-human-barcode-submit"
+                        class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all cursor-pointer flex items-center gap-2">
+                        <i class="ph-bold ph-check"></i> Submit
+                    </button>
                 </div>
             </form>
         </div>
@@ -417,11 +452,11 @@
                                     <p class="text-xs text-gray-500">${order.gender}, ${order.age}y</p>
                                 </td>
                                 <td class="px-6 py-4 font-bold text-gray-700">${test.name}</td>
-                                <td class="px-6 py-4 text-right">
+                            <td class="px-6 py-4 text-right">
                                     <button
                                         class="btn-start-test bg-sidebarBg text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-gray-800 transition-all cursor-pointer"
-                                        data-order-test-id="${test.pivot.id}">
-                                        Start Test
+                                        data-modal="BarcodeEntryModalBackdrop">
+                                        Add Test
                                     </button>
                                 </td>
                             `;
@@ -431,13 +466,29 @@
                 });
             }
 
-            document.addEventListener('click', async (e) => {
+            document.getElementById('btn-open-barcode-modal')?.addEventListener('click', () => {
+                openModal('BarcodeEntryModalBackdrop');
+                setTimeout(() => document.getElementById('humanBarcodeScannerInput').focus(), 100);
+            });
+
+            document.addEventListener('click', (e) => {
                 if (e.target.closest('.btn-start-test')) {
-                    const btn = e.target.closest('.btn-start-test');
-                    const orderTestId = btn.getAttribute('data-order-test-id');
+                    openModal('BarcodeEntryModalBackdrop');
+                    setTimeout(() => document.getElementById('humanBarcodeScannerInput').focus(), 100);
+                }
+            });
+
+            const barcodeForm = document.getElementById('BarcodeEntryForm');
+            if (barcodeForm) {
+                barcodeForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const input = document.getElementById('humanBarcodeScannerInput');
+                    const btn = document.getElementById('btn-human-barcode-submit');
+                    const barcode = input.value.trim();
+                    if (!barcode) return;
 
                     const originalHtml = btn.innerHTML;
-                    btn.innerHTML = 'Starting...';
+                    btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Adding...';
                     btn.disabled = true;
 
                     try {
@@ -448,10 +499,12 @@
                                 'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
-                            body: JSON.stringify({ orderTestId })
+                            body: JSON.stringify({ barcode })
                         });
                         const data = await res.json();
                         if (res.ok && data.status === true) {
+                            closeModal('BarcodeEntryModalBackdrop');
+                            input.value = '';
                             fetchStats();
                             fetchPendingPatients();
                             fetchWorklist();
@@ -464,17 +517,19 @@
                         btn.innerHTML = originalHtml;
                         btn.disabled = false;
                     }
-                }
-            });
+                });
+            }
 
             const attachmentInput = document.getElementById('resultAttachment');
             if (attachmentInput) {
                 attachmentInput.addEventListener('change', async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
+                    const files = e.target.files;
+                    if (!files || files.length === 0) return;
 
                     const formData = new FormData();
-                    formData.append('file', file);
+                    for(let i=0; i<files.length; i++) {
+                        formData.append('files[]', files[i]);
+                    }
 
                     const status = document.getElementById('uploadStatus');
                     status.innerText = 'Uploading...';
@@ -489,7 +544,7 @@
                         });
                         const data = await res.json();
                         if (res.ok && data.status === true) {
-                            document.getElementById('uploadedAttachmentPath').value = data.data.path;
+                            document.getElementById('uploadedAttachmentPath').value = JSON.stringify(data.data.paths);
                             status.innerText = 'Uploaded successfully!';
                             status.classList.remove('text-blue-600', 'text-red-600');
                             status.classList.add('text-green-600');
@@ -725,11 +780,21 @@
                         });
                     });
 
+                    const attachmentPathsValue = document.getElementById('uploadedAttachmentPath').value;
+                    let attachmentPaths = null;
+                    if (attachmentPathsValue) {
+                        try {
+                            attachmentPaths = JSON.parse(attachmentPathsValue);
+                        } catch(e) {
+                            attachmentPaths = null;
+                        }
+                    }
+
                     const payload = {
                         orderTestId: orderTestId,
                         trackingId: trackingId,
                         remarks: document.getElementById('resultRemarks').value,
-                        attachmentPaths: document.getElementById('uploadedAttachmentPath').value ? [document.getElementById('uploadedAttachmentPath').value] : null,
+                        attachmentPaths: attachmentPaths,
                         results: resultsArray
                     };
 

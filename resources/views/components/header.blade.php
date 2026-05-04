@@ -5,20 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laboratory Management System</title>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @auth
-        @if(auth()->user()->role === 'admin')
-            @vite(['resources/js/admin.js'])
-        @endif
-
-        <meta name="user-id" content="{{ auth()->id() }}">
-    @endauth
-
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @auth
+        <meta name="user-id" content="{{ auth()->id() }}">
+        @if(auth()->user()->role === 'admin')
+            @vite(['resources/js/admin.js'])
+        @endif
+    @endauth
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
