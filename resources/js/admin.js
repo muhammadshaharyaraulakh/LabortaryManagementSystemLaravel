@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileBtn = document.getElementById("profile-btn");
     const profileMenu = document.getElementById("profile-menu");
 
-    // Navigation Tabs
     navLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -55,7 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (window.innerWidth < 768) closeMobileSidebar();
         });
     });
-    // Inner Navigation (Staff Hub Buttons)
     document.querySelectorAll(".inner-nav-link").forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -77,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- Profile Dropdown Logic ---
     if (profileBtn && profileMenu) {
         profileBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -113,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- Sidebar Toggle Logic ---
     let isCollapsed = false;
     if (toggleDesktopBtn) {
         toggleDesktopBtn.addEventListener("click", () => {
@@ -180,74 +176,59 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sidebarBackdrop)
         sidebarBackdrop.addEventListener("click", closeMobileSidebar);
 
-    // --- Dashboard Stats Logic ---
-    const filterStartDate = document.getElementById("filterStartDate");
-    const filterEndDate = document.getElementById("filterEndDate");
-    if (filterStartDate) flatpickr("#filterStartDate", { dateFormat: "Y-m-d" });
-    if (filterEndDate) flatpickr("#filterEndDate", { dateFormat: "Y-m-d" });
-
-    const errorMsg = document.getElementById("dateErrorMsg");
-    const emptyState = document.getElementById("reportEmptyState");
-    const loadingState = document.getElementById("reportLoadingState");
-    const dataState = document.getElementById("reportDataState");
-
-    const updateMonthlyUI = (data) => {
-        const oToday = document.getElementById("stat-orders-today");
-        if (oToday) oToday.innerText = data.activeOrders;
-        
-        const cToday = document.getElementById("stat-completed-today");
-        if (cToday) cToday.innerText = data.completedTests;
-
-        const pToday = document.getElementById("stat-pending-today");
-        if (pToday) pToday.innerText = data.pendingTests;
-
-        const mToday = document.getElementById("stat-money-today");
-        if (mToday) mToday.innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
-
-        const tToday = document.getElementById("stat-tax-today");
-        if (tToday) tToday.innerText = `Rs. ${data.totalTax.toLocaleString()}`;
-
-        const dToday = document.getElementById("stat-deleted-today");
-        if (dToday) dToday.innerText = data.deletedOrders;
-    };
-
-    const updateSearchUI = (data) => {
-        const rOrders = document.getElementById("res-orders");
-        if (rOrders) rOrders.innerText = data.activeOrders;
-
-        const rCompleted = document.getElementById("res-completed");
-        if (rCompleted) rCompleted.innerText = data.completedTests;
-
-        const rPending = document.getElementById("res-pending");
-        if (rPending) rPending.innerText = data.pendingTests;
-
-        const rMoney = document.getElementById("res-money");
-        if (rMoney) rMoney.innerText = `Rs. ${data.totalRevenue.toLocaleString()}`;
-
-        const rTax = document.getElementById("res-tax");
-        if (rTax) rTax.innerText = `Rs. ${data.totalTax.toLocaleString()}`;
-
-        const rDeleted = document.getElementById("res-deleted");
-        if (rDeleted) rDeleted.innerText = data.deletedOrders;
-    };
+    flatpickr("#filterStartDate", {
+        dateFormat: "Y-m-d",
+        disableMobile: "true",
+    });
+    flatpickr("#filterEndDate", {
+        dateFormat: "Y-m-d",
+        disableMobile: "true",
+    });
 
     const fetchMonthlyStats = async () => {
         try {
-            const response = await fetch("/stats/monthly");
+            const response = await fetch("/stats/monthly", {
+                headers: { Accept: "application/json" },
+            });
+
             if (response.ok) {
                 const result = await response.json();
-                if (result.status === 200) updateMonthlyUI(result.data);
+                if (result.data) {
+                    const data = result.data;
+                    document.getElementById("stat-orders-today").innerText =
+                        data.activeOrders || 0;
+                    document.getElementById("stat-completed-today").innerText =
+                        data.completedTests || 0;
+                    document.getElementById("stat-pending-today").innerText =
+                        data.pendingTests || 0;
+                    document.getElementById(
+                        "stat-money-today"
+                    ).innerText = `Rs. ${(
+                        data.totalRevenue || 0
+                    ).toLocaleString()}`;
+                    document.getElementById(
+                        "stat-tax-today"
+                    ).innerText = `Rs. ${(
+                        data.totalTax || 0
+                    ).toLocaleString()}`;
+                    document.getElementById("stat-deleted-today").innerText =
+                        data.deletedOrders || 0;
+                }
             }
         } catch (error) {
-            console.error(error);
+            console.error("Error fetching monthly stats:", error);
         }
     };
 
-    const dashboardFilterForm = document.getElementById("DashboardDateFilterForm");
-    if (dashboardFilterForm) {
-        dashboardFilterForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
+    const filterForm = document.getElementById("DashboardDateFilterForm");
 
+    if (filterForm) {
+        filterForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const errorMsg = document.getElementById("dateErrorMsg");
+            const emptyState = document.getElementById("reportEmptyState");
+            const loadingState = document.getElementById("reportLoadingState");
+            const dataState = document.getElementById("reportDataState");
             if (errorMsg) {
                 errorMsg.classList.add("hidden");
                 errorMsg.innerText = "";
@@ -258,14 +239,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const startDate = document.getElementById("filterStartDate").value;
             const endDate = document.getElementById("filterEndDate").value;
-
-            if (!startDate || !endDate) {
-                loadingState.classList.add("hidden");
-                emptyState.classList.remove("hidden");
-                errorMsg.innerText = "Please select both start and end dates.";
-                errorMsg.classList.remove("hidden");
-                return;
-            }
+            const csrfToken = document.querySelector(
+                'meta[name="csrf-token"]'
+            ).content;
 
             try {
                 const response = await fetch("/stats/search", {
@@ -273,9 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         "Content-Type": "application/json",
                         Accept: "application/json",
-                        "X-CSRF-TOKEN": document.querySelector(
-                            'meta[name="csrf-token"]'
-                        ).content,
+                        "X-CSRF-TOKEN": csrfToken,
                     },
                     body: JSON.stringify({ startDate, endDate }),
                 });
@@ -283,23 +257,59 @@ document.addEventListener("DOMContentLoaded", () => {
                 const result = await response.json();
 
                 if (response.status === 422) {
+                    if (loadingState) loadingState.classList.add("hidden");
+                    if (emptyState) emptyState.classList.remove("hidden");
                     const errors = result.errors;
                     const firstError = Object.values(errors)[0][0];
-                    throw new Error(firstError);
+                    if (errorMsg) {
+                        errorMsg.innerText = firstError;
+                        errorMsg.classList.remove("hidden");
+                    }
+                    return;
                 }
 
-                if (result.status === 200) {
-                    updateSearchUI(result.data);
-                    loadingState.classList.add("hidden");
-                    dataState.classList.remove("hidden");
+                if (response.ok && result.data) {
+                    const data = result.data;
+
+                    const rOrders = document.getElementById("res-orders");
+                    if (rOrders) rOrders.innerText = data.activeOrders || 0;
+
+                    const rCompleted = document.getElementById("res-completed");
+                    if (rCompleted)
+                        rCompleted.innerText = data.completedTests || 0;
+
+                    const rPending = document.getElementById("res-pending");
+                    if (rPending) rPending.innerText = data.pendingTests || 0;
+
+                    const rMoney = document.getElementById("res-money");
+                    if (rMoney)
+                        rMoney.innerText = `Rs. ${(
+                            data.totalRevenue || 0
+                        ).toLocaleString()}`;
+
+                    const rTax = document.getElementById("res-tax");
+                    if (rTax)
+                        rTax.innerText = `Rs. ${(
+                            data.totalTax || 0
+                        ).toLocaleString()}`;
+
+                    const rDeleted = document.getElementById("res-deleted");
+                    if (rDeleted) rDeleted.innerText = data.deletedOrders || 0;
+                    if (loadingState) loadingState.classList.add("hidden");
+                    if (emptyState) emptyState.classList.add("hidden");
+                    if (dataState) dataState.classList.remove("hidden");
                 } else {
-                    throw new Error(result.message || "Something went wrong.");
+                    throw new Error(
+                        result.message || "An error occurred on the server."
+                    );
                 }
             } catch (error) {
                 if (loadingState) loadingState.classList.add("hidden");
                 if (emptyState) emptyState.classList.remove("hidden");
                 if (errorMsg) {
-                    errorMsg.innerText = error.message;
+                    errorMsg.innerText =
+                        error.message ||
+                        "A network error occurred. Please try again.";
                     errorMsg.classList.remove("hidden");
                 }
             }

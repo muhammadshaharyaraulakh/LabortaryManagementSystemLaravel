@@ -165,7 +165,6 @@
                                 class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-md text-xs font-bold">0
                                 Tests</span>
                         </div>
-
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm whitespace-nowrap">
@@ -236,14 +235,9 @@
                 <div class="flex-1 overflow-y-auto bg-gray-50 p-6 custom-scrollbar">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-100 text-gray-700 font-bold border-b border-gray-200">
-                                <tr>
-                                    <th class="px-4 py-3 w-1/3">Parameter</th>
-                                    <th class="px-4 py-3 w-1/4">Result Value</th>
-                                    <th class="px-4 py-3 w-1/6">Unit</th>
-                                    <th class="px-4 py-3 w-1/4">Reference Range</th>
-                                    <th class="px-4 py-3 text-center">Flag</th>
-                                </tr>
+                            <thead id="parametersTableHead"
+                                class="bg-gray-100 text-gray-700 font-bold border-b border-gray-200">
+                                {{-- filled dynamically by JS based on parameter type --}}
                             </thead>
                             <tbody id="parametersTableBody" class="divide-y divide-gray-100">
                             </tbody>
@@ -252,8 +246,9 @@
                 </div>
 
                 <div class="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
-                    <p class="text-xs font-bold text-gray-500"><i class="ph-fill ph-info text-blue-500"></i> Values
-                        outside normal range will automatically flag.</p>
+                    <p id="modalHintText" class="text-xs font-bold text-gray-500"><i
+                            class="ph-fill ph-info text-blue-500"></i> Values outside normal range will automatically
+                        flag.</p>
                     <div class="flex gap-3">
                         <button type="button"
                             class="close-modal-btn px-6 py-3 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer"
@@ -423,13 +418,12 @@
                                     <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-bold border border-blue-100">${test.pivot.status}</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <button
+                                   <button
                                         class="btn-enter-results bg-sidebarBg text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-gray-800 transition-all cursor-pointer"
                                         data-order-test-id="${test.pivot.id}"
                                         data-tracking-id="${order.trackingId}"
                                         data-test="${test.name}"
-                                        data-patient="${order.name}"
-                                        data-parameters='${JSON.stringify(test.parameters)}'>
+                                        data-patient="${order.name}">
                                         Enter Results
                                     </button>
                                 </td>
@@ -495,73 +489,236 @@
                 });
             }
 
-            document.addEventListener('click', (e) => {
+            document.addEventListener('click', async (e) => {
                 const enterBtn = e.target.closest('.btn-enter-results');
                 if (enterBtn) {
                     const orderTestId = enterBtn.getAttribute('data-order-test-id');
                     const trackingId = enterBtn.getAttribute('data-tracking-id');
                     const testName = enterBtn.getAttribute('data-test');
                     const patientName = enterBtn.getAttribute('data-patient');
-                    const parametersStr = enterBtn.getAttribute('data-parameters');
 
                     document.getElementById('modalTestNameTitle').innerText = testName;
                     document.getElementById('modalPatientNameText').innerText = patientName;
                     document.getElementById('entryOrderTestId').value = orderTestId;
                     document.getElementById('entryTrackingId').value = trackingId;
 
+                    const paramTableHead = document.getElementById('parametersTableHead');
                     const paramTableBody = document.getElementById('parametersTableBody');
-                    paramTableBody.innerHTML = '';
+                    const hintEl = document.getElementById('modalHintText');
 
-                    try {
-                        const parameters = JSON.parse(parametersStr);
-                        if (parameters && parameters.length > 0) {
-                            parameters.forEach(param => {
-                                const rangeText = param.normalRange ? param.normalRange : 'N/A';
-                                const unitText = param.unit ? param.unit : '';
-
-                                let min = null, max = null;
-                                if (param.normalRange && param.normalRange.includes('-')) {
-                                    const parts = param.normalRange.split('-');
-                                    min = parseFloat(parts[0]);
-                                    max = parseFloat(parts[1]);
-                                }
-
-                                const row = document.createElement('tr');
-                                row.className = 'hover:bg-blue-50/30 transition-colors group';
-                                row.innerHTML = `
-                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
-                                    <td class="px-4 py-3 border-r border-gray-100 relative">
-                                        <input type="${param.inputType === 'number' ? 'number' : 'text'}" 
-                                               step="0.01" 
-                                               required 
-                                               data-param-id="${param.id}"
-                                               data-flag="Normal"
-                                               ${min !== null ? `data-min="${min}"` : ''} 
-                                               ${max !== null ? `data-max="${max}"` : ''} 
-                                               class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors" 
-                                               placeholder="Enter value">
-                                    </td>
-                                    <td class="px-4 py-4 text-gray-500 text-xs border-r border-gray-100">${unitText}</td>
-                                    <td class="px-4 py-4 text-gray-600 text-xs border-r border-gray-100">${rangeText}</td>
-                                    <td class="px-4 py-4 text-center flag-cell">
-                                        <span class="text-gray-300 text-xs font-bold">-</span>
-                                    </td>
-                                `;
-                                paramTableBody.appendChild(row);
-                            });
-                            attachValidationListeners();
-                        } else {
-                            paramTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No parameters defined for this test.</td></tr>`;
-                        }
-                    } catch (error) {
-                        paramTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Error loading parameters.</td></tr>`;
-                    }
+                    if (paramTableHead) paramTableHead.innerHTML = '';
+                    if (paramTableBody) paramTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8"><i class="ph-bold ph-spinner animate-spin text-2xl text-blue-500 mb-2"></i><p class="text-gray-500 text-sm font-bold">Loading parameters...</p></td></tr>`;
 
                     openModal('ResultEntryModalBackdrop');
-                }
 
-                if (e.target.closest('.close-modal-btn')) {
-                    closeModal(e.target.closest('.close-modal-btn').getAttribute('data-modal'));
+                    try {
+                        const res = await fetch(`/getOrderTestParameters/${orderTestId}`, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        });
+
+                        const result = await res.json();
+
+                        if (!res.ok || result.status !== true) {
+                            throw new Error(result.message || 'Failed to load parameters.');
+                        }
+
+                        const parameters = result.data.parameters;
+                        paramTableHead.innerHTML = '';
+                        paramTableBody.innerHTML = '';
+
+                        if (!parameters || parameters.length === 0) {
+                            paramTableHead.innerHTML = `<tr><th class="px-4 py-3">Notice</th></tr>`;
+                            paramTableBody.innerHTML = `
+                                <tr>
+                                    <td class="text-center py-8 text-gray-500 font-medium">
+                                        No parameters defined for this test.
+                                    </td>
+                                </tr>`;
+                            return;
+                        }
+
+                        const pType = (
+                            parameters[0].inputType ||
+                            parameters[0].type ||
+                            parameters[0].test_type || ''
+                        ).toLowerCase().trim();
+
+                        if (pType === 'quantitative') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-2/5">Parameter</th>
+                                <th class="px-4 py-3 w-1/5">Result Value</th>
+                                <th class="px-4 py-3 w-1/6">Unit</th>
+                                <th class="px-4 py-3 w-1/5">Reference Range</th>
+                                <th class="px-4 py-3 text-center w-16">Flag</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.remove('hidden');
+
+                        } else if (pType === 'qualitative') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-1/3">Parameter</th>
+                                <th class="px-4 py-3">Select Result</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.add('hidden');
+
+                        } else if (pType === 'observational') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-1/3">Parameter</th>
+                                <th class="px-4 py-3">Observation / Notes</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.add('hidden');
+
+                        } else if (pType === 'image') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-1/3">Parameter</th>
+                                <th class="px-4 py-3">Upload Images</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.add('hidden');
+                        }
+
+                        parameters.forEach(param => {
+                            const rangeText = param.normalRange || 'N/A';
+                            const unit = param.unit || '';
+
+                            let min = null, max = null;
+                            if (param.normalRange && param.normalRange.includes('-')) {
+                                const parts = param.normalRange.split('-');
+                                min = parseFloat(parts[0]);
+                                max = parseFloat(parts[1]);
+                            }
+
+                            const row = document.createElement('tr');
+                            row.className = 'hover:bg-blue-50/30 transition-colors border-b border-gray-100';
+
+                            if (pType === 'quantitative') {
+                                row.innerHTML = `
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3 border-r border-gray-100">
+                                        <input type="number" step="0.01" required
+                                            data-param-id="${param.id}"
+                                            data-flag="Normal"
+                                            ${min !== null ? `data-min="${min}"` : ''}
+                                            ${max !== null ? `data-max="${max}"` : ''}
+                                            class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors"
+                                            placeholder="Enter value">
+                                    </td>
+                                    <td class="px-4 py-4 text-gray-500 text-xs border-r border-gray-100 font-semibold">${unit}</td>
+                                    <td class="px-4 py-4 text-gray-600 text-xs border-r border-gray-100 font-semibold">${rangeText}</td>
+                                    <td class="px-4 py-4 text-center flag-cell">
+                                        <span class="text-gray-300 text-xs font-bold">—</span>
+                                    </td>`;
+
+
+                            } else if (pType === 'qualitative') {
+
+                                let optionsHtml = `<option value="">Select Results</option>`;
+
+                                let optionsList = param.options;
+
+                                if (!Array.isArray(optionsList)) {
+                                    optionsList = (optionsList || 'Positive,Negative').split(',');
+                                }
+
+                                optionsList.forEach(opt => {
+                                    const o = opt.trim();
+                                    if (o) {
+                                        optionsHtml += `<option value="${o}">${o}</option>`;
+                                    }
+                                });
+
+                                row.innerHTML = `
+        <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">
+            ${param.parameterName}
+        </td>
+        <td class="px-4 py-3">
+            <select required data-param-id="${param.id}" data-flag="Normal"
+                class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors">
+                ${optionsHtml}
+            </select>
+        </td>`;
+                            } else if (pType === 'observational') {
+                                row.innerHTML = `
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3">
+                                        <textarea required data-param-id="${param.id}" data-flag="Normal"
+                                            class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 custom-scrollbar"
+                                            placeholder="Enter observation details..." rows="3"></textarea>
+                                    </td>`;
+
+
+                            } else if (pType === 'image') {
+                                row.innerHTML = `
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3">
+                                        <input type="file" multiple accept="image/*"
+                                            class="param-image-upload w-full border border-gray-300 rounded-lg p-2 text-sm cursor-pointer bg-gray-50">
+                                        <input type="hidden" required data-param-id="${param.id}" data-flag="Normal" class="result-input">
+                                        <p class="param-upload-status text-xs text-blue-600 mt-1 font-semibold"></p>
+                                    </td>`;
+                            }
+
+                            paramTableBody.appendChild(row);
+                        });
+
+                        attachValidationListeners();
+
+                        // Image upload AJAX
+                        document.querySelectorAll('.param-image-upload').forEach(fileInput => {
+                            fileInput.addEventListener('change', async (event) => {
+                                const files = event.target.files;
+                                if (!files || files.length === 0) return;
+                                const td = event.target.closest('td');
+                                const statusText = td.querySelector('.param-upload-status');
+                                const hiddenInput = td.querySelector('.result-input');
+                                const formData = new FormData();
+                                for (let i = 0; i < files.length; i++) formData.append('files[]', files[i]);
+                                statusText.innerText = 'Uploading... please wait.';
+                                statusText.className = 'param-upload-status text-xs text-blue-600 mt-1 font-semibold';
+
+                                try {
+                                    const up = await fetch('/uploadHumanResultFile', {
+                                        method: 'POST',
+                                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+                                        body: formData
+                                    });
+                                    const upData = await up.json();
+
+                                    if (up.ok && upData.status === true) {
+                                        hiddenInput.value = JSON.stringify(upData.data.paths);
+                                        statusText.innerText = `${files.length} image(s) uploaded!`;
+                                        statusText.className = 'param-upload-status text-xs text-green-600 mt-1 font-bold';
+                                    } else {
+                                        throw new Error(upData.message || 'Upload failed');
+                                    }
+                                } catch (err) {
+                                    hiddenInput.value = '';
+                                    statusText.innerText = 'Upload Error: ' + err.message;
+                                    statusText.className = 'param-upload-status text-xs text-red-600 mt-1 font-bold';
+                                }
+                            });
+                        });
+
+                    } catch (error) {
+                        paramTableHead.innerHTML = '';
+                        paramTableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center py-8">
+                                    <div class="flex flex-col items-center gap-2 text-red-500">
+                                        <i class="ph-bold ph-warning-circle text-3xl"></i>
+                                        <span class="font-bold text-sm">${error.message || 'Failed to load parameters.'}</span>
+                                        <span class="text-xs text-gray-400">Check your network or server logs.</span>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        console.error('getOrderTestParameters error:', error);
+                    }
+                } // End of enterBtn block
+
+                const closeBtn = e.target.closest('.close-modal-btn');
+                if (closeBtn) {
+                    closeModal(closeBtn.getAttribute('data-modal'));
                 }
             });
 

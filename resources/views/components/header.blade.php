@@ -5,19 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laboratory Management System</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @auth
         <meta name="user-id" content="{{ auth()->id() }}">
-        @if(auth()->user()->role === 'admin')
-            @vite(['resources/js/admin.js'])
-        @endif
     @endauth
+
+    @php
+        $viteAssets = ['resources/css/app.css', 'resources/js/app.js'];
+
+        if (auth()->check() && auth()->user()->role === 'Admin') {
+            $viteAssets[] = 'resources/js/admin.js';
+        }
+    @endphp
+    @vite($viteAssets)
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+
     <style>
         /* Customizing Flatpickr to match your Tailwind Theme */
         .flatpickr-calendar {
@@ -55,7 +63,6 @@
 
         .flatpickr-day:hover {
             background: #eff6ff;
-            /* Tailwind blue-50 */
         }
     </style>
 </head>

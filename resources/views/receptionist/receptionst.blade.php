@@ -64,8 +64,7 @@
             <div class="pt-4 mt-2 border-t border-gray-700/50">
                 <a href="{{ route('logout') }}"
                     class="flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer">
-                    <i
-                        class="ph-duotone ph-sign-out text-2xl w-7 text-center  group-hover:text-white transition-colors"></i>
+                    <i class="ph ph-sign-out text-2xl w-7 text-center  group-hover:text-white transition-colors"></i>
                     <span class="ml-3 nav-text whitespace-nowrap">Logout</span>
                 </a>
             </div>
@@ -137,7 +136,7 @@
                         class="p-5 border-b border-gray-100 flex flex-col lg:flex-row justify-between gap-4 items-start lg:items-center bg-gray-50/50">
                         <div class="flex items-center gap-2">
                             <i class="ph-duotone ph-calendar-blank text-xl text-gray-500"></i>
-                            <h3 class="text-base font-bold text-gray-800"> Statistics</h3>
+                            <h2 class="text-2xl font-bold text-gray-800"> Statistics</h2>
                         </div>
 
                         <form id="DashboardDateFilterForm"

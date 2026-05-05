@@ -44,7 +44,6 @@ class ResultController extends Controller
                     ]);
                 }
             } else {
-                // For human-based or tests without parameters
                 Result::create([
                     'orderTestId' => $request->orderTestId,
                     'trackingId' => $request->trackingId,
@@ -179,7 +178,7 @@ class ResultController extends Controller
     public function getCompletedReports(Request $request)
     {
         $user = Auth::user();
-        
+
         $completedReports = Order::whereHas('tests', function ($query) use ($user) {
             $query->where('tests.departmentId', $user->department_id)
                 ->where('order_test.status', 'Completed')

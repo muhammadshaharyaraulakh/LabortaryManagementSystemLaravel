@@ -27,7 +27,9 @@ class TestController extends Controller
                 'data' => []
             ], Response::HTTP_BAD_REQUEST);
         }
-        $tests = Test::where('departmentId', $department)->latest()->get();
+        $tests = Test::whereHas('department', function ($query) use ($department) {
+            $query->where('id', $department)->where('is_active', true);
+        })->latest()->get();
 
 
         if ($tests->isNotEmpty()) {
@@ -49,7 +51,7 @@ class TestController extends Controller
     {
         $tests = Test::whereHas('department', function ($query) {
             $query->where('is_active', true);
-        })->with('department')->get();
+        })->with('department')->where('isActive', true)->latest()->get();
 
         if ($tests->isNotEmpty()) {
             return response()->json([
@@ -91,6 +93,7 @@ class TestController extends Controller
             'type' => ['required', 'string', 'max:255'],
             'time' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
+            'instructionsForTechnicianAndSampleCollector' => ['required', 'string'],
             'parameter_name' => ['required', 'array', 'min:1'],
             'parameter_name.*' => ['required', 'string', 'distinct'],
             'parameter_type' => ['required', 'array'],
@@ -117,6 +120,7 @@ class TestController extends Controller
                 'sampleType' => $request->type,
                 'resultHours' => $request->time,
                 'instructions' => $request->instructions,
+                'instructionsForTechnicianAndSampleCollector' => $request->instructionsForTechnicianAndSampleCollector,
                 'departmentId' => Auth::user()->department_id,
                 'userId' => Auth::id(),
                 'isActive' => $request->has('is_active') ? true : false,
@@ -213,6 +217,7 @@ class TestController extends Controller
             'type' => ['required', 'string', 'max:255'],
             'time' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
+            'instructionsForTechnicianAndSampleCollector' => ['required', 'string'],
             'parameter_name' => ['required', 'array', 'min:1'],
             'parameter_name.*' => ['required', 'string', 'distinct'],
             'parameter_type' => ['required', 'array'],
@@ -241,8 +246,10 @@ class TestController extends Controller
                 'sampleType' => $request->type,
                 'resultHours' => $request->time,
                 'instructions' => $request->instructions,
+                'instructionsForTechnicianAndSampleCollector' => $request->instructionsForTechnicianAndSampleCollector,
                 'departmentId' => Auth::user()->department_id,
                 'isActive' => $request->has('is_active') ? true : false,
+                'edited_by' => Auth::id()
             ]);
 
             $test->parameters()->delete();
@@ -336,6 +343,9 @@ class TestController extends Controller
 
         try {
             DB::beginTransaction();
+            $test->update([
+                'deleted_by' => Auth::id()
+            ]);
             $test->parameters()->delete();
             $test->requirements()->delete();
             $test->delete();
@@ -357,12 +367,65 @@ class TestController extends Controller
 
     public function show($id)
     {
-        $test = Test::with(['parameters', 'requirements', 'department'])->findOrFail($id);
+        $test = Test::with(['parameters', 'requirements', 'department'])->where('isActive', true)->where('id', $id)->firstOrFail();
 
         return response()->json([
             'status' => true,
             'message' => 'Test retrieved successfully',
             'data' => $test
         ], Response::HTTP_OK);
+    }
+    public function trashedIndex()
+    {
+        $department = Auth::user()->department_id;
+        if (empty($department)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Department not found',
+                'data' => []
+            ], Response::HTTP_BAD_REQUEST);
+        }
+        $tests = Test::onlyTrashed()->where('departmentId', $department)->latest()->get();
+
+
+        if ($tests->isNotEmpty()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Tests found',
+                'data' => $tests
+            ], Response::HTTP_OK);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Tests not found',
+            'data' => []
+        ], Response::HTTP_OK);
+    }
+    public function restore($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $test = Test::withTrashed()->findOrFail($id);
+            $test->restore();
+            $test->parameters()->withTrashed()->restore();
+            $test->requirements()->withTrashed()->restore();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Test restored successfully',
+            ], Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

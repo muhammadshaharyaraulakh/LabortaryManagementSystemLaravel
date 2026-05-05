@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Factories\InventoryFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -13,7 +14,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory(10)->create();
-        Test::factory(10)->create();
+        Test::factory(54)->create();
     }
 }

@@ -10,9 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const testDetailsContent = document.getElementById("test-details-content");
     const btnBackToTests = document.getElementById("btn-back-to-tests");
 
-    // ==========================================
-    // 2. VIEW TOGGLE LOGIC
-    // ==========================================
     function showListView() {
         testDetailsView.classList.add("hidden");
         testsListView.classList.remove("hidden");
@@ -23,14 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
         testDetailsView.classList.remove("hidden");
     }
 
-    // Attach Back Button Listener
     if (btnBackToTests) {
         btnBackToTests.addEventListener("click", showListView);
     }
 
-    // ==========================================
-    // 3. API FETCHING LOGIC (LIST)
-    // ==========================================
     async function fetchDirectoryTests() {
         if (!testDirectoryTableBody) return;
         testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-purple-600"></i><p class="text-sm text-gray-500 mt-2">Loading tests...</p></td></tr>`;
@@ -57,9 +50,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ==========================================
-    // 4. RENDERING LOGIC
-    // ==========================================
     function renderDirectoryTests(tests) {
         if (!testDirectoryTableBody) return;
         testDirectoryTableBody.innerHTML = "";
@@ -76,7 +66,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const department =
                 test.department?.name || test.department || "General";
             const price = test.price || 0;
-            const time = test.timeRequired || test.time_required || "Standard";
+            const time = test.resultHours
+                ? `${test.resultHours} Hrs`
+                : test.timeRequired || "Standard";
 
             testDirectoryTableBody.innerHTML += `
             <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
@@ -97,9 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ==========================================
-    // 5. SEARCH AND FILTER FUNCTIONALITY
-    // ==========================================
     if (searchTestsDir) {
         searchTestsDir.addEventListener("input", (e) => {
             const query = e.target.value.toLowerCase().trim();
@@ -132,9 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ==========================================
-    // 6. API FETCHING LOGIC (DETAILS UI)
-    // ==========================================
     async function fetchTestDetails(id) {
         if (!testDetailsContent) return;
         testDetailsContent.innerHTML = `<div class="flex flex-col items-center justify-center py-16"><i class="ph-bold ph-spinner animate-spin text-4xl text-purple-600 mb-3"></i><p class="text-sm text-gray-500 font-medium">Fetching details...</p></div>`;
@@ -161,14 +147,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 const department =
                     test.department?.name || test.department || "General";
 
-                let requirementsHtml = "";
+                const sampleType = test.sampleType || "N/A";
+                const resultHours = test.resultHours || "N/A";
+                const techInstructions =
+                    test.instructions_sample_collector ||
+                    test["Instructions(SampleCollector)"] ||
+                    test.instructionsForTechnicianAndSampleCollector ||
+                    "";
+
+                let patientRequirementsHtml = "";
                 if (test.instructions) {
-                    requirementsHtml = `
-                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-100 mb-6">
+                    patientRequirementsHtml = `
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-100 mb-4">
                         <span class="text-sm font-bold text-orange-800 block mb-2 flex items-center gap-2">
                             <i class="ph-fill ph-warning-circle text-orange-500"></i> Patient Instructions
                         </span>
-                        <p class="text-sm text-orange-700 leading-relaxed">${test.instructions}</p>
+                        <p class="text-sm text-orange-700 leading-relaxed whitespace-pre-line">${test.instructions}</p>
+                    </div>
+                `;
+                }
+
+                let techRequirementsHtml = "";
+                if (techInstructions) {
+                    techRequirementsHtml = `
+                    <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 mb-6">
+                        <span class="text-sm font-bold text-blue-800 block mb-2 flex items-center gap-2">
+                            <i class="ph-fill ph-info text-blue-500"></i> Technician & Sample Collector Protocol
+                        </span>
+                        <p class="text-sm text-blue-700 leading-relaxed whitespace-pre-line">${techInstructions}</p>
                     </div>
                 `;
                 }
@@ -176,17 +182,39 @@ document.addEventListener("DOMContentLoaded", function () {
                 let parametersHtml = "";
                 if (test.parameters && test.parameters.length > 0) {
                     const paramList = test.parameters
-                        .map(
-                            (param) =>
-                                `<li class="py-2 border-b border-gray-50 last:border-0 flex justify-between items-center">
-                                    <span class="font-bold text-gray-700">${param.parameterName}</span> 
-                                    <span class="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md">Normal: ${param.normalRange} ${param.unit}</span>
-                                </li>`
-                        )
+                        .map((param) => {
+                            let paramDetails = "";
+                            const type =
+                                param.inputType ||
+                                param.parameterType ||
+                                "Quantitative";
+
+                            if (type === "Quantitative") {
+                                paramDetails = `<span class="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md">Normal: ${
+                                    param.normalRange || "N/A"
+                                } ${param.unit || ""}</span>`;
+                            } else if (type === "Qualitative") {
+                                const opts = Array.isArray(param.options)
+                                    ? param.options.join(", ")
+                                    : param.options || "N/A";
+                                paramDetails = `<span class="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md">Options: ${opts}</span>`;
+                            } else {
+                                paramDetails = `<span class="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md">Type: ${type}</span>`;
+                            }
+
+                            return `
+                                <li class="py-3 border-b border-gray-50 last:border-0 flex justify-between items-center gap-4">
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-gray-700">${param.parameterName}</span>
+                                        <span class="text-[10px] text-gray-400 uppercase tracking-wider font-bold mt-0.5">${type}</span>
+                                    </div>
+                                    <div class="text-right">${paramDetails}</div>
+                                </li>`;
+                        })
                         .join("");
 
                     parametersHtml = `
-                    <h5 class="font-bold text-base text-gray-800 mb-3 border-b border-gray-100 pb-2">Parameters Checked</h5>
+                    <h5 class="font-bold text-base text-gray-800 mb-3 border-b border-gray-100 pb-2">Medical Parameters</h5>
                     <ul class="text-sm text-gray-600 w-full mb-4">
                         ${paramList}
                     </ul>
@@ -194,18 +222,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     parametersHtml = `<div class="bg-gray-50 rounded-lg p-4 text-center"><p class="text-sm text-gray-500 italic">No specific parameters listed for this test.</p></div>`;
                 }
+
                 testDetailsContent.innerHTML = `
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-gray-100 pb-6">
                     <div>
-                        <h4 class="text-2xl font-black text-gray-900 mb-1">${name}</h4>
-                        <p class="text-sm text-gray-500 font-medium">Test Code: <span class="text-gray-800">${code}</span></p>
+                        <h4 class="text-2xl font-black text-gray-900 mb-2">${name}</h4>
+                        <div class="flex flex-wrap items-center gap-2 text-sm font-medium mt-2">
+                            <span class="text-gray-500 bg-gray-100 px-2.5 py-1 rounded border border-gray-200">Code: <span class="text-gray-800 font-bold">${code}</span></span>
+                            <span class="text-gray-500 bg-gray-100 px-2.5 py-1 rounded border border-gray-200">Sample: <span class="text-gray-800 font-bold">${sampleType}</span></span>
+                            <span class="text-gray-500 bg-gray-100 px-2.5 py-1 rounded border border-gray-200">Results In: <span class="text-gray-800 font-bold">${resultHours} Hrs</span></span>
+                        </div>
                     </div>
                     <div class="text-right flex flex-col md:items-end gap-2">
                         <span class="bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg text-sm font-bold inline-block">${department} Department</span>
-                        <span class="text-lg font-bold text-gray-800">Rs. ${test.price}</span>
+                        <span class="text-2xl font-black text-gray-800">Rs. ${test.price}</span>
                     </div>
                 </div>
-                ${requirementsHtml}
+                ${patientRequirementsHtml}
+                ${techRequirementsHtml}
                 ${parametersHtml}
             `;
             } else {
@@ -214,13 +248,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 }</p></div>`;
             }
         } catch (error) {
+            console.error(error);
             testDetailsContent.innerHTML = `<div class="py-12 text-center flex flex-col items-center"><i class="ph-duotone ph-wifi-x text-4xl text-red-500 mb-2"></i><p class="text-red-600 font-bold">Network error occurred.</p></div>`;
         }
     }
 
-    // ==========================================
-    // 7. LAZY LOADING TRIGGER
-    // ==========================================
     const testNavLinks = document.querySelectorAll(
         'a[data-target="section-tests"]'
     );
@@ -235,9 +267,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // ==========================================
-    // 8. GLOBAL CLICK LISTENERS
-    // ==========================================
     document.addEventListener("click", async (e) => {
         const viewTestBtn = e.target.closest(".btn-view-test");
         if (viewTestBtn) {

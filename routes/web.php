@@ -28,9 +28,29 @@ Route::middleware('auth')->group(function () {
 
 
 
-
+    Route::get('/tests', [TestController::class, 'index']);
     Route::view('/pathologist/dashboard', 'pathologist.dashboard')
         ->name('pathologist.dashboard');
+    // --- TEST CONTROLLER ROUTES ---
+    Route::get('/deprtmentTests', [TestController::class, 'deprtmentTests']);
+    Route::get('/InventoryItems', [TestController::class, 'inventoryItems']);
+
+    // 1. Specific routes MUST go first!
+    Route::get('/tests/trashed', [TestController::class, 'trashedIndex']);
+    Route::post('/tests/add', [TestController::class, 'add']);
+
+    // 2. Wildcard {id} routes MUST go after!
+    Route::get('/tests/{id}', [TestController::class, 'show']);
+    Route::put('/tests/{id}', [TestController::class, 'update']);
+    Route::delete('/tests/{id}', [TestController::class, 'destroy']);
+    Route::post('/tests/{id}/restore', [TestController::class, 'restore']);
+    // ------------------------------
+
+    Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
+    Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
+    Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
+    Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
+    Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
 
 
 
@@ -109,23 +129,6 @@ Route::middleware(['auth', 'check.role:admin'])->group(function () {
     Route::post('/stats/search', [StatisticsController::class, 'Search']);
 });
 
-
-Route::middleware('auth')->group(function () {
-    Route::get('/tests', [TestController::class, 'index']);
-    Route::get('/tests/{id}', [TestController::class, 'show']);
-    Route::post('/tests/add', [TestController::class, 'add']);
-    Route::put('/tests/{id}', [TestController::class, 'update']);
-    Route::delete('/tests/{id}', [TestController::class, 'destroy']);
-    Route::get('/deprtmentTests',[TestController::class,'deprtmentTests']);
-    
-    Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
-    Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
-    Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
-    Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
-    Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
-}); 
-
-
 Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
     Route::view('/receptionist', 'receptionist.receptionst')->name('receptionist');
     Route::get('/orders', [OrderController::class, 'getOrders']);
@@ -136,8 +139,6 @@ Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
     Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
     Route::get('/stats', [StatisticsController::class, 'fetchDailyStats']);
     Route::post('/search', [StatisticsController::class, 'SearchForReceptionist']);
-    Route::get('/tests', [TestController::class, 'index']);
-    Route::get('/tests/{id}', [TestController::class, 'show']);
 });
 Route::middleware(['auth', 'check.role:samplecollector'])->group(function () {
     Route::view('/SampleCollector', 'SampleCollector.dashboard')->name('samplecollector.dashboard');
@@ -181,9 +182,8 @@ Route::get('/getSpecialistPendingList', [ResultController::class, 'getPendingRes
 Route::get('/getSpecialistCompletedReports', [ResultController::class, 'getCompletedReports']); // Reuses pathologist logic
 
 Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class, 'downloadReport']);
-
-
+Route::get('/public/track-report/{trackingId}', [OrderController::class, 'PublicTrackReport']);
 
 Route::get('/whoami', fn() => auth()->user());
 
-Route::get('/InventoryItems', [TestController::class, 'inventoryItems']);
+Route::get('/getOrderTestParameters/{id}', [TechnicianController::class, 'getOrderTestParameters']);

@@ -46,6 +46,13 @@
                     class="ph-duotone ph-microscope text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Manage Tests</span>
             </a>
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-archived-tests" data-title="Archived Tests">
+                <i
+                    class="ph-duotone ph-trash text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Archived Tests</span>
+            </a>
 
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
@@ -67,7 +74,7 @@
                 <a href="{{ Route('logout') }}"
                     class="flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer">
                     <i
-                        class="ph-duotone ph-sign-out text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors"></i>
+                        class="ph ph-sign-out text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors"></i>
                     <span class="ml-3 nav-text whitespace-nowrap">Logout</span>
                 </a>
             </div>
@@ -83,38 +90,10 @@
                 </button>
                 <h1 id="header-title"
                     class="text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200">
-                    Dashboard
+                    Dashboard {{ auth()->user()->department->name }}
                 </h1>
             </div>
 
-            <div class="flex items-center space-x-6">
-                <div class="relative hidden sm:flex items-center">
-                    <input type="text" placeholder="Search Patient/Test ID"
-                        class="bg-white border border-gray-200 rounded-full py-1.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200 w-48 lg:w-64 shadow-sm">
-                </div>
-
-                <div class="relative">
-                    <button id="profile-btn"
-                        class="text-gray-700 hover:text-black transition-colors focus:outline-none flex items-center gap-2 cursor-pointer">
-                        <i class="ph-duotone ph-user-circle text-3xl md:text-4xl"></i>
-                    </button>
-
-                    <div id="profile-menu"
-                        class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 hidden z-50 transform origin-top-right dropdown-enter">
-                        <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
-                            <p class="text-sm font-bold text-gray-900">Dr. Smith</p>
-                            <p class="text-xs text-gray-500 font-medium mt-0.5">Head of Hematology</p>
-                        </div>
-                        <div class="py-2">
-                            <a href="#"
-                                class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
-                                Profile
-                            </a>
-                            <x-logout />
-                        </div>
-                    </div>
-                </div>
-            </div>
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
@@ -126,13 +105,15 @@
                             <i class="ph-duotone ph-flask text-2xl"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Department Dashboard</h2>
-                            <p class="text-sm text-gray-500 font-medium mt-1">Review and verify pending results for your department</p>
+
+                            <p class="text-sm text-gray-500 font-medium mt-1">Review and verify pending results for your
+                                department</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
@@ -305,6 +286,13 @@
                             <textarea name="instructions" rows="3"
                                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 resize-none transition-colors"
                                 placeholder="e.g. Fasting required for 12 hours"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Instructions for SampleCollector
+                                and Technician</label>
+                            <textarea name="instructionsForTechnicianAndSampleCollector" rows="3"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 resize-none transition-colors"
+                                placeholder="e.g. Use Red Test Tube for Collecting Blood"></textarea>
                         </div>
 
                         <div class="pt-2">
@@ -500,6 +488,13 @@
                                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-gray-50/50 resize-none transition-colors"
                                 placeholder="e.g. Fasting required for 12 hours"></textarea>
                         </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Instructions for SampleCollector
+                                and Technician</label>
+                            <textarea name="instructionsForTechnicianAndSampleCollector" rows="3"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-gray-50/50 resize-none transition-colors"
+                                placeholder="e.g. Use Red Test Tube for Collecting Blood"></textarea>
+                        </div>
 
                         <div class="pt-2">
                             <label class="flex items-center gap-3 cursor-pointer">
@@ -567,6 +562,43 @@
                         </div>
 
                     </form>
+                </div>
+            </div>
+            <div id="section-archived-tests" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-trash text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Archived Tests</h2>
+                            <p class="text-sm text-gray-500 font-medium">Restore previously deleted tests</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                    <div class="overflow-x-auto min-h-[250px]">
+                        <table class="w-full text-left text-sm">
+                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4">Test Name</th>
+                                    <th scope="col" class="px-6 py-4">Code</th>
+                                    <th scope="col" class="px-6 py-4">Status</th>
+                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="archived-tests-table">
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12 text-center text-gray-500 font-medium">
+                                        <i class="ph-duotone ph-spinner animate-spin text-4xl mb-2 text-gray-400"></i>
+                                        <p>Loading archived Tests.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -816,44 +848,7 @@
         </div>
     </div>
 
-    <div id="ViewReportModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="ViewReportModal"
-            class="bg-white w-full max-w-3xl rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col max-h-[95vh]">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center">
-                        <i class="ph-duotone ph-file-text text-xl"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-gray-800">Laboratory Report Preview</h3>
-                </div>
-                <button id="CloseViewReportX" class="text-gray-400 hover:text-gray-800 transition-colors p-1"><i
-                        class="ph ph-x text-xl"></i></button>
-            </div>
-            <div class="p-8 overflow-y-auto bg-gray-50 flex justify-center custom-scrollbar">
-                <div class="bg-white shadow-sm border border-gray-200 w-full max-w-2xl p-8 rounded-sm min-h-[600px]">
-                    <div class="border-b-2 border-gray-800 pb-4 mb-6 text-center">
-                        <h1 class="text-2xl font-black text-gray-900 uppercase tracking-widest">Medical Laboratory
-                            Report</h1>
-                    </div>
-                    <div class="grid grid-cols-2 text-sm mb-8 gap-4">
-                        <div><span class="font-bold">Patient Name:</span> Sara Ahmed</div>
-                        <div><span class="font-bold">Report ID:</span> REP-2204</div>
-                        <div><span class="font-bold">Test:</span> Liver Function Test</div>
-                        <div><span class="font-bold">Date:</span> Oct 24, 2023</div>
-                    </div>
-                    <p class="text-gray-400 text-center mt-20">[Report Data & Parameters View]</p>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3">
-                <button id="CloseViewReportBtn"
-                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Close</button>
-                <button
-                    class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2"><i
-                        class="ph-bold ph-printer"></i> Print PDF</button>
-            </div>
-        </div>
-    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // ==========================================
@@ -1145,6 +1140,7 @@
                     const targetId = link.getAttribute('data-target');
                     switchSection(targetId, link.getAttribute('data-title'));
 
+
                     // ==========================================
                     // CALL THE RELEVANT API BASED ON THE TAB
                     // ==========================================
@@ -1154,6 +1150,8 @@
                         fetchCompletedReports();
                     } else if (targetId === 'section-manage-tests') {
                         fetchTests();
+                    } else if (targetId === 'section-archived-tests') {
+                        fetchArchivedTests(); // <--- ADD THIS LINE HERE
                     } else if (targetId === 'section-add-test') {
                         loadInventoryItems();
                     } else if (targetId === 'section-settings') {
@@ -1536,6 +1534,10 @@
                 });
             }
 
+
+            // ==========================================
+            // RESTORED: Fetch & Populate Edit Form + Delete Logic
+            // ==========================================
             document.getElementById('department-tests-table')?.addEventListener('click', async (e) => {
                 if (e.target.closest('.btn-edit-test')) {
                     const testId = e.target.closest('.btn-edit-test').dataset.id;
@@ -1543,7 +1545,6 @@
                     form.dataset.testId = testId;
                     clearValidationErrors(form);
 
-                    // Ensure inventory is loaded
                     await loadInventoryItems();
 
                     try {
@@ -1557,14 +1558,18 @@
                             form.querySelector('input[name="price"]').value = test.price || '';
                             form.querySelector('input[name="type"]').value = test.sampleType || '';
                             form.querySelector('input[name="time"]').value = test.resultHours || '';
+
+                            // Load both instruction fields
                             form.querySelector('textarea[name="instructions"]').value = test.instructions || '';
+                            form.querySelector('textarea[name="instructionsForTechnicianAndSampleCollector"]').value = test.instructions_sample_collector || test['Instructions(SampleCollector)'] || test.instructionsForTechnicianAndSampleCollector || '';
+
                             form.querySelector('input[name="is_active"]').checked = test.isActive;
 
                             const paramsContainer = document.getElementById('update-parameters-container');
                             paramsContainer.innerHTML = '';
                             if (test.parameters?.length) {
                                 test.parameters.forEach((param, index) => {
-                                    const type = param.parameterType || 'Quantitative';
+                                    const type = param.inputType || 'Quantitative';
                                     const numberHidden = type === 'Quantitative' ? '' : 'hidden';
                                     const dropdownHidden = type === 'Qualitative' ? '' : 'hidden';
 
@@ -1613,6 +1618,8 @@
                             reqContainer.innerHTML = '';
                             if (test.requirements?.length) {
                                 test.requirements.forEach(req => {
+                                    const cleanQty = Math.round(parseFloat(req.quantityUsed)) || 1;
+
                                     reqContainer.insertAdjacentHTML('beforeend', `
                                     <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row animate-fade-in">
                                         <div class="flex-1">
@@ -1623,7 +1630,7 @@
                                         </div>
                                         <div class="w-32">
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
-                                            <input type="number" name="inventory_quantity[]" value="${req.quantityUsed}" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
+                                            <input type="number" name="inventory_quantity[]" value="${cleanQty}" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
                                         </div>
                                         <div><button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button></div>
                                     </div>`);
@@ -1650,9 +1657,7 @@
                         const response = await fetch(`/tests/${testId}`, { method: 'DELETE', headers: fetchHeaders });
                         const result = await response.json();
                         if (result.status === true) {
-                            // Update global allTests array
                             allTests = allTests.filter(t => t.id != testId);
-
                             row.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
                             setTimeout(() => row.remove(), 300);
                         }
@@ -1662,6 +1667,9 @@
                 }
             });
 
+            // ==========================================
+            // NEW: Submitting the Update Form
+            // ==========================================
             const btnUpdateSubmit = document.querySelector('#UpdateTestFormSection button.bg-teal-600');
             if (btnUpdateSubmit) {
                 btnUpdateSubmit.addEventListener('click', async () => {
@@ -1741,6 +1749,9 @@
                 });
             }
 
+            // ==========================================
+            // 10. DASHBOARD & REPORTS LOGIC
+            // ==========================================
             async function fetchPendingResults() {
                 try {
                     const response = await fetch('/getPendingResultList', { headers: fetchHeaders });
@@ -1987,6 +1998,94 @@
                     displaySignatureMessage('A network error occurred while deleting.', true);
                 }
             });
-        });
+
+            // ==========================================
+            // 12. ARCHIVED / RESTORE TESTS LOGIC (NEW)
+            // ==========================================
+            async function fetchArchivedTests() {
+                try {
+                    const response = await fetch('/tests/trashed', { headers: fetchHeaders });
+                    const result = await response.json();
+
+                    const tbody = document.getElementById('archived-tests-table');
+                    if (!tbody) return;
+                    tbody.innerHTML = '';
+
+                    if (response.ok && result.status === true && result.data && result.data.length > 0) {
+                        result.data.forEach(test => {
+                            const row = `
+                                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 text-gray-800 font-medium animate-fade-in">
+                                    <td class="px-6 py-4">${test.name}</td>
+                                    <td class="px-6 py-4 text-gray-500">${test.code}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold border border-red-100">Archived</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button data-id="${test.id}" class="btn-restore-test bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer border border-green-200 shadow-sm flex items-center justify-center gap-1 ml-auto">
+                                             Restore
+                                        </button>
+                                    </td>
+                                </tr>`;
+                            tbody.insertAdjacentHTML('beforeend', row);
+                        });
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="4" class="px-6 py-16 text-center text-gray-500 font-medium">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                            <i class="ph-duotone ph-folder-dashed text-4xl text-gray-400"></i>
+                                        </div>
+                                        <h3 class="text-lg font-bold text-gray-800">No archived or deleted tests found</h3>
+                                        <p class="text-gray-400 text-sm mt-1 max-w-xs mx-auto">Any tests you delete from the Manage Tests tab will appear here.</p>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    }
+                } catch (error) {
+                    console.error('Error fetching archived tests:', error);
+                }
+            }
+
+            // Restore Button Click Event
+            document.addEventListener('click', async (e) => {
+                if (e.target.closest('.btn-restore-test')) {
+                    const btn = e.target.closest('.btn-restore-test');
+                    const testId = btn.dataset.id;
+                    const row = btn.closest('tr');
+
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i>';
+                    btn.disabled = true;
+
+                    try {
+                        const response = await fetch(`/tests/${testId}/restore`, {
+                            method: 'POST',
+                            headers: fetchHeaders
+                        });
+                        const result = await response.json();
+
+                        if (result.status === true) {
+                            row.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
+                            setTimeout(() => row.remove(), 300);
+
+                            fetchTests();
+                        } else {
+                            alert(result.message || 'Failed to restore test.');
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('Error restoring test:', error);
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                }
+            });
+
+        }); 
     </script>
+
 </body>
+
+</html>

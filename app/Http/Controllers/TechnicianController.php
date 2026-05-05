@@ -43,7 +43,7 @@ class TechnicianController extends Controller
         $completedToday = DB::table('order_test')
             ->join('tests', 'order_test.testId', '=', 'tests.id')
             ->where('tests.departmentId', $departmentId)
-            ->where('order_test.status', 'Verified')
+            ->where('order_test.status', 'Completed')
             ->whereDate('order_test.updated_at', Carbon::today())
             ->count();
 
@@ -330,5 +330,45 @@ class TechnicianController extends Controller
             'status' => false,
             'message' => 'No files uploaded'
         ], Response::HTTP_BAD_REQUEST);
+    }
+    public function getOrderTestParameters($orderTestId)
+    {
+        if (empty($orderTestId)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'orderTestId is required.'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Get the order_test pivot row
+        $orderTest = DB::table('order_test')->where('id', $orderTestId)->first();
+
+        if (!$orderTest) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Order test not found.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // Get the test with its parameters
+        $test = Test::with('parameters')->find($orderTest->testId);
+
+        if (!$test) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Test not found.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Parameters fetched successfully.',
+            'data' => [
+                'orderTestId' => (int) $orderTestId,
+                'testId' => $test->id,
+                'testName' => $test->name,
+                'parameters' => $test->parameters
+            ]
+        ], Response::HTTP_OK);
     }
 }

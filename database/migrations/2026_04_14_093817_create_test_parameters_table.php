@@ -10,7 +10,6 @@ return new class extends Migration {
         Schema::create('test_parameters', function (Blueprint $table) {
             $table->id();
 
-            // Yahan humne column ka naam 'testId' rakha hai, aur bataya hai ke ye 'tests' table ke 'id' se link hai
             $table->foreignId('testId')->constrained('tests', 'id')->onDelete('cascade');
 
             $table->string('parameterName');

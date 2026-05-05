@@ -252,6 +252,31 @@ class OrderController extends Controller
             'orders' => [$order]
         ], Response::HTTP_OK);
     }
+
+    public function PublicTrackReport($trackingId)
+    {
+        if (empty($trackingId)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Tracking ID is required'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $order = Order::with('tests')->where('trackingId', $trackingId)->first();
+
+        if (empty($order)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No record found with this Tracking ID.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Order found',
+            'orders' => [$order]
+        ], Response::HTTP_OK);
+    }
     public function downloadReceiptPdf($trackingId)
     {
         $order = Order::with('tests')->where('trackingId', $trackingId)->firstOrFail();
@@ -280,6 +305,8 @@ class OrderController extends Controller
         $results = Result::where('orderTestId', $test->pivot->id)
             ->with('parameter')
             ->get();
+
+
 
         $pdf = Pdf::loadView('TestReport', compact('order', 'test', 'results'));
 

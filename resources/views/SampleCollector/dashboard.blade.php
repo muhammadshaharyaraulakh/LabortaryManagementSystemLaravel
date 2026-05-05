@@ -46,8 +46,7 @@
             <div class="pt-4 mt-2 border-t border-gray-700/50">
                 <a href="{{ route('logout') }}"
                     class="flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer">
-                    <i
-                        class="ph-duotone ph-sign-out text-2xl w-7 text-center group-hover:text-white transition-colors"></i>
+                    <i class="ph ph-sign-out text-2xl w-7 text-center group-hover:text-white transition-colors"></i>
                     <span class="ml-3 nav-text whitespace-nowrap">Logout</span>
                 </a>
             </div>
@@ -66,10 +65,7 @@
                     Pending Collections
                 </h1>
             </div>
-            <button
-                class="bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors cursor-pointer text-gray-600">
-                <i class="ph-bold ph-bell text-xl"></i>
-            </button>
+
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">

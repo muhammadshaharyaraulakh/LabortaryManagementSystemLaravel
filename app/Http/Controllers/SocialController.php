@@ -28,9 +28,10 @@ class SocialController extends Controller
 
             $routeMap = [
                 'admin' => 'admin.adminstrator',
-                'receptionist' => 'receptionist.dashboard',
+                'receptionist' => 'receptionist',
                 'pathologist' => 'pathologist.dashboard',
                 'samplecollector' => 'samplecollector.dashboard',
+                'technician' => 'Technician.dashboard',
             ];
             return redirect()->route($routeMap[$role] ?? 'login');
 

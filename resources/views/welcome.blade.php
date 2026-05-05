@@ -385,7 +385,7 @@
                 resultsContainer.classList.add('hidden');
 
                 try {
-                    const response = await fetch(`/orders/search/${trackingId}`);
+                    const response = await fetch(`/public/track-report/${trackingId}`);
                     const result = await response.json();
 
                     if (response.ok && result.status === 200) {
