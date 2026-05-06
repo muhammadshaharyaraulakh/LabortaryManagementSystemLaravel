@@ -412,32 +412,21 @@
 
             function renderResults(order) {
                 let html = `
-                    <div class="p-6 md:p-8 bg-white rounded-3xl border border-gray-100 mb-8 shadow-sm">
-                        <div class="flex flex-col md:flex-row justify-between items-start mb-8 gap-6 border-b border-gray-50 pb-8">
-                            <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm border border-blue-100">
-                                    <i class="ph-duotone ph-user-circle text-4xl"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-3xl font-black text-sidebarBg mb-1 tracking-tight">${order.name}</h3>
-                                    <div class="flex flex-wrap items-center gap-3">
-                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-black rounded-lg uppercase tracking-widest">${order.gender}</span>
-                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-black rounded-lg uppercase tracking-widest">${order.age} Years</span>
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: <b class="text-sidebarBg">${order.trackingId}</b></span>
-                                    </div>
+                    <div class="p-4 md:p-6 bg-gray-50 rounded-3xl border border-gray-100 mb-6 shadow-sm">
+                        <div class="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
+                            <div>
+                                <h3 class="text-2xl font-black text-sidebarBg mb-1">${order.name}</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tracking ID</span>
+                                    <span class="px-2 py-0.5 bg-sidebarBg text-white text-[10px] font-black rounded uppercase">${order.trackingId}</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col items-end gap-2">
-                                <div class="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-600 rounded-2xl border border-green-100 shadow-sm">
-                                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                    <span class="text-[10px] font-black uppercase tracking-widest">Verified Report</span>
-                                </div>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Generated: ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="px-4 py-1.5 bg-green-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm shadow-green-200">Record Verified</span>
+                                <span class="text-[10px] text-gray-400 font-bold italic">Last updated: ${new Date().toLocaleDateString()}</span>
                             </div>
                         </div>
-
-                        <div class="space-y-8">
+                        <div class="space-y-6">
                 `;
 
                 order.tests.forEach(test => {
@@ -446,66 +435,66 @@
                     const results = test.results || [];
                     
                     html += `
-                        <div class="bg-gray-50/30 rounded-[2rem] border border-gray-100 overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-gray-200/50 group">
+                        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
                             <!-- Test Header -->
-                            <div class="p-6 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-gray-100 group-hover:bg-gray-50/50 transition-colors">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-14 h-14 rounded-2xl bg-sidebarBg text-white flex items-center justify-center shadow-lg shadow-sidebarBg/20 group-hover:scale-110 transition-transform duration-500">
-                                        <i class="ph-bold ph-test-tube text-2xl"></i>
+                            <div class="p-4 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-xl bg-sidebarBg text-white flex items-center justify-center shadow-lg shadow-sidebarBg/20">
+                                        <i class="ph-bold ph-test-tube text-xl"></i>
                                     </div>
                                     <div>
-                                        <h4 class="font-black text-sidebarBg text-xl tracking-tight">${test.name}</h4>
-                                        <div class="flex items-center gap-3 mt-1">
-                                            <span class="text-[10px] font-black uppercase tracking-widest ${isCompleted ? 'text-green-600 bg-green-50 px-2 py-0.5 rounded' : 'text-orange-500 bg-orange-50 px-2 py-0.5 rounded'}">
+                                        <h4 class="font-black text-sidebarBg text-lg">${test.name}</h4>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-black uppercase tracking-tighter ${isCompleted ? 'text-green-600' : 'text-orange-500'}">
                                                 ${status}
                                             </span>
                                             <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${test.sampleType || 'Standard Sample'}</span>
+                                            <span class="text-[10px] text-gray-400 font-bold uppercase">${test.sampleType || 'Standard Sample'}</span>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 ${isCompleted ? `
                                     <a href="/orders/${order.trackingId}/test/${test.id}/report" 
-                                       class="px-8 py-3 bg-brandAccent text-white rounded-2xl text-xs font-black hover:bg-blue-600 transition-all shadow-lg shadow-brandAccent/20 flex items-center justify-center gap-3 active:scale-95 group/btn">
-                                        <i class="ph-bold ph-download-simple text-base group-hover/btn:translate-y-1 transition-transform"></i> 
-                                        <span>Download Full PDF</span>
+                                       class="px-6 py-2.5 bg-brandAccent text-white rounded-xl text-xs font-black hover:bg-blue-600 transition-all shadow-lg shadow-brandAccent/20 flex items-center justify-center gap-2 active:scale-95">
+                                        <i class="ph-bold ph-download-simple"></i> Download PDF
                                     </a>
                                 ` : `
-                                    <div class="flex items-center gap-3 text-xs text-orange-600 font-black uppercase tracking-widest bg-orange-50/50 px-5 py-3 rounded-2xl border border-orange-100">
-                                        <i class="ph-bold ph-hourglass-high animate-spin text-base"></i> 
-                                        <span>Processing in Lab</span>
+                                    <div class="flex items-center gap-2 text-xs text-orange-500 font-black uppercase tracking-tighter bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-100">
+                                        <i class="ph-bold ph-hourglass-high animate-spin"></i> Processing
                                     </div>
                                 `}
                             </div>
 
                             <!-- Results Section -->
                             ${isCompleted && results.length > 0 ? `
-                                <div class="p-6">
+                                <div class="p-4">
                                     <div class="overflow-x-auto">
-                                        <table class="w-full text-left border-separate border-spacing-y-3">
-                                            <thead class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] opacity-70">
+                                        <table class="w-full text-left border-separate border-spacing-y-2">
+                                            <thead class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                                 <tr>
-                                                    <th class="px-4 py-2">Medical Parameter</th>
-                                                    <th class="px-4 py-2">Result Value</th>
-                                                    <th class="px-4 py-2">Reference Range</th>
-                                                    <th class="px-4 py-2 text-center">Status</th>
+                                                    <th class="px-2 py-1">Parameter</th>
+                                                    <th class="px-2 py-1">Result</th>
+                                                    <th class="px-2 py-1">Unit / Range</th>
+                                                    <th class="px-2 py-1 text-center">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="text-sm">
                                                 ${results.map(res => {
-                                                    let pType = (res.parameter?.inputType || '').toLowerCase();
+                                                    let pType = (res.parameter?.inputType || res.parameter?.type || '').toLowerCase().trim();
                                                     const val = res.resultValue || '';
-                                                    const flag = res.statusFlag || 'Normal';
                                                     
-                                                    const isHigh = flag.toLowerCase() === 'high';
-                                                    const isLow = flag.toLowerCase() === 'low';
-                                                    const flagClass = isHigh ? 'bg-red-50 text-red-600 border-red-100' : 
-                                                                    (isLow ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-600 border-green-100');
-                                                    
-                                                    const indicatorColor = isHigh ? 'bg-red-500' : (isLow ? 'bg-orange-500' : 'bg-green-500');
+                                                    // Auto-detect image type if it looks like a JSON array
+                                                    if (!pType && val.startsWith('[') && val.endsWith(']')) {
+                                                        pType = 'image';
+                                                    }
+                                                    if (!pType) pType = 'quantitative';
 
-                                                    let resultValueHtml = `<span class="font-black text-sidebarBg text-base tracking-tight">${val || 'N/A'}</span>`;
+                                                    const flag = res.statusFlag || 'Normal';
+                                                    const flagClass = flag.toLowerCase() === 'high' ? 'bg-red-50 text-red-600 border-red-100' : 
+                                                                    (flag.toLowerCase() === 'low' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-600 border-green-100');
+                                                    
+                                                    let resultValueHtml = `<span class="font-black text-sidebarBg">${val || 'N/A'}</span>`;
                                                     
                                                     if (pType === 'image') {
                                                         let paths = [];
@@ -514,42 +503,31 @@
                                                         } catch(e) {}
                                                         
                                                         resultValueHtml = `
-                                                            <div class="flex flex-wrap gap-2 py-1">
-                                                                ${paths.map(p => {
-                                                                    const encodedPath = encodeURI(p.replace(/^\//, ''));
-                                                                    return `
-                                                                    <div class="relative group/img cursor-pointer">
-                                                                        <img src="/${encodedPath}" class="w-12 h-12 rounded-lg object-cover border border-gray-200 shadow-sm group-hover/img:scale-150 transition-transform duration-300 z-10" />
-                                                                        <a href="/${encodedPath}" target="_blank" class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center rounded-lg transition-opacity">
-                                                                            <i class="ph ph-magnifying-glass-plus text-white text-xs"></i>
-                                                                        </a>
-                                                                    </div>
-                                                                `}).join('')}
-                                                                ${paths.length === 0 ? '<span class="text-xs text-gray-400 italic font-bold">No images uploaded</span>' : ''}
+                                                            <div class="flex flex-wrap gap-1">
+                                                                ${paths.map(p => `
+                                                                    <a href="/${p.replace(/^\//, '')}" target="_blank" class="w-8 h-8 bg-blue-50 text-blue-500 rounded border border-blue-100 flex items-center justify-center hover:bg-blue-100 transition-colors" title="View Image">
+                                                                        <i class="ph-bold ph-image text-xs"></i>
+                                                                    </a>
+                                                                `).join('')}
+                                                                ${paths.length === 0 ? '<span class="text-xs text-gray-400 italic">No images</span>' : ''}
                                                             </div>
                                                         `;
                                                     }
 
                                                     return `
-                                                        <tr class="bg-white rounded-2xl shadow-sm border border-gray-50 hover:border-sidebarBg/10 transition-all duration-300">
-                                                            <td class="px-4 py-5 rounded-l-2xl">
-                                                                <div class="flex items-center gap-3">
-                                                                    <div class="w-1.5 h-8 ${indicatorColor} rounded-full opacity-50"></div>
-                                                                    <div>
-                                                                        <span class="font-black text-sidebarBg block">${res.parameter?.parameterName || 'Unknown'}</span>
-                                                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${res.parameter?.unit || '-'}</span>
-                                                                    </div>
-                                                                </div>
+                                                        <tr class="bg-gray-50/30 rounded-xl group hover:bg-gray-50 transition-colors">
+                                                            <td class="px-2 py-3 border-l-4 ${flag.toLowerCase() === 'high' ? 'border-red-400' : (flag.toLowerCase() === 'low' ? 'border-orange-400' : 'border-green-400')} rounded-l-lg">
+                                                                <span class="font-bold text-gray-700">${res.parameter?.parameterName || 'Unknown'}</span>
                                                             </td>
-                                                            <td class="px-4 py-5">${resultValueHtml}</td>
-                                                            <td class="px-4 py-5">
+                                                            <td class="px-2 py-3">${resultValueHtml}</td>
+                                                            <td class="px-2 py-3">
                                                                 <div class="flex flex-col">
-                                                                    <span class="text-xs font-bold text-gray-600">${res.parameter?.normalRange || 'N/A'}</span>
-                                                                    <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Typical Range</span>
+                                                                    <span class="text-[10px] font-black text-gray-400 uppercase">${res.parameter?.unit || '-'}</span>
+                                                                    <span class="text-[9px] text-gray-400 italic">${res.parameter?.normalRange || 'N/A'}</span>
                                                                 </div>
                                                             </td>
-                                                            <td class="px-4 py-5 text-center rounded-r-2xl">
-                                                                <span class="px-4 py-1.5 ${flagClass} border rounded-xl text-[10px] font-black uppercase tracking-[0.1em] shadow-sm">
+                                                            <td class="px-2 py-3 text-center">
+                                                                <span class="px-2 py-0.5 ${flagClass} border rounded text-[9px] font-black uppercase tracking-tighter">
                                                                     ${flag}
                                                                 </span>
                                                             </td>
@@ -561,29 +539,19 @@
                                     </div>
                                     
                                     ${results[0]?.remarks ? `
-                                        <div class="mt-8 p-6 bg-gradient-to-r from-orange-50/50 to-amber-50/50 border border-orange-100 rounded-3xl relative overflow-hidden">
-                                            <div class="absolute right-0 top-0 opacity-10">
-                                                <i class="ph ph-chat-centered-dots text-8xl text-orange-900"></i>
+                                        <div class="mt-4 p-4 bg-orange-50/50 border border-orange-100 rounded-xl">
+                                            <div class="flex items-center gap-2 mb-1 text-orange-800">
+                                                <i class="ph-fill ph-chat-centered-dots"></i>
+                                                <span class="text-[10px] font-black uppercase tracking-widest">Medical Remarks</span>
                                             </div>
-                                            <div class="relative z-10">
-                                                <div class="flex items-center gap-3 mb-3 text-orange-800">
-                                                    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                                                        <i class="ph-fill ph-quotes text-lg"></i>
-                                                    </div>
-                                                    <span class="text-xs font-black uppercase tracking-[0.2em]">Consultant Interpretation</span>
-                                                </div>
-                                                <p class="text-sm text-gray-700 leading-relaxed font-medium pl-1">${results[0].remarks}</p>
-                                            </div>
+                                            <p class="text-sm text-gray-700 leading-relaxed">${results[0].remarks}</p>
                                         </div>
                                     ` : ''}
                                 </div>
                             ` : (isCompleted ? `
-                                <div class="p-12 text-center bg-white">
-                                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
-                                        <i class="ph-duotone ph-file-search text-5xl text-gray-300"></i>
-                                    </div>
-                                    <h5 class="text-sidebarBg font-bold text-lg mb-1">Detailed Data in PDF</h5>
-                                    <p class="text-gray-400 text-sm max-w-xs mx-auto">This test contains complex data structures. Please download the full PDF report to see the detailed medical findings.</p>
+                                <div class="p-8 text-center bg-gray-50/50">
+                                    <i class="ph-duotone ph-file-search text-4xl text-gray-300 mb-2"></i>
+                                    <p class="text-gray-400 text-sm font-medium">Detailed results are currently only available in the PDF report.</p>
                                 </div>
                             ` : '')}
                         </div>
@@ -591,7 +559,6 @@
                 });
 
                 html += `
-                        </div>
                     </div>
                 `;
 

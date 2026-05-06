@@ -786,7 +786,11 @@
                 </form>
             </div>
             <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end">
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-between">
+                <button id="BtnRejectSample" type="button"
+                    class="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2">
+                    <i class="ph-bold ph-warning-circle"></i> Reject Sample
+                </button>
                 <div class="flex gap-3">
                     <button id="CloseVerifyTestBtn" type="button"
                         class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancel</button>
@@ -795,6 +799,47 @@
                         <i class="ph-bold ph-check-circle"></i> Verify & Sign
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="RejectSampleModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-70 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="RejectSampleModal"
+            class="bg-white w-full max-w-md rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+                        <i class="ph-duotone ph-warning-circle text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Reject Sample</h3>
+                </div>
+                <button id="CloseRejectSampleX" class="text-gray-400 hover:text-gray-800 transition-colors p-1"><i
+                        class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6">
+                <label class="block text-sm font-bold text-gray-700 mb-2">Reason for Rejection <span
+                        class="text-red-500">*</span></label>
+                <select
+                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-100 outline-none bg-gray-50/50 mb-4 cursor-pointer">
+                    <option disabled selected>Select a reason...</option>
+                    <option>Hemolyzed Sample</option>
+                    <option>Insufficient Quantity</option>
+                    <option>Clotted Sample</option>
+                    <option>Wrong Container/Tube</option>
+                    <option>Other (Specify below)</option>
+                </select>
+                <textarea rows="2"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-100 outline-none bg-gray-50/50 resize-none"
+                    placeholder="Additional details..."></textarea>
+            </div>
+            <div
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseRejectSampleBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancel</button>
+                <button id="ConfirmRejectSampleBtn" type="button"
+                    class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm">Confirm
+                    Rejection</button>
             </div>
         </div>
     </div>
@@ -1368,7 +1413,48 @@
 
             document.getElementById('CloseVerifyTestX')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
             document.getElementById('CloseVerifyTestBtn')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
-            
+            document.getElementById('BtnRejectSample')?.addEventListener('click', () => openModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
+            document.getElementById('CloseRejectSampleX')?.addEventListener('click', () => closeModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
+            document.getElementById('CloseRejectSampleBtn')?.addEventListener('click', () => closeModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
+
+            document.getElementById('ConfirmRejectSampleBtn')?.addEventListener('click', async function () {
+                const modal = document.getElementById('RejectSampleModal');
+                const reasonSelect = modal.querySelector('select');
+                const reasonText = modal.querySelector('textarea');
+                const reason = reasonSelect.value === 'Other (Specify below)' ? reasonText.value : reasonSelect.value;
+                const orderTestId = document.getElementById('VerifyTestForm').dataset.orderTestId;
+
+                if (!reason || reason === 'Select a reason...') {
+                    showGlobalNotification('Please select or specify a reason.', 'error');
+                    return;
+                }
+
+                const originalText = this.innerText;
+                this.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Processing...';
+                this.disabled = true;
+
+                try {
+                    const response = await fetch('/rejectSample', {
+                        method: 'POST',
+                        headers: { ...fetchHeaders, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderTestId, reason })
+                    });
+                    const res = await response.json();
+                    if (res.status === 200) {
+                        showGlobalNotification('Sample rejected successfully.', 'success');
+                        closeModal('RejectSampleModalBackdrop', 'RejectSampleModal');
+                        closeModal('VerifyTestModalBackdrop', 'VerifyTestModal');
+                        fetchPendingResults();
+                    } else {
+                        showGlobalNotification(res.message || 'Rejection failed.', 'error');
+                    }
+                } catch (err) {
+                    showGlobalNotification('An error occurred during rejection.', 'error');
+                } finally {
+                    this.innerText = originalText;
+                    this.disabled = false;
+                }
+            });
             document.querySelectorAll('.btn-view-report').forEach(btn => btn.addEventListener('click', () => openModal('ViewReportModalBackdrop', 'ViewReportModal')));
             document.getElementById('CloseViewReportX')?.addEventListener('click', () => closeModal('ViewReportModalBackdrop', 'ViewReportModal'));
             document.getElementById('CloseViewReportBtn')?.addEventListener('click', () => closeModal('ViewReportModalBackdrop', 'ViewReportModal'));

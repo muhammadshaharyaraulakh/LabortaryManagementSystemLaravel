@@ -110,41 +110,6 @@ class TechnicianController extends Controller
             ]
         ], Response::HTTP_OK);
     }
-
-    public function getSampleInfo(Request $request)
-    {
-        $request->validate([
-            'BarcodeNumber' => 'required|exists:order_test,vialBarcode',
-        ]);
-
-        $user = Auth::user();
-        $userDepartmentId = $user->department_id;
-
-        $order = Order::whereHas('tests', function ($query) use ($request, $userDepartmentId) {
-            $query->where('order_test.vialBarcode', $request->BarcodeNumber)
-                ->where('tests.departmentId', $userDepartmentId);
-        })->first();
-
-        if (empty($order)) {
-            return response()->json([
-                'message' => 'Order not found for this barcode and department.',
-                'status' => false,
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        $test = $order->tests()->where('order_test.vialBarcode', $request->BarcodeNumber)->first();
-
-        return response()->json([
-            'status' => true,
-            'data' => [
-                'orderTestId' => $test->pivot->id,
-                'patientName' => $order->name,
-                'testName' => $test->name,
-                'status' => $test->pivot->status,
-                'sampleType' => $test->sampleType
-            ]
-        ]);
-    }
     public function TechnicianWorklist()
     {
         $user = Auth::user();

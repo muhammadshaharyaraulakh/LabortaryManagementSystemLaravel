@@ -128,7 +128,6 @@ Route::middleware(['auth', 'check.role:technician'])->group(function () {
     Route::view('/Technician', 'Technician.SampleBasedTechnician')->name('SampleBasedTechnician');
     Route::get('/TechnicianStats', [TechnicianController::class, 'getDashboardStats']);
     Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
-    Route::post('/getSampleInfo', [TechnicianController::class, 'getSampleInfo']);
     Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
     Route::get('/getPendingVerifications', [TechnicianController::class, 'getPendingVerificationList']);
     Route::view('/TechnicianDashboard', 'Technician.HumanBasedTechnician')->name('HumanTechnicianDashboard');

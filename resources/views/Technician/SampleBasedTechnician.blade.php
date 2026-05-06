@@ -211,123 +211,54 @@
     </div>
 
     <div id="ResultEntryModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        class="fixed inset-0 bg-black/60 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="ResultEntryModal"
-            class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
-            <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-t-3xl">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
-                        <i class="ph ph-flask text-2xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-black text-gray-900 tracking-tight" id="resultModalTestName">Result Entry</h3>
-                        <p class="text-gray-500 text-sm font-bold mt-0.5" id="resultModalPatientName">Patient: -</p>
-                    </div>
+            class="bg-white w-full max-w-4xl rounded-[1.25rem] shadow-2xl transform scale-95 transition-all duration-300 flex flex-col max-h-[95vh] overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-sidebarBg text-white">
+                <div>
+                    <h3 class="font-black text-lg flex items-center gap-2">
+                        <i class="ph-bold ph-flask"></i> <span id="modalTestNameTitle"></span>
+                    </h3>
+                    <p class="text-xs text-gray-300 font-medium mt-1">Patient: <span id="modalPatientNameText"></span>
+                    </p>
                 </div>
-                <button onclick="closeModal('ResultEntryModalBackdrop')"
-                    class="text-gray-400 hover:text-gray-900 transition-colors cursor-pointer p-2 hover:bg-gray-100 rounded-xl">
+                <button class="close-modal-btn text-gray-300 hover:text-white transition-colors cursor-pointer"
+                    data-modal="ResultEntryModalBackdrop">
                     <i class="ph ph-x text-2xl"></i>
                 </button>
             </div>
 
-            <div class="p-8 overflow-y-auto custom-scrollbar flex-1">
-                <form id="resultForm" class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="parametersContainer">
-                    </div>
-                </form>
-            </div>
+            <form id="ResultEntryForm" class="flex flex-col flex-1 overflow-hidden">
+                <input type="hidden" id="entryOrderTestId">
+                <input type="hidden" id="entryTrackingId">
 
-            <div class="px-8 py-6 border-t border-gray-100 bg-gray-50/50 rounded-b-3xl flex justify-end gap-4">
-                <button onclick="closeModal('ResultEntryModalBackdrop')"
-                    class="px-8 py-3 rounded-2xl font-bold text-gray-600 hover:bg-gray-200 transition-all active:scale-95 cursor-pointer">
-                    Cancel
-                </button>
-                <button id="saveResultsBtn"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-blue-200 active:scale-95 flex items-center gap-2 cursor-pointer">
-                    <i class="ph ph-check-circle text-lg"></i> Complete Test
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sample Confirmation Modal -->
-    <div id="SampleConfirmationModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-[60] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="SampleConfirmationModal"
-            class="bg-white w-full max-w-md rounded-3xl shadow-2xl transform scale-95 transition-all duration-300 flex flex-col">
-            <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-t-3xl">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
-                        <i class="ph-duotone ph-scan text-xl"></i>
+                <div class="flex-1 overflow-y-auto bg-gray-50 p-6 custom-scrollbar">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead id="parametersTableHead"
+                                class="bg-gray-100 text-gray-700 font-bold border-b border-gray-200">
+                            </thead>
+                            <tbody id="parametersTableBody" class="divide-y divide-gray-100">
+                            </tbody>
+                        </table>
                     </div>
-                    <h3 class="text-lg font-black text-gray-900 tracking-tight">Sample Received</h3>
                 </div>
-                <button onclick="closeModal('SampleConfirmationModalBackdrop')"
-                    class="text-gray-400 hover:text-gray-900 transition-colors cursor-pointer p-1">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
-            </div>
-            <div class="p-8 space-y-4">
-                <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
-                    <p class="text-xs text-indigo-400 font-black uppercase tracking-widest mb-1">Patient Details</p>
-                    <h4 class="text-lg font-black text-indigo-900" id="confPatientName">-</h4>
-                    <p class="text-sm text-indigo-700 font-bold" id="confTestName">-</p>
-                </div>
-                <p class="text-sm text-gray-500 font-bold leading-relaxed text-center">
-                    Please confirm if you want to accept this sample for testing or reject it due to quality issues.
-                </p>
-            </div>
-            <div class="px-8 py-6 border-t border-gray-100 bg-gray-50/50 rounded-b-3xl grid grid-cols-2 gap-4">
-                <button id="btnRejectInConf"
-                    class="flex items-center justify-center gap-2 bg-white border-2 border-red-100 text-red-600 px-6 py-3 rounded-2xl font-bold hover:bg-red-50 transition-all active:scale-95 cursor-pointer">
-                    <i class="ph ph-x-circle text-lg"></i> Reject
-                </button>
-                <button id="btnAcceptInConf"
-                    class="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95 cursor-pointer">
-                    <i class="ph ph-check-circle text-lg"></i> Accept
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Reject Sample Modal -->
-    <div id="RejectSampleModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-[70] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="RejectSampleModal"
-            class="bg-white w-full max-w-md rounded-3xl shadow-2xl transform scale-95 transition-all duration-300 flex flex-col">
-            <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-t-3xl">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
-                        <i class="ph-duotone ph-warning-circle text-xl"></i>
+                <div class="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
+                    <p id="modalHintText" class="text-xs font-bold text-gray-500"><i
+                            class="ph-fill ph-info text-blue-500"></i> Values outside normal range will automatically
+                        flag.</p>
+                    <div class="flex gap-3">
+                        <button type="button"
+                            class="close-modal-btn px-6 py-3 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer"
+                            data-modal="ResultEntryModalBackdrop">Cancel</button>
+                        <button type="submit" id="submitResultsBtn"
+                            class="px-6 py-3 text-sm font-bold text-white bg-green-600 rounded-xl hover:bg-green-700 shadow-lg shadow-green-200 transition-all cursor-pointer flex items-center gap-2">
+                            <i class="ph-bold ph-check-circle"></i> Save Results
+                        </button>
                     </div>
-                    <h3 class="text-lg font-black text-gray-900 tracking-tight">Rejection Reason</h3>
                 </div>
-                <button onclick="closeModal('RejectSampleModalBackdrop')"
-                    class="text-gray-400 hover:text-gray-900 transition-colors p-1 cursor-pointer">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
-            </div>
-            <div class="p-8">
-                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Reason for Rejection <span class="text-red-500">*</span></label>
-                <select id="rejectionReasonSelect"
-                    class="w-full border-2 border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold focus:border-red-400 focus:ring-0 outline-none bg-gray-50/50 mb-4 cursor-pointer transition-all">
-                    <option disabled selected>Select a reason...</option>
-                    <option>Hemolyzed Sample</option>
-                    <option>Insufficient Quantity</option>
-                    <option>Clotted Sample</option>
-                    <option>Wrong Container/Tube</option>
-                    <option>Other (Specify below)</option>
-                </select>
-                <textarea id="rejectionReasonText" rows="3"
-                    class="w-full border-2 border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold focus:border-red-400 focus:ring-0 outline-none bg-gray-50/50 resize-none transition-all"
-                    placeholder="Additional details..."></textarea>
-            </div>
-            <div class="px-8 py-6 border-t border-gray-100 bg-gray-50/50 rounded-b-3xl flex items-center justify-end gap-3">
-                <button onclick="closeModal('RejectSampleModalBackdrop')"
-                    class="px-6 py-3 rounded-2xl font-bold text-gray-600 hover:bg-gray-200 transition-all active:scale-95 cursor-pointer">Cancel</button>
-                <button id="ConfirmRejectBtn"
-                    class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-red-200 active:scale-95 cursor-pointer">Confirm Rejection</button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -392,35 +323,31 @@
             document.getElementById('close-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             sidebarBackdrop?.addEventListener('click', toggleSidebar);
 
-            function openModal(backdropId, modalId) {
-                const backdrop = document.getElementById(backdropId);
-                const modal = document.getElementById(modalId || backdropId.replace('Backdrop', ''));
-                if (!backdrop || !modal) return;
+            function openModal(modalId) {
+                const backdrop = document.getElementById(modalId);
+                if (!backdrop) return;
                 backdrop.classList.remove('hidden');
                 backdrop.classList.add('flex');
                 requestAnimationFrame(() => {
                     backdrop.classList.remove('opacity-0');
-                    modal.classList.remove('scale-95');
-                    modal.classList.add('scale-100');
+                    const modalContent = backdrop.firstElementChild;
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
                 });
             }
 
-            function closeModal(backdropId) {
-                const backdrop = document.getElementById(backdropId);
+            function closeModal(modalId) {
+                const backdrop = document.getElementById(modalId);
                 if (!backdrop) return;
-                const modal = backdrop.firstElementChild;
                 backdrop.classList.add('opacity-0');
-                if (modal) {
-                    modal.classList.remove('scale-100');
-                    modal.classList.add('scale-95');
-                }
+                const modalContent = backdrop.firstElementChild;
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
                 setTimeout(() => {
                     backdrop.classList.remove('flex');
                     backdrop.classList.add('hidden');
                 }, 300);
             }
-
-            window.closeModal = closeModal;
 
             async function fetchStats() {
                 try {
@@ -507,17 +434,27 @@
                 badge.innerText = `${testCount} Tests`;
             }
 
-            const barcodeInput = document.getElementById('barcodeScannerInput');
-            let currentSampleBarcode = null;
-            let currentOrderTestId = null;
+            const receiveForm = document.getElementById('ReceiveSampleForm');
+            if (receiveForm) {
+                receiveForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const input = document.getElementById('barcodeScannerInput');
+                    const btn = document.getElementById('btn-receive-submit');
+                    const barcode = input.value.trim();
+                    const successMsg = document.getElementById('receiveSuccessMsg');
+                    const errorMsg = document.getElementById('receiveErrorMsg');
 
-            barcodeInput.addEventListener('keypress', async (e) => {
-                if (e.key === 'Enter') {
-                    const barcode = barcodeInput.value.trim();
+                    successMsg.classList.add('hidden');
+                    errorMsg.classList.add('hidden');
+
                     if (!barcode) return;
-                    currentSampleBarcode = barcode;
+
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-xl"></i>';
+                    btn.disabled = true;
+
                     try {
-                        const response = await fetch('/getSampleInfo', {
+                        const response = await fetch('/ReceiveSample', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -527,116 +464,29 @@
                             body: JSON.stringify({ BarcodeNumber: barcode })
                         });
 
-                        const resData = await response.json();
-                        if (response.ok && resData.status === true) {
-                            currentOrderTestId = resData.data.orderTestId;
-                            document.getElementById('confPatientName').innerText = resData.data.patientName;
-                            document.getElementById('confTestName').innerText = resData.data.testName;
-                            
-                            if(resData.data.status !== 'Collected'){
-                                alert('This sample is already ' + resData.data.status);
-                                barcodeInput.value = '';
-                                return;
-                            }
+                        const result = await response.json();
 
-                            openModal('SampleConfirmationModalBackdrop', 'SampleConfirmationModal');
-                            barcodeInput.value = '';
+                        if (response.ok && result.status === true) {
+                            successMsg.innerText = result.message;
+                            successMsg.classList.remove('hidden');
+                            input.value = '';
+                            fetchStats();
+                            setTimeout(() => successMsg.classList.add('hidden'), 3000);
+                        } else {
+                            errorMsg.innerText = result.message || 'Failed to process barcode.';
+                            errorMsg.classList.remove('hidden');
+                            setTimeout(() => errorMsg.classList.add('hidden'), 5000);
                         }
                     } catch (error) {
-                        console.error(error);
+                        errorMsg.innerText = 'Network Error. Try again.';
+                        errorMsg.classList.remove('hidden');
+                    } finally {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                        input.focus();
                     }
-                }
-            });
-
-            document.getElementById('btnAcceptInConf').addEventListener('click', async () => {
-                const btn = document.getElementById('btnAcceptInConf');
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Processing...';
-                btn.disabled = true;
-
-                try {
-                    const response = await fetch('/ReceiveSample', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({ BarcodeNumber: currentSampleBarcode })
-                    });
-
-                    const resData = await response.json();
-                    if (response.ok && resData.status === true) {
-                        closeModal('SampleConfirmationModalBackdrop');
-                        fetchWorklist();
-                        fetchStats();
-                    } else {
-                        alert(resData.message || 'Failed to receive sample.');
-                    }
-                } catch (error) {
-                    alert('Network Error.');
-                } finally {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                }
-            });
-
-            document.getElementById('btnRejectInConf').addEventListener('click', () => {
-                closeModal('SampleConfirmationModalBackdrop');
-                setTimeout(() => {
-                    openModal('RejectSampleModalBackdrop', 'RejectSampleModal');
-                }, 300);
-            });
-
-            document.getElementById('ConfirmRejectBtn').addEventListener('click', async () => {
-                const reasonSelect = document.getElementById('rejectionReasonSelect');
-                const reasonText = document.getElementById('rejectionReasonText');
-                const reason = reasonSelect.value === 'Other (Specify below)' ? reasonText.value : reasonSelect.value;
-
-                if (!reason || reason === 'Select a reason...') {
-                    alert('Please select or specify a reason.');
-                    return;
-                }
-
-                const btn = document.getElementById('ConfirmRejectBtn');
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Processing...';
-                btn.disabled = true;
-
-                try {
-                    const response = await fetch('/rejectSample', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({ orderTestId: currentOrderTestId, reason: reason })
-                    });
-
-                    const resData = await response.json();
-                    if (response.ok && resData.status === 200) {
-                        closeModal('RejectSampleModalBackdrop');
-                        fetchStats();
-                        const msgEl = document.createElement('div');
-                        msgEl.className = 'fixed top-5 right-5 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold text-sm flex items-center gap-2';
-                        msgEl.innerHTML = `<i class="ph-fill ph-warning-circle text-lg"></i> Sample Rejected.`;
-                        document.body.appendChild(msgEl);
-                        setTimeout(() => {
-                            msgEl.style.opacity = '0';
-                            msgEl.style.transition = 'opacity 0.3s ease';
-                            setTimeout(() => msgEl.remove(), 300);
-                        }, 3000);
-                    } else {
-                        alert(resData.message || 'Failed to reject sample.');
-                    }
-                } catch (error) {
-                    alert('Network Error.');
-                } finally {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                }
-            });
+                });
+            }
 
             document.addEventListener('click', async (e) => {
                 const enterBtn = e.target.closest('.btn-enter-results');
@@ -646,11 +496,17 @@
                     const testName = enterBtn.getAttribute('data-test');
                     const patientName = enterBtn.getAttribute('data-patient');
 
-                    document.getElementById('resultModalTestName').innerText = testName;
-                    document.getElementById('resultModalPatientName').innerText = `Patient: ${patientName}`;
-                    
-                    const parametersContainer = document.getElementById('parametersContainer');
-                    parametersContainer.innerHTML = `<div class="col-span-full text-center py-12"><i class="ph-bold ph-spinner animate-spin text-4xl text-blue-500 mb-4"></i><p class="text-gray-500 font-bold">Loading parameters...</p></div>`;
+                    document.getElementById('modalTestNameTitle').innerText = testName;
+                    document.getElementById('modalPatientNameText').innerText = patientName;
+                    document.getElementById('entryOrderTestId').value = orderTestId;
+                    document.getElementById('entryTrackingId').value = trackingId;
+
+                    const paramTableHead = document.getElementById('parametersTableHead');
+                    const paramTableBody = document.getElementById('parametersTableBody');
+                    const hintEl = document.getElementById('modalHintText');
+
+                    if (paramTableHead) paramTableHead.innerHTML = '';
+                    if (paramTableBody) paramTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8"><i class="ph-bold ph-spinner animate-spin text-2xl text-blue-500 mb-2"></i><p class="text-gray-500 text-sm font-bold">Loading parameters...</p></td></tr>`;
 
                     openModal('ResultEntryModalBackdrop');
 
@@ -663,153 +519,336 @@
                         });
 
                         const result = await res.json();
-                        if (!res.ok || result.status !== true) throw new Error(result.message || 'Failed to load parameters.');
+
+                        if (!res.ok || result.status !== true) {
+                            throw new Error(result.message || 'Failed to load parameters.');
+                        }
 
                         const parameters = result.data.parameters;
-                        parametersContainer.innerHTML = '';
+                        paramTableHead.innerHTML = '';
+                        paramTableBody.innerHTML = '';
+
+                        if (!parameters || parameters.length === 0) {
+                            paramTableHead.innerHTML = `<tr><th class="px-4 py-3">Notice</th></tr>`;
+                            paramTableBody.innerHTML = `
+                                <tr>
+                                    <td class="text-center py-8 text-gray-500 font-medium">
+                                        No parameters defined for this test.
+                                    </td>
+                                </tr>`;
+                            return;
+                        }
+
+                        const pType = (
+                            parameters[0].inputType ||
+                            parameters[0].type ||
+                            parameters[0].test_type || ''
+                        ).toLowerCase().trim();
+
+                        if (pType === 'quantitative') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-2/5">Parameter</th>
+                                <th class="px-4 py-3 w-1/5">Result Value</th>
+                                <th class="px-4 py-3 w-1/6">Unit</th>
+                                <th class="px-4 py-3 w-1/5">Reference Range</th>
+                                <th class="px-4 py-3 text-center w-16">Flag</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.remove('hidden');
+
+                        } else if (pType === 'qualitative') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-1/3">Parameter</th>
+                                <th class="px-4 py-3">Select Result</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.add('hidden');
+
+                        } else if (pType === 'observational') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-1/3">Parameter</th>
+                                <th class="px-4 py-3">Observation / Notes</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.add('hidden');
+
+                        } else if (pType === 'image') {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-1/3">Parameter</th>
+                                <th class="px-4 py-3">Upload Images</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.add('hidden');
+                        }
 
                         parameters.forEach(param => {
-                            const type = (param.inputType || param.type || 'quantitative').toLowerCase().trim();
-                            let inputHtml = '';
+                            const rangeText = param.normalRange || 'N/A';
+                            const unit = param.unit || '';
 
-                            if (type === 'quantitative') {
-                                inputHtml = `<div class="space-y-2">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <label class="text-sm font-black text-gray-700">${param.parameterName}</label>
-                                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded-md border border-gray-100">${param.unit || 'No Unit'}</span>
-                                    </div>
-                                    <input type="number" step="0.01" required data-param-id="${param.id}" 
-                                        class="result-input w-full border-2 border-gray-100 rounded-2xl px-5 py-3.5 focus:border-blue-400 focus:ring-0 outline-none font-bold text-gray-900 bg-gray-50/30 transition-all" 
-                                        placeholder="Enter value...">
-                                    <div class="flex justify-between items-center mt-1.5 px-1">
-                                        <span class="text-[10px] font-bold text-gray-400">Range: ${param.normalRange || 'N/A'}</span>
-                                        <div class="flag-indicator"></div>
-                                    </div>
-                                </div>`;
-                            } else if (type === 'qualitative') {
-                                let options = (param.options || 'Positive,Negative').split(',');
-                                let optionsHtml = options.map(o => `<option value="${o.trim()}">${o.trim()}</option>`).join('');
-                                inputHtml = `<div class="space-y-2">
-                                    <label class="text-sm font-black text-gray-700 block mb-1">${param.parameterName}</label>
-                                    <select required data-param-id="${param.id}" class="result-input w-full border-2 border-gray-100 rounded-2xl px-5 py-3.5 focus:border-blue-400 focus:ring-0 outline-none font-bold text-gray-900 bg-gray-50/30 transition-all cursor-pointer">
-                                        <option value="" disabled selected>Select result...</option>
-                                        ${optionsHtml}
-                                    </select>
-                                </div>`;
-                            } else if (type === 'observational') {
-                                inputHtml = `<div class="col-span-full space-y-2">
-                                    <label class="text-sm font-black text-gray-700 block mb-1">${param.parameterName}</label>
-                                    <textarea required data-param-id="${param.id}" rows="3" class="result-input w-full border-2 border-gray-100 rounded-2xl px-5 py-3.5 focus:border-blue-400 focus:ring-0 outline-none font-bold text-gray-900 bg-gray-50/30 transition-all resize-none" placeholder="Enter detailed observations..."></textarea>
-                                </div>`;
-                            } else if (type === 'image') {
-                                inputHtml = `<div class="col-span-full space-y-2 bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-200">
-                                    <label class="text-sm font-black text-gray-700 block mb-1">${param.parameterName}</label>
-                                    <input type="file" multiple accept="image/*" class="param-image-upload hidden" id="file-${param.id}">
-                                    <label for="file-${param.id}" class="flex flex-col items-center justify-center gap-3 cursor-pointer p-4 hover:bg-gray-100 rounded-xl transition-all">
-                                        <i class="ph ph-cloud-arrow-up text-3xl text-blue-500"></i>
-                                        <span class="text-sm font-bold text-gray-500">Click to upload diagnostic images</span>
-                                    </label>
-                                    <input type="hidden" required data-param-id="${param.id}" class="result-input">
-                                    <div class="upload-status text-xs font-bold text-center mt-2"></div>
-                                </div>`;
+                            let min = null, max = null;
+                            if (param.normalRange && param.normalRange.includes('-')) {
+                                const parts = param.normalRange.split('-');
+                                min = parseFloat(parts[0]);
+                                max = parseFloat(parts[1]);
                             }
 
-                            parametersContainer.insertAdjacentHTML('beforeend', inputHtml);
+                            const row = document.createElement('tr');
+                            row.className = 'hover:bg-blue-50/30 transition-colors border-b border-gray-100';
+
+                            if (pType === 'quantitative') {
+                                row.innerHTML = `
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3 border-r border-gray-100">
+                                        <input type="number" step="0.01" required
+                                            data-param-id="${param.id}"
+                                            data-flag="Normal"
+                                            ${min !== null ? `data-min="${min}"` : ''}
+                                            ${max !== null ? `data-max="${max}"` : ''}
+                                            class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors"
+                                            placeholder="Enter value">
+                                    </td>
+                                    <td class="px-4 py-4 text-gray-500 text-xs border-r border-gray-100 font-semibold">${unit}</td>
+                                    <td class="px-4 py-4 text-gray-600 text-xs border-r border-gray-100 font-semibold">${rangeText}</td>
+                                    <td class="px-4 py-4 text-center flag-cell">
+                                        <span class="text-gray-300 text-xs font-bold">—</span>
+                                    </td>`;
+
+
+                            } else if (pType === 'qualitative') {
+
+                                let optionsHtml = `<option value="">Select Results</option>`;
+
+                                let optionsList = param.options;
+
+                                if (!Array.isArray(optionsList)) {
+                                    optionsList = (optionsList || 'Positive,Negative').split(',');
+                                }
+
+                                optionsList.forEach(opt => {
+                                    const o = opt.trim();
+                                    if (o) {
+                                        optionsHtml += `<option value="${o}">${o}</option>`;
+                                    }
+                                });
+
+                                row.innerHTML = `
+        <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">
+            ${param.parameterName}
+        </td>
+        <td class="px-4 py-3">
+            <select required data-param-id="${param.id}" data-flag="Normal"
+                class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors">
+                ${optionsHtml}
+            </select>
+        </td>`;
+                            } else if (pType === 'observational') {
+                                row.innerHTML = `
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3">
+                                        <textarea required data-param-id="${param.id}" data-flag="Normal"
+                                            class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 custom-scrollbar"
+                                            placeholder="Enter observation details..." rows="3"></textarea>
+                                    </td>`;
+
+
+                            } else if (pType === 'image') {
+                                row.innerHTML = `
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3">
+                                        <input type="file" multiple accept="image/*"
+                                            class="param-image-upload w-full border border-gray-300 rounded-lg p-2 text-sm cursor-pointer bg-gray-50">
+                                        <input type="hidden" required data-param-id="${param.id}" data-flag="Normal" class="result-input">
+                                        <p class="param-upload-status text-xs text-blue-600 mt-1 font-semibold"></p>
+                                    </td>`;
+                            }
+
+                            paramTableBody.appendChild(row);
                         });
 
-                        // Re-attach image upload logic for new inputs
-                        document.querySelectorAll('.param-image-upload').forEach(input => {
-                            input.addEventListener('change', async (e) => {
-                                const files = e.target.files;
-                                if (!files.length) return;
-                                const status = e.target.parentElement.querySelector('.upload-status');
-                                const hidden = e.target.parentElement.querySelector('.result-input');
+                        attachValidationListeners();
+
+                        // Image upload AJAX
+                        document.querySelectorAll('.param-image-upload').forEach(fileInput => {
+                            fileInput.addEventListener('change', async (event) => {
+                                const files = event.target.files;
+                                if (!files || files.length === 0) return;
+                                const td = event.target.closest('td');
+                                const statusText = td.querySelector('.param-upload-status');
+                                const hiddenInput = td.querySelector('.result-input');
                                 const formData = new FormData();
-                                for (let f of files) formData.append('files[]', f);
-                                
-                                status.innerText = 'Uploading...';
-                                status.className = 'upload-status text-xs font-bold text-center mt-2 text-blue-500';
-                                
+                                for (let i = 0; i < files.length; i++) formData.append('files[]', files[i]);
+                                statusText.innerText = 'Uploading... please wait.';
+                                statusText.className = 'param-upload-status text-xs text-blue-600 mt-1 font-semibold';
+
                                 try {
                                     const up = await fetch('/uploadHumanResultFile', {
                                         method: 'POST',
                                         headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
                                         body: formData
                                     });
-                                    const data = await up.json();
-                                    if (data.status) {
-                                        hidden.value = JSON.stringify(data.data.paths);
-                                        status.innerText = `${files.length} images uploaded successfully`;
-                                        status.className = 'upload-status text-xs font-bold text-center mt-2 text-green-500';
+                                    const upData = await up.json();
+
+                                    if (up.ok && upData.status === true) {
+                                        hiddenInput.value = JSON.stringify(upData.data.paths);
+                                        statusText.innerText = `${files.length} image(s) uploaded!`;
+                                        statusText.className = 'param-upload-status text-xs text-green-600 mt-1 font-bold';
+                                    } else {
+                                        throw new Error(upData.message || 'Upload failed');
                                     }
                                 } catch (err) {
-                                    status.innerText = 'Upload failed';
-                                    status.className = 'upload-status text-xs font-bold text-center mt-2 text-red-500';
+                                    hiddenInput.value = '';
+                                    statusText.innerText = 'Upload Error: ' + err.message;
+                                    statusText.className = 'param-upload-status text-xs text-red-600 mt-1 font-bold';
                                 }
                             });
                         });
 
-                        // Add resultForm submit listener
-                        document.getElementById('saveResultsBtn').onclick = async () => {
-                            const btn = document.getElementById('saveResultsBtn');
-                            const originalHtml = btn.innerHTML;
-                            btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Saving...';
-                            btn.disabled = true;
-
-                            const inputs = document.querySelectorAll('.result-input');
-                            const resultsArray = [];
-                            inputs.forEach(input => {
-                                resultsArray.push({
-                                    testParameterId: input.getAttribute('data-param-id'),
-                                    resultValue: input.value,
-                                    statusFlag: 'Normal' // Simple flag for now
-                                });
-                            });
-
-                            try {
-                                const response = await fetch('/addResult', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                    },
-                                    body: JSON.stringify({
-                                        orderTestId: orderTestId,
-                                        trackingId: trackingId,
-                                        results: resultsArray
-                                    })
-                                });
-
-                                const resData = await response.json();
-                                if (response.ok && resData.status === 200) {
-                                    closeModal('ResultEntryModalBackdrop');
-                                    fetchWorklist();
-                                    fetchStats();
-                                } else {
-                                    alert(resData.message || 'Failed to save results.');
-                                }
-                            } catch (err) {
-                                alert('Network Error.');
-                            } finally {
-                                btn.innerHTML = originalHtml;
-                                btn.disabled = false;
-                            }
-                        };
-
-                    } catch (err) {
-                        console.error(err);
-                        alert('Failed to load test parameters.');
+                    } catch (error) {
+                        paramTableHead.innerHTML = '';
+                        paramTableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center py-8">
+                                    <div class="flex flex-col items-center gap-2 text-red-500">
+                                        <i class="ph-bold ph-warning-circle text-3xl"></i>
+                                        <span class="font-bold text-sm">${error.message || 'Failed to load parameters.'}</span>
+                                        <span class="text-xs text-gray-400">Check your network or server logs.</span>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        console.error('getOrderTestParameters error:', error);
                     }
+                } // End of enterBtn block
+
+                const closeBtn = e.target.closest('.close-modal-btn');
+                if (closeBtn) {
+                    closeModal(closeBtn.getAttribute('data-modal'));
                 }
             });
+
+            function attachValidationListeners() {
+                const inputs = document.querySelectorAll('.result-input[type="number"]');
+                inputs.forEach(input => {
+                    input.addEventListener('input', function () {
+                        if (!this.hasAttribute('data-min') || !this.hasAttribute('data-max')) return;
+
+                        const val = parseFloat(this.value);
+                        const min = parseFloat(this.getAttribute('data-min'));
+                        const max = parseFloat(this.getAttribute('data-max'));
+                        const flagCell = this.closest('tr').querySelector('.flag-cell');
+
+                        this.classList.remove('border-gray-300', 'border-red-500', 'border-yellow-500', 'bg-red-50', 'bg-yellow-50');
+
+                        if (isNaN(val)) {
+                            this.dataset.flag = 'Normal';
+                            this.classList.add('border-gray-300');
+                            flagCell.innerHTML = '<span class="text-gray-300 text-xs font-bold">-</span>';
+                            return;
+                        }
+
+                        if (val < min) {
+                            this.dataset.flag = 'Low';
+                            this.classList.add('border-yellow-500', 'bg-yellow-50');
+                            flagCell.innerHTML = '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-black text-xs border border-yellow-200">L</span>';
+                        } else if (val > max) {
+                            this.dataset.flag = 'High';
+                            this.classList.add('border-red-500', 'bg-red-50');
+                            flagCell.innerHTML = '<span class="bg-red-100 text-red-700 px-2 py-1 rounded font-black text-xs border border-red-200">H</span>';
+                        } else {
+                            this.dataset.flag = 'Normal';
+                            this.classList.add('border-gray-300');
+                            flagCell.innerHTML = '<span class="text-green-500 text-xs font-bold"><i class="ph-bold ph-check"></i></span>';
+                        }
+                    });
+                });
+            }
+
+            const searchInput = document.getElementById('searchWorklist');
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const query = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('#worklistTableBody tr');
+                    rows.forEach(row => {
+                        const text = row.innerText.toLowerCase();
+                        row.style.display = text.includes(query) ? '' : 'none';
+                    });
+                });
+            }
+
+            const resultForm = document.getElementById('ResultEntryForm');
+            if (resultForm) {
+                resultForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const btn = document.getElementById('submitResultsBtn');
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Saving...`;
+                    btn.disabled = true;
+
+                    const orderTestId = document.getElementById('entryOrderTestId').value;
+                    const trackingId = document.getElementById('entryTrackingId').value;
+
+                    const inputs = document.querySelectorAll('.result-input');
+                    const resultsArray = [];
+
+                    inputs.forEach(input => {
+                        resultsArray.push({
+                            testParameterId: input.getAttribute('data-param-id'),
+                            resultValue: input.value,
+                            statusFlag: input.dataset.flag || 'Normal'
+                        });
+                    });
+
+                    const payload = {
+                        orderTestId: orderTestId,
+                        trackingId: trackingId,
+                        remarks: null,
+                        attachmentPaths: null,
+                        results: resultsArray
+                    };
+
+                    try {
+                        const response = await fetch('/addResult', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const resData = await response.json();
+
+                        if (response.ok && resData.status === 200) {
+                            closeModal('ResultEntryModalBackdrop');
+                            fetchWorklist();
+
+                            const msgEl = document.createElement('div');
+                            msgEl.className = 'fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold text-sm flex items-center gap-2';
+                            msgEl.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> Results submitted successfully.`;
+                            document.body.appendChild(msgEl);
+
+                            setTimeout(() => {
+                                msgEl.style.opacity = '0';
+                                msgEl.style.transition = 'opacity 0.3s ease';
+                                setTimeout(() => msgEl.remove(), 300);
+                            }, 3000);
+                        } else {
+                            alert(resData.message || 'Failed to save results.');
+                        }
+                    } catch (error) {
+                        alert('Network Error. Please try again.');
+                    } finally {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
+                });
+            }
 
             async function fetchPendingVerifications() {
                 try {
                     const response = await fetch('/getPendingVerifications');
                     if (response.ok) {
                         const result = await response.json();
-                        if (result.status === true) renderPendingVerifications(result.data);
+                        if (result.status === true) {
+                            renderPendingVerifications(result.data);
+                        }
                     }
                 } catch (error) {
                     console.error(error);
@@ -821,16 +860,33 @@
                 tbody.innerHTML = '';
 
                 if (!orders || orders.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-20 text-center"><div class="flex flex-col items-center justify-center"><div class="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mb-4"><i class="ph-duotone ph-clipboard-text text-4xl text-purple-400"></i></div><h3 class="text-lg font-bold text-gray-900">No Pending Verifications</h3><p class="text-gray-500 text-sm mt-1 max-w-xs mx-auto">Tests you complete will appear here until the pathologist verifies them.</p></div></td></tr>`;
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="px-6 py-20 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mb-4">
+                                        <i class="ph-duotone ph-clipboard-text text-4xl text-purple-400"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900">No Pending Verifications</h3>
+                                    <p class="text-gray-500 text-sm mt-1 max-w-xs mx-auto">Tests you complete will appear here until the pathologist verifies them.</p>
+                                </div>
+                            </td>
+                        </tr>`;
                     return;
                 }
 
                 orders.forEach(order => {
-                    if (order.tests) {
+                    if (order.tests && order.tests.length > 0) {
                         order.tests.forEach(test => {
                             const tr = document.createElement('tr');
                             tr.className = 'hover:bg-gray-50 transition-colors animate-fade-in';
-                            tr.innerHTML = `<td class="px-6 py-4 font-mono text-sm text-gray-700">${order.trackingId}</td><td class="px-6 py-4 font-bold text-gray-700">${test.name}</td><td class="px-6 py-4"><span class="bg-yellow-50 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold border border-yellow-100">Pending</span></td>`;
+                            tr.innerHTML = `
+                                <td class="px-6 py-4 font-mono text-sm text-gray-700">${order.trackingId}</td>
+                                <td class="px-6 py-4 font-bold text-gray-700">${test.name}</td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-yellow-50 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold border border-yellow-100">Pending</span>
+                                </td>
+                            `;
                             tbody.appendChild(tr);
                         });
                     }
