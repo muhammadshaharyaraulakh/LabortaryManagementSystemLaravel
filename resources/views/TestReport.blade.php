@@ -1,298 +1,419 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Diagnostic Report - {{ $order->trackingId }}</title>
+    <title>Medical Report - {{ $order->trackingId }}</title>
     <style>
+        @page {
+            margin: 0cm 0cm;
+        }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            color: #1b2033;
-            line-height: 1.4;
-            padding: 10px;
-            font-size: 13px;
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 3px solid #3b82f6;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-        }
-
-        .header h1 {
+            color: #2c3e50;
+            line-height: 1.5;
             margin: 0;
-            color: #1b2033;
-            font-size: 28px;
-            letter-spacing: 1px;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .header-container {
+            background-color: #1b2033;
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+        }
+        .header-content h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 2px;
+            font-weight: 900;
             text-transform: uppercase;
         }
-
-        .header p {
+        .header-content p {
             margin: 5px 0 0 0;
-            color: #6b7280;
-            font-size: 14px;
+            font-size: 11px;
+            opacity: 0.8;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
-
-        .info-grid {
+        .tracking-badge {
+            position: absolute;
+            right: 40px;
+            top: 35px;
+            background-color: #3b82f6;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .main-content {
+            padding: 30px 40px;
+        }
+        .patient-info-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
-            border: 1px solid #e5e7eb;
-            background-color: #f9fafb;
         }
-
-        .info-grid td {
-            padding: 10px 15px;
-            border: 1px solid #e5e7eb;
+        .info-table td {
+            padding: 8px 0;
+            vertical-align: top;
         }
-
-        .info-label {
-            font-weight: bold;
-            color: #4b5563;
-            width: 20%;
-            background-color: #f3f4f6;
-        }
-
-        .info-value {
-            font-weight: bold;
-            color: #111827;
-            width: 30%;
-        }
-
-        .section-title {
-            background-color: #1b2033;
-            color: #ffffff;
-            padding: 8px 15px;
-            font-size: 15px;
+        .label {
+            font-size: 10px;
+            color: #64748b;
             font-weight: bold;
             text-transform: uppercase;
-            margin-bottom: 15px;
-            border-radius: 4px;
+            display: block;
+            margin-bottom: 2px;
         }
-
+        .value {
+            font-size: 13px;
+            color: #1e293b;
+            font-weight: bold;
+        }
+        .section-header {
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+        }
+        .section-header h2 {
+            margin: 0;
+            font-size: 14px;
+            color: #1b2033;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
         .results-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
         }
-
-        .results-table th,
-        .results-table td {
-            border-bottom: 1px solid #e5e7eb;
-            padding: 12px 10px;
-            text-align: left;
-        }
-
         .results-table th {
-            background-color: #f3f4f6;
-            color: #374151;
-            font-size: 12px;
+            text-align: left;
+            font-size: 10px;
+            color: #64748b;
             text-transform: uppercase;
-            border-top: 2px solid #1b2033;
-            border-bottom: 2px solid #1b2033;
+            padding: 12px 10px;
+            border-bottom: 2px solid #cbd5e1;
+            background-color: #f1f5f9;
         }
-
-        .results-table tr:nth-child(even) {
-            background-color: #f9fafb;
+        .results-table td {
+            padding: 15px 10px;
+            font-size: 12px;
+            border-bottom: 1px solid #f1f5f9;
         }
-
-        .flag-high {
-            color: #ef4444;
+        .param-name {
             font-weight: bold;
+            color: #1e293b;
         }
-
-        .flag-low {
-            color: #f59e0b;
-            font-weight: bold;
+        .result-value {
+            font-size: 14px;
+            font-weight: 900;
+            color: #1b2033;
         }
-
-        .flag-normal {
-            color: #10b981;
-        }
-
-        .remarks-box {
-            background-color: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 15px;
-            margin-bottom: 30px;
+        .flag-badge {
+            font-size: 9px;
+            font-weight: 900;
+            padding: 3px 8px;
             border-radius: 4px;
+            text-transform: uppercase;
         }
-
-        .remarks-box h4 {
+        .flag-high { background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .flag-low { background-color: #ffedd5; color: #d97706; border: 1px solid #fed7aa; }
+        .flag-normal { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        
+        .remarks-container {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+        }
+        .remarks-container h3 {
             margin: 0 0 5px 0;
+            font-size: 11px;
             color: #92400e;
+            text-transform: uppercase;
         }
-
-        .footer {
+        .remarks-container p {
+            margin: 0;
+            font-size: 12px;
+            color: #78350f;
+            line-height: 1.6;
+        }
+        .footer-container {
             margin-top: 50px;
-            padding-top: 20px;
-            position: relative;
+            padding: 0 40px 40px 40px;
         }
-
-        .signature-box {
-            position: absolute;
-            right: 0;
-            top: 0;
+        .footer-grid {
+            width: 100%;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 30px;
+        }
+        .signature-section {
             text-align: right;
-            width: 250px;
+            width: 300px;
+            float: right;
         }
-
         .signature-img {
-            max-width: 180px;
-            max-height: 80px;
+            max-width: 150px;
+            max-height: 70px;
             margin-bottom: 10px;
         }
-
         .signature-line {
-            border-top: 1px solid #1b2033;
+            border-top: 2px solid #1b2033;
             margin-bottom: 5px;
-            width: 100%;
         }
-
-        .signature-name {
-            font-weight: bold;
-            color: #111827;
-            font-size: 14px;
+        .signer-name {
+            font-size: 13px;
+            font-weight: 900;
+            color: #1b2033;
         }
-
-        .signature-title {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .system-note {
-            margin-top: 100px;
-            text-align: center;
+        .signer-title {
             font-size: 10px;
-            color: #9ca3af;
-            border-top: 1px dotted #d1d5db;
-            padding-top: 10px;
+            color: #64748b;
+            font-weight: bold;
         }
-
-        .qr-code {
-            position: absolute;
-            left: 0;
-            top: 10px;
+        .barcode-section {
+            float: left;
+            width: 200px;
+        }
+        .barcode-img {
+            max-height: 35px;
+            margin-bottom: 5px;
+        }
+        .barcode-text {
+            font-size: 9px;
+            color: #94a3b8;
+            letter-spacing: 2px;
+        }
+        .disclaimer {
+            clear: both;
+            margin-top: 80px;
+            text-align: center;
+            font-size: 9px;
+            color: #94a3b8;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>MY LAB DIAGNOSTICS</h1>
-        <p>Advanced AI-Powered Pathology & Diagnostic Center</p>
+    <div class="header-container">
+        <div class="header-content">
+            <h1>My Lab Diagnostics</h1>
+            <p>Premium Clinical Pathology & Health Services</p>
+        </div>
+        <div class="tracking-badge">
+            ID: {{ $order->trackingId }}
+        </div>
     </div>
 
-    <div class="section-title">Patient Details</div>
-    <table class="info-grid">
-        <tr>
-            <td class="info-label">Patient Name</td>
-            <td class="info-value">{{ $order->name }}</td>
-            <td class="info-label">Tracking ID</td>
-            <td class="info-value">{{ $order->trackingId }}</td>
-        </tr>
-        <tr>
-            <td class="info-label">Age / Gender</td>
-            <td class="info-value">{{ $order->age }} Years / {{ $order->gender }}</td>
-            <td class="info-label">Report Date</td>
-            <td class="info-value">{{ $test->pivot->updated_at->format('d M, Y h:i A') }}</td>
-        </tr>
-        <tr>
-            <td class="info-label">Contact</td>
-            <td class="info-value">{{ $order->phone }}</td>
-            <td class="info-label">Test Name</td>
-            <td class="info-value" style="color: #3b82f6;">{{ $test->name }}</td>
-        </tr>
-    </table>
-
-    @php
-        $hasParameters = $results->whereNotNull('testParameterId')->count() > 0;
-        $firstResult = $results->first();
-    @endphp
-
-    @if($hasParameters)
-        <div class="section-title">Test Results</div>
-        <table class="results-table">
-            <thead>
+    <div class="main-content">
+        <div class="patient-info-card">
+            <table class="info-table">
                 <tr>
-                    <th>Parameter</th>
-                    <th>Result Value</th>
-                    <th>Unit</th>
-                    <th>Reference Range</th>
-                    <th>Status</th>
+                    <td width="35%">
+                        <span class="label">Patient Name</span>
+                        <span class="value">{{ $order->name }}</span>
+                    </td>
+                    <td width="20%">
+                        <span class="label">Age</span>
+                        <span class="value">{{ $order->age }} Years</span>
+                    </td>
+                    <td width="20%">
+                        <span class="label">Gender</span>
+                        <span class="value">{{ $order->gender }}</span>
+                    </td>
+                    <td width="25%">
+                        <span class="label">Date Generated</span>
+                        <span class="value">{{ now()->format('d M, Y') }}</span>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($results as $result)
-                    @if($result->testParameterId)
-                        @php
-                            $flagClass = '';
-                            $flagText = $result->statusFlag ?? 'Normal';
-                            if(strtolower($flagText) === 'high' || strtolower($flagText) === 'abnormal') $flagClass = 'flag-high';
-                            elseif(strtolower($flagText) === 'low') $flagClass = 'flag-low';
-                            else $flagClass = 'flag-normal';
-                        @endphp
-                        <tr>
-                            <td style="font-weight: bold;">{{ $result->parameter->parameterName ?? 'N/A' }}</td>
-                            <td><strong style="font-size: 15px;">{{ $result->resultValue }}</strong></td>
-                            <td style="color: #6b7280;">{{ $result->parameter->unit ?? '' }}</td>
-                            <td style="color: #6b7280;">{{ $result->parameter->normalRange ?? 'N/A' }}</td>
-                            <td class="{{ $flagClass }}">{{ $flagText }}</td>
-                        </tr>
+                <tr>
+                    <td>
+                        <span class="label">Contact Number</span>
+                        <span class="value">{{ $order->phone }}</span>
+                    </td>
+                    <td colspan="2">
+                        <span class="label">Sample Type</span>
+                        <span class="value">{{ $test->sampleType ?? 'Serum/Plasma' }}</span>
+                    </td>
+                    <td>
+                        <span class="label">Report Status</span>
+                        <span class="value" style="color: #16a34a;">FINAL VERIFIED</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section-header">
+            <h2>Test Findings: {{ $test->name }}</h2>
+        </div>
+
+        @php
+            $hasStructured = $results->whereNotNull('testParameterId')->count() > 0;
+            $firstResult = $results->first();
+        @endphp
+
+        @if($hasStructured)
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th width="35%">Parameter</th>
+                        <th width="20%">Result Value</th>
+                        <th width="15%">Unit</th>
+                        <th width="20%">Normal Range</th>
+                        <th width="10%" style="text-align: center;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($results as $res)
+                        @if($res->testParameterId)
+                            @php
+                                $val = $res->resultValue;
+                                $isImage = ($res->parameter && strtolower($res->parameter->inputType) === 'image') || 
+                                           (is_string($val) && str_starts_with($val, '[') && str_ends_with($val, ']'));
+                                
+                                $flag = strtolower($res->statusFlag ?? 'normal');
+                                $badgeClass = $flag === 'high' ? 'flag-high' : ($flag === 'low' ? 'flag-low' : 'flag-normal');
+                            @endphp
+                            <tr>
+                                <td><span class="param-name">{{ $res->parameter->parameterName }}</span></td>
+                                <td>
+                                    <span class="result-value">
+                                        @if($isImage)
+                                            <span style="color: #3b82f6; font-size: 11px;">[ See Diagnostic Attachments ]</span>
+                                        @else
+                                            {{ $val }}
+                                        @endif
+                                    </span>
+                                </td>
+                                <td style="color: #64748b;">{{ $res->parameter->unit ?? '-' }}</td>
+                                <td style="color: #64748b; font-style: italic;">{{ $res->parameter->normalRange ?? 'N/A' }}</td>
+                                <td style="text-align: center;">
+                                    <span class="flag-badge {{ $badgeClass }}">{{ strtoupper($flag) }}</span>
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <div style="padding: 30px; text-align: center; background-color: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 30px;">
+                <p style="font-size: 14px; font-weight: bold; color: #475569; margin: 0;">Observational / Non-Structured Report</p>
+                <p style="font-size: 12px; color: #64748b; margin-top: 5px;">This test does not contain tabular parameters. Please see the clinical remarks below for detailed findings.</p>
+            </div>
+        @endif
+
+        @if($firstResult && $firstResult->remarks)
+            <div class="remarks-container">
+                <h3>Clinical Interpretations & Remarks</h3>
+                <p>{!! nl2br(e($firstResult->remarks)) !!}</p>
+            </div>
+        @endif
+
+        @php
+            $images = [];
+            foreach($results as $r) {
+                $val = $r->resultValue;
+                $isImage = ($r->parameter && strtolower($r->parameter->inputType) === 'image') || 
+                           (is_string($val) && str_starts_with($val, '[') && str_ends_with($val, ']'));
+                
+                if($isImage && $val) {
+                    try {
+                        $paths = json_decode($val, true);
+                        if(is_array($paths)) $images = array_merge($images, $paths);
+                    } catch(\Exception $e) {}
+                }
+            }
+        @endphp
+
+        @if(count($images) > 0)
+            <div class="section-header">
+                <h2>Diagnostic Attachments</h2>
+            </div>
+            <div style="margin-bottom: 30px;">
+                @foreach($images as $path)
+                    @php
+                        $cleanPath = ltrim($path, '/');
+                        $storagePath = preg_replace('/^storage\//', '', $cleanPath);
+                        
+                        $fullPath = public_path($cleanPath);
+                        if(!file_exists($fullPath)) {
+                            $fullPath = storage_path('app/public/' . $storagePath);
+                        }
+                        
+                        $base64Image = null;
+                        if(file_exists($fullPath)) {
+                            $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+                            $data = @file_get_contents($fullPath);
+                            if($data) {
+                                $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                            }
+                        }
+                    @endphp
+                    @if($base64Image)
+                        <div style="margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; display: inline-block; width: 45%; margin-right: 2%; vertical-align: top;">
+                            <img src="{{ $base64Image }}" style="max-width: 100%; border-radius: 4px;" alt="Diagnostic Image" />
+                        </div>
                     @endif
                 @endforeach
-            </tbody>
-        </table>
-    @else
-        <div style="padding: 40px 20px; text-align: center; background-color: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; margin-bottom: 30px;">
-            <p style="font-size: 16px; color: #4b5563; font-weight: bold; margin: 0;">This test does not have structured parameters.</p>
-            <p style="font-size: 14px; color: #6b7280; margin-top: 5px;">Please refer to the remarks or attached diagnostic images for the findings.</p>
-        </div>
-    @endif
+                <div style="clear: both;"></div>
+            </div>
+        @endif
+    </div>
 
-    @if($firstResult && $firstResult->remarks)
-        <div class="remarks-box">
-            <h4>Clinical Remarks:</h4>
-            <p style="margin: 0; line-height: 1.6;">{!! nl2br(e($firstResult->remarks)) !!}</p>
-        </div>
-    @endif
+    <div class="footer-container">
+        <div class="footer-grid">
+            <div class="barcode-section">
+                @if(isset($test->backend_barcode))
+                    <img src="data:image/png;base64,{{ $test->backend_barcode }}" class="barcode-img" alt="Test Barcode" />
+                    <div class="barcode-text">{{ $test->pivot->vialBarcode }}</div>
+                @endif
+                <div style="margin-top: 10px; font-size: 10px; color: #64748b;">
+                    Report Verified by System AI & Medical Team
+                </div>
+            </div>
 
-    <div class="footer">
-        <div class="qr-code">
-            @if(isset($test->backend_barcode))
-                <img src="data:image/png;base64,{{ $test->backend_barcode }}" alt="barcode" style="max-height: 40px; margin-bottom: 5px;" />
-                <div style="font-size: 10px; color: #6b7280; letter-spacing: 2px;">{{ $test->pivot->vialBarcode }}</div>
-            @endif
-        </div>
-
-        <div class="signature-box">
-            @php
-                $base64Sig = null;
-                if($firstResult && $firstResult->signatureImagePath) {
-                    $sigPath = public_path($firstResult->signatureImagePath);
-                    if(file_exists($sigPath)) {
-                        $type = pathinfo($sigPath, PATHINFO_EXTENSION);
-                        $data = file_get_contents($sigPath);
-                        $base64Sig = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            <div class="signature-section">
+                @php
+                    $base64Sig = null;
+                    if($firstResult && $firstResult->signatureImagePath) {
+                        $sigPath = public_path($firstResult->signatureImagePath);
+                        if(file_exists($sigPath)) {
+                            $type = pathinfo($sigPath, PATHINFO_EXTENSION);
+                            $data = file_get_contents($sigPath);
+                            $base64Sig = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        }
                     }
-                }
-            @endphp
+                @endphp
 
-            @if($base64Sig)
-                <img src="{{ $base64Sig }}" class="signature-img" alt="Digital Signature" />
-            @else
-                <div style="height: 60px;"></div> <!-- Spacer if no signature image -->
-            @endif
-            
-            <div class="signature-line"></div>
-            <div class="signature-name">{{ $firstResult->verifiedBy ?? 'Dr. Pathologist' }}</div>
-            <div class="signature-title">Consultant Medical Professional</div>
+                @if($base64Sig)
+                    <img src="{{ $base64Sig }}" class="signature-img" alt="Digital Signature" />
+                @else
+                    <div style="height: 50px;"></div>
+                @endif
+                
+                <div class="signature-line"></div>
+                <div class="signer-name">{{ $firstResult->verifiedBy ?? 'Dr. Pathology Expert' }}</div>
+                <div class="signer-title">Consultant Pathologist & Laboratory Director</div>
+            </div>
         </div>
-        
-        <div style="clear: both;"></div>
 
-        <div class="system-note">
-            This is a computer-generated report. It has been digitally verified and does not require a physical stamp. <br>
-            Generated on {{ now()->format('d M, Y \a\t h:i A') }}
+        <div class="disclaimer">
+            This is a digitally signed medical report. Its authenticity can be verified by entering the Tracking ID on our official portal.
+            The results are for clinical consultation and should be interpreted by a registered medical practitioner.
+            <br>
+            <strong>My Lab Diagnostics</strong> - Bringing Clarity to your Healthcare.
         </div>
     </div>
 </body>

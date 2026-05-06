@@ -130,6 +130,7 @@ class ResultController extends Controller
             'results' => 'required|array',
             'results.*.id' => 'required|exists:results,id',
             'results.*.resultValue' => 'nullable',
+            'results.*.statusFlag' => 'nullable|string',
             'remarks' => 'nullable|string',
             'alertPatient' => 'boolean'
         ]);
@@ -148,6 +149,7 @@ class ResultController extends Controller
             foreach ($request->results as $res) {
                 Result::where('id', $res['id'])->update([
                     'resultValue' => $res['resultValue'],
+                    'statusFlag' => $res['statusFlag'] ?? 'Normal',
                     'remarks' => $request->remarks,
                     'signatureImagePath' => $user->signature,
                     'alertPatient' => $request->alertPatient ?? false,
@@ -189,5 +191,26 @@ class ResultController extends Controller
             'message' => 'Completed Reports Fetched Successfully',
             'data' => $completedReports
         ], Response::HTTP_OK);
+    }
+
+    public function rejectSample(Request $request)
+    {
+        $request->validate([
+            'orderTestId' => 'required|exists:order_test,id',
+            'reason' => 'required|string'
+        ]);
+
+        DB::table('order_test')
+            ->where('id', $request->orderTestId)
+            ->update([
+                'status' => 'Rejected',
+                'rejectionReason' => $request->reason,
+                'rejectedBy' => Auth::user()->name
+            ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Sample rejected successfully.'
+        ]);
     }
 }

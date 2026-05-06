@@ -21,31 +21,26 @@ Route::get('/login', function () {
     return view('authentication.login');
 });
 
+Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
+    ->name('google.redirect');
+
+Route::get('/auth/google/callback', [SocialController::class, 'googleCallback'])
+    ->name('google.callback');
+
+Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
+    ->name('github.redirect');
+
+Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
+    ->name('github.callback');
+
+Route::post('login', [loginController::class, 'login'])->name('login');
+Route::get('/logout', [loginController::class, 'logout'])->name('logout');
+
 Route::post('/login', [loginController::class, 'login'])->name('login');
 
 Route::middleware('auth')->group(function () {
 
-
-
-
     Route::get('/tests', [TestController::class, 'index']);
-    Route::view('/pathologist/dashboard', 'pathologist.dashboard')
-        ->name('pathologist.dashboard');
-    // --- TEST CONTROLLER ROUTES ---
-    Route::get('/deprtmentTests', [TestController::class, 'deprtmentTests']);
-    Route::get('/InventoryItems', [TestController::class, 'inventoryItems']);
-
-    // 1. Specific routes MUST go first!
-    Route::get('/tests/trashed', [TestController::class, 'trashedIndex']);
-    Route::post('/tests/add', [TestController::class, 'add']);
-
-    // 2. Wildcard {id} routes MUST go after!
-    Route::get('/tests/{id}', [TestController::class, 'show']);
-    Route::put('/tests/{id}', [TestController::class, 'update']);
-    Route::delete('/tests/{id}', [TestController::class, 'destroy']);
-    Route::post('/tests/{id}/restore', [TestController::class, 'restore']);
-    // ------------------------------
-
     Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
     Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
     Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
@@ -68,24 +63,8 @@ Route::get('/resetPassword', function () {
     return view('authentication.resetPassword');
 })->name('resetPassword');
 
-Route::get('/home', function () {
-    return view('home');
-});
-Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
-    ->name('google.redirect');
 
-Route::get('/auth/google/callback', [SocialController::class, 'googleCallback'])
-    ->name('google.callback');
 
-Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
-    ->name('github.redirect');
-
-Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
-    ->name('github.callback');
-
-Route::post('login', [loginController::class, 'login'])->name('login');
-Route::get('/logout', [loginController::class, 'logout'])->name('logout');
-Route::get('/users', [profileController::class, 'allusers'])->name('users');
 
 Route::middleware(['auth', 'check.role:admin'])->group(function () {
     Route::view('/AdminDashboard', 'admin.dashboard')
@@ -145,25 +124,42 @@ Route::middleware(['auth', 'check.role:samplecollector'])->group(function () {
     Route::get('/PendingOrders', [SampleCollectorController::class, 'index'])->name('PendingOrders');
     Route::post('/CollectSample', [SampleCollectorController::class, 'CollectSample'])->name('CollectSample');
 });
+Route::middleware(['auth', 'check.role:technician'])->group(function () {
+    Route::view('/Technician', 'Technician.SampleBasedTechnician')->name('SampleBasedTechnician');
+    Route::get('/TechnicianStats', [TechnicianController::class, 'getDashboardStats']);
+    Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
+    Route::post('/getSampleInfo', [TechnicianController::class, 'getSampleInfo']);
+    Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
+    Route::get('/getPendingVerifications', [TechnicianController::class, 'getPendingVerificationList']);
+    Route::view('/TechnicianDashboard', 'Technician.HumanBasedTechnician')->name('HumanTechnicianDashboard');
+    Route::get('/HumanTechnicianStats', [TechnicianController::class, 'getHumanDashboardStats']);
+    Route::get('/HumanTechnicianPendingWorklist', [TechnicianController::class, 'HumanTechnicianPendingWorklist']);
+    Route::post('/StartHumanTest', [TechnicianController::class, 'StartHumanTest']);
+    Route::post('/uploadHumanResultFile', [TechnicianController::class, 'uploadHumanResultFile']);
+});
+Route::middleware(['auth', 'check.role:pathologist'])->group(function () {
+    Route::get('/pathologist', function () {
+        return view('pathologist.dashboard');
+    })->name('pathologist.dashboard');
+    Route::get('/getPathologistStats', [ResultController::class, 'getPathologistStats']);
+    Route::get('/getPathologistPendingList', [ResultController::class, 'getPendingResultList']);
+    Route::get('/getPathologistCompletedReports', [ResultController::class, 'getCompletedReports']);
+    Route::get('/deprtmentTests', [TestController::class, 'deprtmentTests']);
+    Route::get('/InventoryItems', [TestController::class, 'inventoryItems']);
+    Route::get('/tests/trashed', [TestController::class, 'trashedIndex']);
+    Route::post('/tests/add', [TestController::class, 'add']);
+    Route::put('/tests/{id}', [TestController::class, 'update']);
+    Route::delete('/tests/{id}', [TestController::class, 'destroy']);
+    Route::post('/tests/{id}/restore', [TestController::class, 'restore']);
+});
+
+Route::get('/tests/{id}', [TestController::class, 'show']);
 
 
 
 
 
 
-
-
-Route::view('/TechnicianDashboard', 'Technician.dashboard');
-Route::get('/TechnicianStats', [TechnicianController::class, 'getDashboardStats']);
-Route::post('/ReceiveSample', [TechnicianController::class, 'Lock']);
-Route::get('/TechnicianWorklist', [TechnicianController::class, 'TechnicianWorklist']);
-Route::get('/getPendingVerifications', [TechnicianController::class, 'getPendingVerificationList']);
-
-Route::view('/HumanTechnicianDashboard', 'Technician.human_dashboard');
-Route::get('/HumanTechnicianStats', [TechnicianController::class, 'getHumanDashboardStats']);
-Route::get('/HumanTechnicianPendingWorklist', [TechnicianController::class, 'HumanTechnicianPendingWorklist']);
-Route::post('/StartHumanTest', [TechnicianController::class, 'StartHumanTest']);
-Route::post('/uploadHumanResultFile', [TechnicianController::class, 'uploadHumanResultFile']);
 
 
 
@@ -171,15 +167,13 @@ Route::post('/uploadHumanResultFile', [TechnicianController::class, 'uploadHuman
 Route::post('/addResult', [ResultController::class, 'addResult']);
 Route::get('/getPendingResultList', [ResultController::class, 'getPendingResultList']);
 Route::get('/getResultsByOrderTestId/{id}', [ResultController::class, 'getResultsByOrderTestId']);
-Route::post('/verifyResult', [ResultController::class, 'verifyResult']);
+    Route::post('/verifyResult', [ResultController::class, 'verifyResult']);
+    Route::post('/rejectSample', [ResultController::class, 'rejectSample']);
 Route::get('/getPathologistStats', [ResultController::class, 'getPathologistStats']);
 Route::get('/getCompletedReports', [ResultController::class, 'getCompletedReports']);
 
-// Specialist Doctor (Human-Based) Routes
-Route::view('/SpecialistDashboard', 'Specialist.dashboard')->name('specialist.dashboard');
-Route::get('/getSpecialistStats', [ResultController::class, 'getPathologistStats']); // Reuses pathologist logic
-Route::get('/getSpecialistPendingList', [ResultController::class, 'getPendingResultList']); // Reuses pathologist logic
-Route::get('/getSpecialistCompletedReports', [ResultController::class, 'getCompletedReports']); // Reuses pathologist logic
+
+
 
 Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class, 'downloadReport']);
 Route::get('/public/track-report/{trackingId}', [OrderController::class, 'PublicTrackReport']);

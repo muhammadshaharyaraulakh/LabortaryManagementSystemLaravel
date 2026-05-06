@@ -61,15 +61,24 @@ class loginController extends Controller
 
             Session::forget(['LoginVerificationCode', 'LoginPendingUserId']);
 
-            $role = trim($user->role);
-            $routeMap = [
-                'admin' => 'admin.adminstrator',
-                'receptionist' => '/receptionist',
-                'pathologist' => 'pathologist.dashboard',
-                'SampleCollector' => 'samplecollector.dashboard',
-            ];
-
-            $redirectUrl = array_key_exists($role, $routeMap) ? route($routeMap[$role]) : url('/');
+            $role = strtolower(trim($user->role));
+            
+            if ($role === 'technician') {
+                if ($user->department && $user->department->type === 'human_based') {
+                    $redirectUrl = route('HumanTechnicianDashboard');
+                } else {
+                    $redirectUrl = route('SampleBasedTechnician');
+                }
+            } elseif ($role === 'pathologist' || $role === 'specialistdoctor') {
+                $redirectUrl = route('pathologist.dashboard');
+            } else {
+                $routeMap = [
+                    'admin' => 'admin.adminstrator',
+                    'receptionist' => 'receptionist',
+                    'samplecollector' => 'samplecollector.dashboard',
+                ];
+                $redirectUrl = isset($routeMap[$role]) ? route($routeMap[$role]) : url('/');
+            }
 
             return response()->json([
                 'status' => 'success',

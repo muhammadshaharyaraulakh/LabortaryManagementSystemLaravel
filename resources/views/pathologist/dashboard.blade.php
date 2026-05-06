@@ -97,6 +97,7 @@
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
+            <div id="globalNotification" class="fixed top-24 right-10 z-70 hidden p-4 rounded-xl shadow-lg border animate-fade-in max-w-sm pointer-events-none"></div>
 
             <div id="section-dashboard" class="content-section block animate-fade-in">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -507,7 +508,7 @@
                             </label>
                         </div>
 
-                        <!-- Parameters -->
+
                         <div class="border-b border-gray-100 pb-4 mb-4 mt-8 pt-4">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-bold text-gray-800">
@@ -524,10 +525,10 @@
                         <div class="parameter-error-summary"></div>
 
                         <div id="update-parameters-container" class="space-y-4">
-                            <!-- Populated dynamically via JS -->
+
                         </div>
 
-                        <!-- Inventory -->
+
                         <div class="border-b border-gray-100 pb-4 mb-4 mt-8 pt-4">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-bold text-gray-800">
@@ -545,10 +546,10 @@
                         <div class="inventory-error-summary"></div>
 
                         <div id="update-requirements-container" class="space-y-4">
-                            <!-- Populated dynamically via JS -->
+
                         </div>
 
-                        <!-- Buttons -->
+
                         <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
                             <button id="btn-cancel-update-test-bottom" type="button"
                                 class="px-6 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
@@ -748,16 +749,11 @@
                         class="ph ph-x text-xl"></i></button>
             </div>
             <div class="p-6 overflow-y-auto custom-scrollbar">
+                <div id="verifyNotification" class="hidden mb-4 p-4 rounded-xl text-sm font-bold animate-fade-in"></div>
                 <form id="VerifyTestForm" class="space-y-6">
                     <div class="border border-gray-200 rounded-xl overflow-hidden">
                         <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-700 font-bold">
-                                <tr>
-                                    <th class="px-4 py-3">Parameter</th>
-                                    <th class="px-4 py-3">Result Value</th>
-                                    <th class="px-4 py-3">Unit</th>
-                                    <th class="px-4 py-3">Normal Range</th>
-                                </tr>
+                            <thead id="verifyParametersTableHead" class="bg-gray-50 border-b border-gray-200 text-xs text-gray-700 font-bold">
                             </thead>
                             <tbody class="divide-y divide-gray-100" id="verifyResultsTbody">
                             </tbody>
@@ -790,11 +786,7 @@
                 </form>
             </div>
             <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-between">
-                <button id="BtnRejectSample" type="button"
-                    class="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2">
-                    <i class="ph-bold ph-warning-circle"></i> Reject Sample
-                </button>
+                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end">
                 <div class="flex gap-3">
                     <button id="CloseVerifyTestBtn" type="button"
                         class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancel</button>
@@ -807,53 +799,9 @@
         </div>
     </div>
 
-    <div id="RejectSampleModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-70 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="RejectSampleModal"
-            class="bg-white w-full max-w-md rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
-                        <i class="ph-duotone ph-warning-circle text-xl"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-gray-800">Reject Sample</h3>
-                </div>
-                <button id="CloseRejectSampleX" class="text-gray-400 hover:text-gray-800 transition-colors p-1"><i
-                        class="ph ph-x text-xl"></i></button>
-            </div>
-            <div class="p-6">
-                <label class="block text-sm font-bold text-gray-700 mb-2">Reason for Rejection <span
-                        class="text-red-500">*</span></label>
-                <select
-                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-100 outline-none bg-gray-50/50 mb-4 cursor-pointer">
-                    <option disabled selected>Select a reason...</option>
-                    <option>Hemolyzed Sample</option>
-                    <option>Insufficient Quantity</option>
-                    <option>Clotted Sample</option>
-                    <option>Wrong Container/Tube</option>
-                    <option>Other (Specify below)</option>
-                </select>
-                <textarea rows="2"
-                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-100 outline-none bg-gray-50/50 resize-none"
-                    placeholder="Additional details..."></textarea>
-            </div>
-            <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
-                <button id="CloseRejectSampleBtn" type="button"
-                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancel</button>
-                <button type="button"
-                    class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm">Confirm
-                    Rejection</button>
-            </div>
-        </div>
-    </div>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ==========================================
-            // 1. GLOBAL SETUP & HEADERS
-            // ==========================================
             const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             const fetchHeaders = {
@@ -862,12 +810,8 @@
             };
 
             let inventoryItemsList = [];
-            let allTests = []; // Global variable to store all tests for client-side search
+            let allTests = [];
             let hasSignature = false;
-
-            // ==========================================
-            // 2. ERROR HANDLING HELPERS
-            // ==========================================
             function clearValidationErrors(form) {
                 form.querySelectorAll('.validation-error').forEach(el => el.remove());
                 form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
@@ -884,8 +828,6 @@
                 const paramEntries = [];
                 const inventoryEntries = [];
                 const generalMessages = [];
-
-                // Identify summary containers
                 const paramSummary = form.querySelector('.parameter-error-summary');
                 const inventorySummary = form.querySelector('.inventory-error-summary');
                 const formAlert = form.querySelector('.form-general-error');
@@ -945,31 +887,23 @@
                     }
                     return msg;
                 };
-
-                // Handle Parameter errors universal paragraph
                 if (paramEntries.length > 0 && paramSummary) {
                     sortEntries(paramEntries);
                     const p = document.createElement('p');
                     p.className = 'text-red-500 text-sm font-bold validation-error animate-fade-in mb-4 bg-red-50 p-3 rounded-xl border border-red-100';
                     p.innerHTML = paramEntries.map(e => `• ${cleanMsg(e.message, e.key)}`).join('<br>');
                     paramSummary.appendChild(p);
-
-                    // Remove after 3 seconds
                     setTimeout(() => {
                         if (p.parentNode) p.classList.add('opacity-0');
                         setTimeout(() => { if (p.parentNode) p.remove(); }, 300);
                     }, 3000);
                 }
-
-                // Handle Inventory errors distinctly
                 if (inventoryEntries.length > 0 && inventorySummary) {
                     sortEntries(inventoryEntries);
                     const p = document.createElement('p');
                     p.className = 'text-red-500 text-sm font-bold validation-error animate-fade-in mb-4 bg-red-50 p-3 rounded-xl border border-red-100';
                     p.innerHTML = inventoryEntries.map(e => `• ${cleanMsg(e.message, e.key)}`).join('<br>');
                     inventorySummary.appendChild(p);
-
-                    // Remove after 3 seconds
                     setTimeout(() => {
                         if (p.parentNode) p.classList.add('opacity-0');
                         setTimeout(() => { if (p.parentNode) p.remove(); }, 300);
@@ -981,10 +915,6 @@
                     formAlert.innerHTML = generalMessages.map(msg => `• ${msg}`).join('<br>');
                 }
             }
-
-            // ==========================================
-            // 3. INVENTORY HELPERS
-            // ==========================================
             function getInventoryOptionsHTML() {
                 if (inventoryItemsList.length === 0) {
                     return '<option value="" disabled selected>No inventory items found...</option>';
@@ -999,7 +929,7 @@
             }
 
             async function loadInventoryItems() {
-                if (inventoryItemsList.length > 0) return; // Use already fetched data
+                if (inventoryItemsList.length > 0) return;
 
                 try {
                     const response = await fetch('/InventoryItems', { headers: fetchHeaders });
@@ -1019,10 +949,6 @@
                     console.error('Error loading inventory:', error);
                 }
             }
-
-            // ==========================================
-            // 4. FETCH & RENDER TESTS (READ ALL)
-            // ==========================================
             async function fetchTests() {
                 try {
                     const response = await fetch('/deprtmentTests', { headers: fetchHeaders });
@@ -1032,7 +958,7 @@
                     if (!tbody) return;
 
                     if (response.ok && result.status === true && result.data) {
-                        allTests = result.data; // Store all tests globally
+                        allTests = result.data;
                         renderTestsTable(allTests);
                     } else {
                         tbody.innerHTML = `
@@ -1089,8 +1015,6 @@
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
             }
-
-            // Search Filter Logic
             document.getElementById('test-search-input')?.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase().trim();
 
@@ -1101,10 +1025,6 @@
 
                 renderTestsTable(filteredTests);
             });
-
-            // ==========================================
-            // 5. UI NAVIGATION & SIDEBAR
-            // ==========================================
             const sections = document.querySelectorAll('.content-section');
             const headerTitle = document.getElementById('header-title');
 
@@ -1139,11 +1059,6 @@
 
                     const targetId = link.getAttribute('data-target');
                     switchSection(targetId, link.getAttribute('data-title'));
-
-
-                    // ==========================================
-                    // CALL THE RELEVANT API BASED ON THE TAB
-                    // ==========================================
                     if (targetId === 'section-dashboard') {
                         fetchPendingResults();
                     } else if (targetId === 'section-completed-reports') {
@@ -1151,7 +1066,7 @@
                     } else if (targetId === 'section-manage-tests') {
                         fetchTests();
                     } else if (targetId === 'section-archived-tests') {
-                        fetchArchivedTests(); // <--- ADD THIS LINE HERE
+                        fetchArchivedTests();
                     } else if (targetId === 'section-add-test') {
                         loadInventoryItems();
                     } else if (targetId === 'section-settings') {
@@ -1161,10 +1076,6 @@
                     if (window.innerWidth < 768) toggleSidebar();
                 });
             });
-
-            // ==========================================
-            // 6. MODALS
-            // ==========================================
             function openModal(backdropId, modalId) {
                 const backdrop = document.getElementById(backdropId);
                 const modal = document.getElementById(modalId);
@@ -1191,6 +1102,77 @@
                 }, 300);
             }
 
+            function showVerifyNotification(message, type = 'success') {
+                const notify = document.getElementById('verifyNotification');
+                if (!notify) return;
+                
+                notify.innerText = message;
+                notify.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'border-green-100', 'bg-red-50', 'text-red-700', 'border-red-100');
+                
+                if (type === 'success') {
+                    notify.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-100');
+                } else {
+                    notify.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-100');
+                }
+                
+                notify.classList.remove('hidden');
+                setTimeout(() => notify.classList.add('hidden'), 5000);
+            }
+
+            function attachVerifyValidationListeners() {
+                const inputs = document.querySelectorAll('#verifyResultsTbody .result-input[type="number"], #verifyResultsTbody .result-input[type="text"].quantitative-input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', function () {
+                        const tr = this.closest('tr');
+                        const min = parseFloat(this.dataset.min);
+                        const max = parseFloat(this.dataset.max);
+                        const flagCell = tr.querySelector('.flag-cell');
+                        if (!flagCell) return;
+
+                        const val = parseFloat(this.value);
+                        this.classList.remove('border-red-500', 'border-yellow-500', 'bg-red-50', 'bg-yellow-50');
+
+                        if (isNaN(val)) {
+                            this.dataset.flag = 'Normal';
+                            flagCell.innerHTML = '<span class="text-gray-300 text-xs font-bold">—</span>';
+                            return;
+                        }
+
+                        if (val < min) {
+                            this.dataset.flag = 'Low';
+                            this.classList.add('border-yellow-500', 'bg-yellow-50');
+                            flagCell.innerHTML = '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-black text-xs border border-yellow-200">L</span>';
+                        } else if (val > max) {
+                            this.dataset.flag = 'High';
+                            this.classList.add('border-red-500', 'bg-red-50');
+                            flagCell.innerHTML = '<span class="bg-red-100 text-red-700 px-2 py-1 rounded font-black text-xs border border-red-200">H</span>';
+                        } else {
+                            this.dataset.flag = 'Normal';
+                            flagCell.innerHTML = '<span class="text-green-500 text-xs font-bold"><i class="ph-bold ph-check"></i></span>';
+                        }
+                    });
+                    // Trigger input to initial flag
+                    input.dispatchEvent(new Event('input'));
+                });
+            }
+
+            function showGlobalNotification(message, type = 'success') {
+                const notify = document.getElementById('globalNotification');
+                if (!notify) return;
+                
+                notify.innerText = message;
+                notify.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'border-green-100', 'bg-red-50', 'text-red-700', 'border-red-100');
+                
+                if (type === 'success') {
+                    notify.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-100');
+                } else {
+                    notify.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-100');
+                }
+                
+                notify.classList.remove('hidden');
+                setTimeout(() => notify.classList.add('hidden'), 5000);
+            }
+
             document.addEventListener('click', async (e) => {
                 if (e.target.closest('.btn-open-verify')) {
                     const btn = e.target.closest('.btn-open-verify');
@@ -1198,15 +1180,12 @@
                     const patientName = btn.dataset.patientName;
                     const testName = btn.dataset.testName;
 
-                    if (!hasSignature) {
-                        alert('Please upload your signature in Settings before verifying results.');
-                        switchSection('section-settings', 'Settings');
-                        return;
-                    }
-
                     document.getElementById('verifyModalSubtitle').innerText = `Patient: ${patientName} | Test: ${testName}`;
                     const tbody = document.getElementById('verifyResultsTbody');
-                    tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Loading results...</td></tr>';
+                    const thead = document.getElementById('verifyParametersTableHead');
+                    
+                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Loading results...</td></tr>';
+                    thead.innerHTML = '';
                     document.getElementById('VerifyTestForm').dataset.orderTestId = orderTestId;
 
                     openModal('VerifyTestModalBackdrop', 'VerifyTestModal');
@@ -1214,27 +1193,115 @@
                     try {
                         const res = await fetch(`/getResultsByOrderTestId/${orderTestId}`, { headers: fetchHeaders });
                         const result = await res.json();
-
-                        if (result.status === 200) {
+                        if (result.status === 200 && Array.isArray(result.data)) {
                             tbody.innerHTML = '';
-                            result.data.forEach(item => {
-                                const row = `
-                                    <tr data-result-id="${item.id}">
-                                        <td class="px-4 py-3 font-medium">${item.parameter?.parameterName || 'N/A'}</td>
-                                        <td class="px-4 py-3">
-                                            <input type="text" value="${item.resultValue || ''}" 
-                                                class="result-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none">
-                                        </td>
-                                        <td class="px-4 py-3 text-gray-500">${item.parameter?.unit || ''}</td>
-                                        <td class="px-4 py-3 text-gray-500">${item.parameter?.normalRange || ''}</td>
-                                    </tr>
-                                `;
-                                tbody.insertAdjacentHTML('beforeend', row);
-                            });
+                            
+                            if (result.data.length > 0) {
+                                // Check if any parameter is quantitative to decide on the Flag column
+                                const hasQuantitative = result.data.some(item => {
+                                    const type = (item.parameter?.inputType || item.parameter?.type || '').toLowerCase().trim();
+                                    return type === 'quantitative' || type === ''; // Default is quantitative
+                                });
+                                
+                                if (hasQuantitative) {
+                                    thead.innerHTML = `
+                                        <tr>
+                                            <th class="px-4 py-3">Parameter</th>
+                                            <th class="px-4 py-3">Result Value</th>
+                                            <th class="px-4 py-3">Unit</th>
+                                            <th class="px-4 py-3">Normal Range</th>
+                                            <th class="px-4 py-3 text-center">Flag</th>
+                                        </tr>`;
+                                } else {
+                                    thead.innerHTML = `
+                                        <tr>
+                                            <th class="px-4 py-3">Parameter</th>
+                                            <th class="px-4 py-3">Result Value</th>
+                                            <th class="px-4 py-3">Unit</th>
+                                            <th class="px-4 py-3">Normal Range</th>
+                                        </tr>`;
+                                }
+
+                                result.data.forEach(item => {
+                                    const type = (item.parameter?.inputType || item.parameter?.type || 'quantitative').toLowerCase().trim();
+                                    const paramName = item.parameter?.parameterName || 'N/A';
+                                    const unit = item.parameter?.unit || '';
+                                    const range = item.parameter?.normalRange || '';
+                                    const val = item.resultValue || '';
+                                    const currentFlag = item.statusFlag || 'Normal';
+
+                                    let inputHtml = '';
+                                    let flagCellHtml = '';
+
+                                    if (type === 'quantitative') {
+                                        let min = null, max = null;
+                                        if (range && range.includes('-')) {
+                                            const parts = range.split('-');
+                                            min = parseFloat(parts[0]);
+                                            max = parseFloat(parts[1]);
+                                        }
+                                        inputHtml = `<input type="number" step="0.01" value="${val}" 
+                                            data-min="${min}" data-max="${max}" data-flag="${currentFlag}"
+                                            class="result-input quantitative-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none font-bold">`;
+                                        flagCellHtml = `<td class="px-4 py-3 text-center flag-cell align-top pt-4"></td>`;
+
+                                    } else if (type === 'qualitative') {
+                                        let optionsList = item.parameter?.options ? item.parameter.options : 'Positive,Negative';
+                                        let optionsHtml = `<option value="">Select Result...</option>`;
+                                        let finalOptions = Array.isArray(optionsList) ? optionsList : (typeof optionsList === 'string' ? optionsList.split(',') : []);
+
+                                        finalOptions.forEach(opt => {
+                                            const o = typeof opt === 'string' ? opt.trim() : opt;
+                                            if (o) {
+                                                const selected = (val == o) ? 'selected' : '';
+                                                optionsHtml += `<option value="${o}" ${selected}>${o}</option>`;
+                                            }
+                                        });
+                                        inputHtml = `<select class="result-input w-full border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white font-bold">${optionsHtml}</select>`;
+
+                                    } else if (type === 'observational') {
+                                        inputHtml = `<textarea class="result-input w-full border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none custom-scrollbar font-bold" rows="2">${val}</textarea>`;
+
+                                    } else if (type === 'image') {
+                                        let imagesHtml = '';
+                                        try {
+                                            const paths = typeof val === 'string' && val.startsWith('[') ? JSON.parse(val) : val;
+                                            if (Array.isArray(paths)) {
+                                                paths.forEach(path => {
+                                                    imagesHtml += `<a href="/${path.replace(/^\//, '')}" target="_blank" class="bg-blue-50 text-blue-600 px-3 py-1 rounded-md text-xs font-bold border border-blue-200 hover:bg-blue-100 transition-colors inline-block mr-2 mt-1"><i class="ph-bold ph-image"></i> View Image</a>`;
+                                                });
+                                            }
+                                        } catch (e) {
+                                            imagesHtml = `<span class="text-xs text-gray-400">No images attached</span>`;
+                                        }
+
+                                        inputHtml = `
+                                            <div class="flex flex-wrap gap-2">${imagesHtml}</div>
+                                            <input type="hidden" value='${val}' class="result-input">`;
+                                    } else {
+                                        inputHtml = `<input type="text" value="${val}" class="result-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm font-bold">`;
+                                    }
+
+                                    const row = `
+                                        <tr data-result-id="${item.id}">
+                                            <td class="px-4 py-3 font-bold align-top pt-4 text-gray-800">${paramName}</td>
+                                            <td class="px-4 py-3 align-top">${inputHtml}</td>
+                                            <td class="px-4 py-3 text-gray-500 align-top pt-4 font-medium">${unit}</td>
+                                            <td class="px-4 py-3 text-gray-500 align-top pt-4 font-medium">${range}</td>
+                                            ${flagCellHtml}
+                                        </tr>`;
+                                    tbody.insertAdjacentHTML('beforeend', row);
+                                });
+                                attachVerifyValidationListeners();
+                            } else {
+                                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500 font-bold">No results found for this test.</td></tr>';
+                            }
+                        } else {
+                            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-red-500 font-bold">Failed to load results.</td></tr>';
                         }
                     } catch (err) {
                         console.error(err);
-                        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-red-500">Error loading results.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-red-500">Error loading results.</td></tr>';
                     }
                 }
             });
@@ -1253,7 +1320,8 @@
                     const input = row.querySelector('.result-input');
                     results.push({
                         id: row.dataset.resultId,
-                        resultValue: input ? input.value : null
+                        resultValue: input ? input.value : null,
+                        statusFlag: input ? (input.dataset.flag || 'Normal') : 'Normal'
                     });
                 });
 
@@ -1265,7 +1333,7 @@
                 };
 
                 const originalText = this.innerText;
-                this.innerText = 'Verifying...';
+                this.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Verifying...';
                 this.disabled = true;
 
                 try {
@@ -1280,16 +1348,18 @@
 
                     const res = await response.json();
                     if (res.status === 200) {
-                        alert('Verified successfully!');
-                        closeModal('VerifyTestModalBackdrop', 'VerifyTestModal');
-                        fetchPendingResults();
-                        fetchCompletedReports();
+                        showVerifyNotification('Verified successfully!', 'success');
+                        setTimeout(() => {
+                            closeModal('VerifyTestModalBackdrop', 'VerifyTestModal');
+                            fetchPendingResults();
+                            fetchCompletedReports();
+                        }, 1000);
                     } else {
-                        alert(res.message || 'Verification failed');
+                        showVerifyNotification(res.message || 'Verification failed', 'error');
                     }
                 } catch (err) {
                     console.error(err);
-                    alert('An error occurred during verification.');
+                    showVerifyNotification('An error occurred during verification.', 'error');
                 } finally {
                     this.innerText = originalText;
                     this.disabled = false;
@@ -1298,19 +1368,10 @@
 
             document.getElementById('CloseVerifyTestX')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
             document.getElementById('CloseVerifyTestBtn')?.addEventListener('click', () => closeModal('VerifyTestModalBackdrop', 'VerifyTestModal'));
-            document.getElementById('BtnRejectSample')?.addEventListener('click', () => openModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
-            document.getElementById('CloseRejectSampleX')?.addEventListener('click', () => closeModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
-            document.getElementById('CloseRejectSampleBtn')?.addEventListener('click', () => closeModal('RejectSampleModalBackdrop', 'RejectSampleModal'));
+            
             document.querySelectorAll('.btn-view-report').forEach(btn => btn.addEventListener('click', () => openModal('ViewReportModalBackdrop', 'ViewReportModal')));
             document.getElementById('CloseViewReportX')?.addEventListener('click', () => closeModal('ViewReportModalBackdrop', 'ViewReportModal'));
             document.getElementById('CloseViewReportBtn')?.addEventListener('click', () => closeModal('ViewReportModalBackdrop', 'ViewReportModal'));
-
-            // ==========================================
-            // 7. DYNAMIC FORM FIELDS
-            // ==========================================
-            // ==========================================
-            // 7. DYNAMIC FORM FIELDS
-            // ==========================================
             function setupDynamicFields(containerId, addBtnId, isUpdate) {
                 const container = document.getElementById(containerId);
                 const addBtn = document.getElementById(addBtnId);
@@ -1432,9 +1493,6 @@
             setupDynamicFields('add-requirements-container', 'btn-add-item', false);
             setupDynamicFields('update-parameters-container', 'btn-update-add-parameter', true);
             setupDynamicFields('update-requirements-container', 'btn-update-add-item', true);
-            // ==========================================
-            // 8. FORM BUTTON ACTIONS
-            // ==========================================
             const backToTestsList = () => {
                 switchSection('section-manage-tests', 'Manage Tests');
                 ['AddTestFormSection', 'UpdateTestFormSection'].forEach(id => {
@@ -1452,10 +1510,6 @@
             document.getElementById('btn-back-to-tests-from-update')?.addEventListener('click', backToTestsList);
             document.getElementById('btn-cancel-update-test-bottom')?.addEventListener('click', backToTestsList);
 
-            // ==========================================
-            // 9. CRUD OPERATIONS
-            // ==========================================
-
             const btnSaveTest = document.querySelector('#AddTestFormSection button.bg-sidebarBg');
 
             if (btnSaveTest) {
@@ -1464,8 +1518,6 @@
                     const formData = new FormData(form);
 
                     clearValidationErrors(form);
-
-                    // Client-side Validation
                     const paramRows = form.querySelectorAll('.parameter-row');
                     const invRows = form.querySelectorAll('.requirement-row');
                     const validationErrors = {};
@@ -1533,11 +1585,6 @@
                     }
                 });
             }
-
-
-            // ==========================================
-            // RESTORED: Fetch & Populate Edit Form + Delete Logic
-            // ==========================================
             document.getElementById('department-tests-table')?.addEventListener('click', async (e) => {
                 if (e.target.closest('.btn-edit-test')) {
                     const testId = e.target.closest('.btn-edit-test').dataset.id;
@@ -1558,8 +1605,6 @@
                             form.querySelector('input[name="price"]').value = test.price || '';
                             form.querySelector('input[name="type"]').value = test.sampleType || '';
                             form.querySelector('input[name="time"]').value = test.resultHours || '';
-
-                            // Load both instruction fields
                             form.querySelector('textarea[name="instructions"]').value = test.instructions || '';
                             form.querySelector('textarea[name="instructionsForTechnicianAndSampleCollector"]').value = test.instructions_sample_collector || test['Instructions(SampleCollector)'] || test.instructionsForTechnicianAndSampleCollector || '';
 
@@ -1666,10 +1711,6 @@
                     }
                 }
             });
-
-            // ==========================================
-            // NEW: Submitting the Update Form
-            // ==========================================
             const btnUpdateSubmit = document.querySelector('#UpdateTestFormSection button.bg-teal-600');
             if (btnUpdateSubmit) {
                 btnUpdateSubmit.addEventListener('click', async () => {
@@ -1680,8 +1721,6 @@
                     const formData = new FormData(form);
                     formData.append('_method', 'PUT');
                     clearValidationErrors(form);
-
-                    // Client-side Validation
                     const paramRows = form.querySelectorAll('.parameter-row');
                     const invRows = form.querySelectorAll('.requirement-row');
                     const validationErrors = {};
@@ -1748,10 +1787,6 @@
                     }
                 });
             }
-
-            // ==========================================
-            // 10. DASHBOARD & REPORTS LOGIC
-            // ==========================================
             async function fetchPendingResults() {
                 try {
                     const response = await fetch('/getPendingResultList', { headers: fetchHeaders });
@@ -1863,10 +1898,6 @@
             }
 
             fetchPendingResults();
-
-            // ==========================================
-            // 11. SETTINGS & PROFILE MANAGEMENT
-            // ==========================================
             function displaySignatureMessage(message, isError = false) {
                 let msgContainer = document.getElementById('signature-message');
 
@@ -1998,10 +2029,6 @@
                     displaySignatureMessage('A network error occurred while deleting.', true);
                 }
             });
-
-            // ==========================================
-            // 12. ARCHIVED / RESTORE TESTS LOGIC (NEW)
-            // ==========================================
             async function fetchArchivedTests() {
                 try {
                     const response = await fetch('/tests/trashed', { headers: fetchHeaders });
@@ -2046,8 +2073,6 @@
                     console.error('Error fetching archived tests:', error);
                 }
             }
-
-            // Restore Button Click Event
             document.addEventListener('click', async (e) => {
                 if (e.target.closest('.btn-restore-test')) {
                     const btn = e.target.closest('.btn-restore-test');
@@ -2066,12 +2091,13 @@
                         const result = await response.json();
 
                         if (result.status === true) {
+                            showGlobalNotification('Test restored successfully.', 'success');
                             row.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
                             setTimeout(() => row.remove(), 300);
 
                             fetchTests();
                         } else {
-                            alert(result.message || 'Failed to restore test.');
+                            showGlobalNotification(result.message || 'Failed to restore test.', 'error');
                             btn.innerHTML = originalText;
                             btn.disabled = false;
                         }
