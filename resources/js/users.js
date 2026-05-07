@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // ==========================================
-    // 1. GLOBAL VARIABLES & INITIALIZATION
-    // ==========================================
     const addUserBackdrop = document.getElementById("AddUserModalBackdrop");
     const addUserModal = document.getElementById("AddUserModal");
     const updateUserBackdrop = document.getElementById(

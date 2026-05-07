@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
+use App\Jobs\ProcessTestResult;
+use App\Jobs\SendResultEmailJob;
+use App\Jobs\DeleteReportPdf;
+
 
 class ResultController extends Controller
 {
@@ -127,6 +131,7 @@ class ResultController extends Controller
     {
         $request->validate([
             'orderTestId' => 'required|exists:order_test,id',
+            'orderId' => 'required|exists:orders,id',
             'results' => 'required|array',
             'results.*.id' => 'required|exists:results,id',
             'results.*.resultValue' => 'nullable',
@@ -145,7 +150,9 @@ class ResultController extends Controller
         }
 
         DB::beginTransaction();
+
         try {
+
             foreach ($request->results as $res) {
                 Result::where('id', $res['id'])->update([
                     'resultValue' => $res['resultValue'],
@@ -161,14 +168,43 @@ class ResultController extends Controller
                 ->where('id', $request->orderTestId)
                 ->update(['status' => 'Completed']);
 
+            $order = \App\Models\Order::with([
+                'tests' => function ($q) use ($request) {
+                    $q->wherePivot('id', $request->orderTestId);
+                }
+            ])->where('id', $request->orderId)->first();
+
+            $test = $order->tests->first();
+
+            $fileName = "reports/Report-{$order->trackingId}-{$test->name}.pdf";
+
+            ProcessTestResult::withChain([
+                (new SendResultEmailJob(
+                    $order->email,
+                    $order->name,
+                    $order->trackingId,
+                    $test->name,
+                    storage_path('app/public/' . $fileName)
+                ))->delay(now()->addMinutes(1)),
+                (new DeleteReportPdf($fileName))
+                    ->delay(now()->addMinutes(2))
+
+            ])->dispatch(
+                    $request->orderId,
+                    $request->orderTestId
+                );
+
             DB::commit();
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Test verified and signed successfully.'
+                'message' => 'Test verified and queued successfully.'
             ]);
+
         } catch (\Exception $e) {
+
             DB::rollBack();
+
             return response()->json([
                 'status' => 500,
                 'message' => 'Failed to verify results.',

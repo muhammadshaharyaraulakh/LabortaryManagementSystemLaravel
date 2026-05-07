@@ -1,5 +1,4 @@
 <div id="section-tests" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
-
     <div id="tests-list-view" class="w-full animate-fade-in">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div class="flex items-center gap-3">
@@ -12,7 +11,6 @@
                 </div>
             </div>
         </div>
-
         <div
             class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
             <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4">
@@ -41,7 +39,6 @@
             </div>
         </div>
     </div>
-
     <div id="test-details-view" class="w-full hidden animate-fade-in">
         <div class="flex items-center gap-4 mb-6">
             <button id="btn-back-to-tests"
@@ -59,5 +56,4 @@
             <div id="test-details-content"></div>
         </div>
     </div>
-
 </div>

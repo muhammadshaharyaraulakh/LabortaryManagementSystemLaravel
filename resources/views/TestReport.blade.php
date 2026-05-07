@@ -401,8 +401,7 @@
                     <img src="{{ $base64Sig }}" class="signature-img" alt="Digital Signature" />
                 @else
                     <div style="height: 50px;"></div>
-                @endif
-                
+                @endif               
                 <div class="signature-line"></div>
                 <div class="signer-name">{{ $firstResult->verifiedBy ?? 'Dr. Pathology Expert' }}</div>
                 <div class="signer-title">Consultant Pathologist & Laboratory Director</div>

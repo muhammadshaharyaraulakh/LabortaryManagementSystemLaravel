@@ -1,8 +1,6 @@
 <x-header />
-
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
-    <div id="sidebar-backdrop"
-        class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer"></div>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer"></div>
     <aside id="sidebar"
         class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 md:relative transform -translate-x-full md:translate-x-0">
         <div class="h-20 flex items-center justify-between px-6 pt-2">
@@ -57,7 +55,6 @@
             </div>
         </nav>
     </aside>
-
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header class="h-20 px-4 md:px-10 z-20 sticky top-0 bg-mainBg flex items-center justify-between">
             <div class="flex items-center">
@@ -209,7 +206,6 @@
             <x-settings />
         </main>
     </div>
-
     <div id="ResultEntryModalBackdrop"
         class="fixed inset-0 bg-black/60 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="ResultEntryModal"
@@ -261,7 +257,6 @@
             </form>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sections = document.querySelectorAll('.content-section');
@@ -897,5 +892,4 @@
         });
     </script>
 </body>
-
 </html>

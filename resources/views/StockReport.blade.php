@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Laboratory Inventory Report</title>
@@ -117,7 +116,6 @@
         }
     </style>
 </head>
-
 <body>
 
     <div class="header">
@@ -170,5 +168,4 @@
 
 
 </body>
-
 </html>

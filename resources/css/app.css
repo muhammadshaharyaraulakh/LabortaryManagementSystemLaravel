@@ -17,11 +17,9 @@
     .custom-scrollbar::-webkit-scrollbar {
         width: 4px;
     }
-
     .custom-scrollbar::-webkit-scrollbar-track {
         background: transparent;
     }
-
     .custom-scrollbar::-webkit-scrollbar-thumb {
         background: #374151;
         border-radius: 4px;
@@ -54,12 +52,10 @@
         transform: scale(1) translateY(0);
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     .dropdown-leave {
         opacity: 1;
         transform: scale(1) translateY(0);
     }
-
     .dropdown-leave-active {
         opacity: 0;
         transform: scale(0.95) translateY(-10px);

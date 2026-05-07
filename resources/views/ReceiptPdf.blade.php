@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Receipt - {{ $order->trackingId }}</title>
@@ -169,7 +168,6 @@
         }
     </style>
 </head>
-
 <body>
 
     <div class="header text-center">
@@ -258,5 +256,4 @@
     </div>
 
 </body>
-
 </html>

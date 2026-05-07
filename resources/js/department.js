@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // ==========================================
-    // 1. DOM ELEMENTS & INITIALIZATION
-    // ==========================================
     const addDepartmentBackdrop = document.getElementById(
         "AddDepartmentModalBackdrop"
     );
@@ -24,9 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     const backToDeptBtn = document.getElementById("back-to-departments-btn");
 
-    // ==========================================
-    // 2. MODAL MANAGEMENT HELPERS
-    // ==========================================
     function openModal(backdrop, modal) {
         if (!backdrop || !modal) return;
         backdrop.classList.remove("hidden");
@@ -58,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
     }
 
-    // ==========================================
     // 3. FORM ERROR HANDLING
     // ==========================================
     function clearDepartmentErrors(prefix) {
@@ -163,7 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (departmentNavLink) {
         departmentNavLink.addEventListener("click", () => {
-            const secDeleted = document.getElementById("section-deleted-departments");
+            const secDeleted = document.getElementById(
+                "section-deleted-departments"
+            );
             const secDept = document.getElementById("section-department");
             if (secDeleted) {
                 secDeleted.classList.add("hidden");
@@ -183,7 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (viewDeletedBtn) {
         viewDeletedBtn.addEventListener("click", () => {
-            const secDeleted = document.getElementById("section-deleted-departments");
+            const secDeleted = document.getElementById(
+                "section-deleted-departments"
+            );
             const secDept = document.getElementById("section-department");
             if (secDept) {
                 secDept.classList.add("hidden");
@@ -203,7 +200,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (backToDeptBtn) {
         backToDeptBtn.addEventListener("click", () => {
-            const secDeleted = document.getElementById("section-deleted-departments");
+            const secDeleted = document.getElementById(
+                "section-deleted-departments"
+            );
             const secDept = document.getElementById("section-department");
             if (secDeleted) {
                 secDeleted.classList.add("hidden");

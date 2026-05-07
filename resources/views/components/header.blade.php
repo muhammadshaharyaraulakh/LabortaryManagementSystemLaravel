@@ -9,7 +9,6 @@
     @auth
         <meta name="user-id" content="{{ auth()->id() }}">
     @endauth
-
     @php
         $viteAssets = ['resources/css/app.css', 'resources/js/app.js'];
 
@@ -18,7 +17,6 @@
         }
     @endphp
     @vite($viteAssets)
-
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
@@ -27,14 +25,11 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
 
     <style>
-        /* Customizing Flatpickr to match your Tailwind Theme */
         .flatpickr-calendar {
             font-family: inherit;
             border: 1px solid #f3f4f6;
-            /* Tailwind gray-100 */
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             border-radius: 1rem;
-            /* Rounded-2xl */
             padding: 0.5rem;
         }
 
@@ -57,7 +52,6 @@
         .flatpickr-day.startRange.nextMonthDay,
         .flatpickr-day.endRange.nextMonthDay {
             background: #3b82f6;
-            /* Tailwind blue-500 */
             border-color: #3b82f6;
         }
 

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // --- Sidebar & Navigation Logic ---
     const sidebar = document.getElementById("sidebar");
     const toggleDesktopBtn = document.getElementById("toggle-desktop-sidebar");
     const desktopToggleIcon = document.getElementById("desktop-toggle-icon");

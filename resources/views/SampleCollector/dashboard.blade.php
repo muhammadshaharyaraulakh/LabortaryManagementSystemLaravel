@@ -1,5 +1,4 @@
 <x-header />
-
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
 
     <div id="sidebar-backdrop"
@@ -448,3 +447,4 @@
         });
     </script>
 </body>
+</html>

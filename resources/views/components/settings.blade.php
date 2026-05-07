@@ -8,7 +8,6 @@
             <p class="text-sm text-gray-500 font-medium">Manage email and password</p>
         </div>
     </div>
-
     <div class="flex flex-col w-full gap-10">
         <div class="flex flex-col gap-4 border-b border-gray-300 pb-10">
             <div class="flex items-center gap-2">

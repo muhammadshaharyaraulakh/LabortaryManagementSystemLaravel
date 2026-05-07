@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Jobs\SendVerficationEmail;
 
 class VerificationEmail extends Mailable
 {
@@ -19,10 +20,10 @@ class VerificationEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($user,$code)
+    public function __construct($user, $code)
     {
-        $this->$user=$user;
-        $this->code=$code;
+        $this->user = $user;
+        $this->code = $code;
     }
 
     /**

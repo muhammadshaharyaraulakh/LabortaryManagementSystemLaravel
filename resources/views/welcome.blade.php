@@ -106,7 +106,7 @@
 
             <h1 class="text-5xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-6">
                 Your Health,<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brandAccent to-purple-400">Clearly
+                <span class="text-transparent bg-clip-text bg-linear-to-r from-brandAccent to-purple-400">Clearly
                     Understood.</span>
             </h1>
 
@@ -176,7 +176,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
                 <div
-                    class="bg-white p-8 rounded-[1.5rem] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial">
+                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial">
                     <div class="w-14 h-14 bg-red-50 text-red-500 rounded-xl flex items-center justify-center mb-6">
                         <i class="ph-duotone ph-drop text-3xl"></i>
                     </div>
@@ -186,7 +186,7 @@
                 </div>
 
                 <div
-                    class="bg-white p-8 rounded-[1.5rem] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-100">
+                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-100">
                     <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mb-6">
                         <i class="ph-duotone ph-dna text-3xl"></i>
                     </div>
@@ -196,7 +196,7 @@
                 </div>
 
                 <div
-                    class="bg-white p-8 rounded-[1.5rem] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-200">
+                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-200">
                     <div
                         class="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center mb-6">
                         <i class="ph-duotone ph-flask text-3xl"></i>
@@ -207,7 +207,7 @@
                 </div>
 
                 <div
-                    class="bg-white p-8 rounded-[1.5rem] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial">
+                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial">
                     <div class="w-14 h-14 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mb-6">
                         <i class="ph-duotone ph-virus text-3xl"></i>
                     </div>
@@ -217,7 +217,7 @@
                 </div>
 
                 <div
-                    class="bg-white p-8 rounded-[1.5rem] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-100">
+                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-100">
                     <div
                         class="w-14 h-14 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center mb-6">
                         <i class="ph-duotone ph-activity text-3xl"></i>
@@ -228,7 +228,7 @@
                 </div>
 
                 <div
-                    class="bg-white p-8 rounded-[1.5rem] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-200">
+                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-200">
                     <div
                         class="w-14 h-14 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-6">
                         <i class="ph-duotone ph-shield-plus text-3xl"></i>
@@ -254,10 +254,11 @@
                     results.</p>
             </div>
 
-            <div class="bg-white rounded-[1.5rem] p-6 md:p-10 shadow-2xl">
+            <div class="bg-white rounded-3xl p-6 md:p-10 shadow-2xl">
                 <form id="tracking-form" class="flex flex-col md:flex-row gap-4 mb-4">
                     <div class="flex-1">
-                        <input type="text" id="tracking-id-input" placeholder="Enter Tracking ID (e.g., ORD-20260424-ABCD)"
+                        <input type="text" id="tracking-id-input"
+                            placeholder="Enter Tracking ID (e.g., ORD-20260424-ABCD)"
                             class="w-full bg-inputBg border border-gray-200 rounded-xl px-6 py-4 text-gray-800 font-bold placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brandAccent transition-all text-lg">
                     </div>
 
@@ -433,7 +434,7 @@
                     const status = test.pivot.status;
                     const isCompleted = status === 'Completed';
                     const results = test.results || [];
-                    
+
                     html += `
                         <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
                             <!-- Test Header -->
@@ -481,28 +482,28 @@
                                             </thead>
                                             <tbody class="text-sm">
                                                 ${results.map(res => {
-                                                    let pType = (res.parameter?.inputType || res.parameter?.type || '').toLowerCase().trim();
-                                                    const val = res.resultValue || '';
-                                                    
-                                                    // Auto-detect image type if it looks like a JSON array
-                                                    if (!pType && val.startsWith('[') && val.endsWith(']')) {
-                                                        pType = 'image';
-                                                    }
-                                                    if (!pType) pType = 'quantitative';
+                        let pType = (res.parameter?.inputType || res.parameter?.type || '').toLowerCase().trim();
+                        const val = res.resultValue || '';
 
-                                                    const flag = res.statusFlag || 'Normal';
-                                                    const flagClass = flag.toLowerCase() === 'high' ? 'bg-red-50 text-red-600 border-red-100' : 
-                                                                    (flag.toLowerCase() === 'low' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-600 border-green-100');
-                                                    
-                                                    let resultValueHtml = `<span class="font-black text-sidebarBg">${val || 'N/A'}</span>`;
-                                                    
-                                                    if (pType === 'image') {
-                                                        let paths = [];
-                                                        try {
-                                                            paths = typeof val === 'string' && val.startsWith('[') ? JSON.parse(val) : (Array.isArray(val) ? val : []);
-                                                        } catch(e) {}
-                                                        
-                                                        resultValueHtml = `
+                        // Auto-detect image type if it looks like a JSON array
+                        if (!pType && val.startsWith('[') && val.endsWith(']')) {
+                            pType = 'image';
+                        }
+                        if (!pType) pType = 'quantitative';
+
+                        const flag = res.statusFlag || 'Normal';
+                        const flagClass = flag.toLowerCase() === 'high' ? 'bg-red-50 text-red-600 border-red-100' :
+                            (flag.toLowerCase() === 'low' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-600 border-green-100');
+
+                        let resultValueHtml = `<span class="font-black text-sidebarBg">${val || 'N/A'}</span>`;
+
+                        if (pType === 'image') {
+                            let paths = [];
+                            try {
+                                paths = typeof val === 'string' && val.startsWith('[') ? JSON.parse(val) : (Array.isArray(val) ? val : []);
+                            } catch (e) { }
+
+                            resultValueHtml = `
                                                             <div class="flex flex-wrap gap-1">
                                                                 ${paths.map(p => `
                                                                     <a href="/${p.replace(/^\//, '')}" target="_blank" class="w-8 h-8 bg-blue-50 text-blue-500 rounded border border-blue-100 flex items-center justify-center hover:bg-blue-100 transition-colors" title="View Image">
@@ -512,9 +513,9 @@
                                                                 ${paths.length === 0 ? '<span class="text-xs text-gray-400 italic">No images</span>' : ''}
                                                             </div>
                                                         `;
-                                                    }
+                        }
 
-                                                    return `
+                        return `
                                                         <tr class="bg-gray-50/30 rounded-xl group hover:bg-gray-50 transition-colors">
                                                             <td class="px-2 py-3 border-l-4 ${flag.toLowerCase() === 'high' ? 'border-red-400' : (flag.toLowerCase() === 'low' ? 'border-orange-400' : 'border-green-400')} rounded-l-lg">
                                                                 <span class="font-bold text-gray-700">${res.parameter?.parameterName || 'Unknown'}</span>
@@ -533,7 +534,7 @@
                                                             </td>
                                                         </tr>
                                                     `;
-                                                }).join('')}
+                    }).join('')}
                                             </tbody>
                                         </table>
                                     </div>
@@ -564,7 +565,7 @@
 
                 resultsContainer.innerHTML = html;
                 resultsContainer.classList.remove('hidden');
-                
+
                 resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         });

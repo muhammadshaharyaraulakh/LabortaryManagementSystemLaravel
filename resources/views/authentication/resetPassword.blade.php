@@ -1,11 +1,8 @@
 <x-header />
-
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex min-h-screen">
-
     <div class="hidden lg:flex lg:w-1/2 relative bg-sidebarBg items-center justify-center overflow-hidden">
         <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1200"
             alt="Lab Background" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay">
-
         <div class="relative z-10 px-12 text-center">
             <h1 class="text-white text-5xl font-extrabold tracking-tight mb-6">My Lab</h1>
             <p class="text-gray-300 text-lg font-medium max-w-md mx-auto">
@@ -170,5 +167,4 @@
         });
     </script>
 </body>
-
 </html>

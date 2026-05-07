@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (test.instructions) {
                     patientRequirementsHtml = `
                     <div class="bg-orange-50 rounded-xl p-5 border border-orange-100 mb-4">
-                        <span class="text-sm font-bold text-orange-800 block mb-2 flex items-center gap-2">
+                        <span class="text-sm font-bold text-orange-800  mb-2 flex items-center gap-2">
                             <i class="ph-fill ph-warning-circle text-orange-500"></i> Patient Instructions
                         </span>
                         <p class="text-sm text-orange-700 leading-relaxed whitespace-pre-line">${test.instructions}</p>
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (techInstructions) {
                     techRequirementsHtml = `
                     <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 mb-6">
-                        <span class="text-sm font-bold text-blue-800 block mb-2 flex items-center gap-2">
+                        <span class="text-sm font-bold text-blue-800  mb-2 flex items-center gap-2">
                             <i class="ph-fill ph-info text-blue-500"></i> Technician & Sample Collector Protocol
                         </span>
                         <p class="text-sm text-blue-700 leading-relaxed whitespace-pre-line">${techInstructions}</p>

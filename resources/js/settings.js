@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "Content-Type": "application/json",
         "X-CSRF-TOKEN": csrfToken,
     };
-
     function displayTemporaryMessage(inputElement, message, isError = true) {
         if (!inputElement) return;
         const parent = inputElement.parentElement;

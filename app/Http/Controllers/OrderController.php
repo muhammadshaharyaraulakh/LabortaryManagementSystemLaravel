@@ -262,9 +262,11 @@ class OrderController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $order = Order::with(['tests' => function($query) {
-            $query->withPivot('id', 'status', 'vialBarcode');
-        }])->where('trackingId', $trackingId)->first();
+        $order = Order::with([
+            'tests' => function ($query) {
+                $query->withPivot('id', 'status', 'vialBarcode');
+            }
+        ])->where('trackingId', $trackingId)->first();
 
         if (empty($order)) {
             return response()->json([

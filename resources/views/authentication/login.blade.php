@@ -1,23 +1,18 @@
 <x-header />
-
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex min-h-screen">
-
     <div class="hidden lg:flex lg:w-1/2 relative bg-sidebarBg items-center justify-center overflow-hidden">
         <img src="{{ asset('images/login.avif') }}" alt="Lab Background"
             class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay">
-
         <div class="relative z-10 px-12 text-center">
             <h1 class="text-white text-5xl font-extrabold tracking-tight mb-6">Laboratory Management System</h1>
             <p class="text-gray-300 text-lg font-medium max-w-md mx-auto">
                 Securely access your dashboard to manage patients, test results, and laboratory logistics.
             </p>
         </div>
-
         <div
             class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse">
         </div>
     </div>
-
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative z-10">
         <div class="w-full max-w-md p-4 sm:p-8">
 
@@ -95,7 +90,6 @@
 
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loginForm = document.getElementById('login-form');

@@ -1,10 +1,7 @@
 <x-header />
-
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
-
     <div id="sidebar-backdrop"
         class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer"></div>
-
     <aside id="sidebar"
         class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 md:relative transform -translate-x-full md:translate-x-0">
         <div class="h-20 flex items-center justify-between px-6 pt-2">
@@ -80,7 +77,6 @@
             </div>
         </nav>
     </aside>
-
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header class="h-20 px-4 md:px-10 flex items-center justify-between z-20 sticky top-0 bg-mainBg">
             <div class="flex items-center">
@@ -97,7 +93,9 @@
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
-            <div id="globalNotification" class="fixed top-24 right-10 z-70 hidden p-4 rounded-xl shadow-lg border animate-fade-in max-w-sm pointer-events-none"></div>
+            <div id="globalNotification"
+                class="fixed top-24 right-10 z-70 hidden p-4 rounded-xl shadow-lg border animate-fade-in max-w-sm pointer-events-none">
+            </div>
 
             <div id="section-dashboard" class="content-section block animate-fade-in">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -158,7 +156,7 @@
                                 <tr>
                                     <th scope="col" class="px-6 py-4 text-gray-400 font-medium"><b>Receipt</b> ID</th>
                                     <th scope="col" class="px-6 py-4">Patient Name</th>
-                                    <th scope="col" class="px-6 py-4">Tests Count</th>
+
                                     <th scope="col" class="px-6 py-4 text-right">Completion Status</th>
                                 </tr>
                             </thead>
@@ -727,7 +725,6 @@
 
         </main>
     </div>
-
     <div id="VerifyTestModalBackdrop"
         class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="VerifyTestModal"
@@ -753,7 +750,8 @@
                 <form id="VerifyTestForm" class="space-y-6">
                     <div class="border border-gray-200 rounded-xl overflow-hidden">
                         <table class="w-full text-sm text-left">
-                            <thead id="verifyParametersTableHead" class="bg-gray-50 border-b border-gray-200 text-xs text-gray-700 font-bold">
+                            <thead id="verifyParametersTableHead"
+                                class="bg-gray-50 border-b border-gray-200 text-xs text-gray-700 font-bold">
                             </thead>
                             <tbody class="divide-y divide-gray-100" id="verifyResultsTbody">
                             </tbody>
@@ -802,7 +800,6 @@
             </div>
         </div>
     </div>
-
     <div id="RejectSampleModalBackdrop"
         class="fixed inset-0 bg-black/50 z-70 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="RejectSampleModal"
@@ -843,8 +840,6 @@
             </div>
         </div>
     </div>
-
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
@@ -1150,16 +1145,16 @@
             function showVerifyNotification(message, type = 'success') {
                 const notify = document.getElementById('verifyNotification');
                 if (!notify) return;
-                
+
                 notify.innerText = message;
                 notify.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'border-green-100', 'bg-red-50', 'text-red-700', 'border-red-100');
-                
+
                 if (type === 'success') {
                     notify.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-100');
                 } else {
                     notify.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-100');
                 }
-                
+
                 notify.classList.remove('hidden');
                 setTimeout(() => notify.classList.add('hidden'), 5000);
             }
@@ -1204,16 +1199,16 @@
             function showGlobalNotification(message, type = 'success') {
                 const notify = document.getElementById('globalNotification');
                 if (!notify) return;
-                
+
                 notify.innerText = message;
                 notify.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'border-green-100', 'bg-red-50', 'text-red-700', 'border-red-100');
-                
+
                 if (type === 'success') {
                     notify.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-100');
                 } else {
                     notify.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-100');
                 }
-                
+
                 notify.classList.remove('hidden');
                 setTimeout(() => notify.classList.add('hidden'), 5000);
             }
@@ -1222,16 +1217,19 @@
                 if (e.target.closest('.btn-open-verify')) {
                     const btn = e.target.closest('.btn-open-verify');
                     const orderTestId = btn.dataset.orderTestId;
+                    const orderId = btn.dataset.orderId;
                     const patientName = btn.dataset.patientName;
                     const testName = btn.dataset.testName;
 
                     document.getElementById('verifyModalSubtitle').innerText = `Patient: ${patientName} | Test: ${testName}`;
                     const tbody = document.getElementById('verifyResultsTbody');
                     const thead = document.getElementById('verifyParametersTableHead');
-                    
+
                     tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Loading results...</td></tr>';
                     thead.innerHTML = '';
-                    document.getElementById('VerifyTestForm').dataset.orderTestId = orderTestId;
+                    const verifyForm = document.getElementById('VerifyTestForm');
+                    verifyForm.dataset.orderTestId = orderTestId;
+                    verifyForm.dataset.orderId = orderId;
 
                     openModal('VerifyTestModalBackdrop', 'VerifyTestModal');
 
@@ -1240,14 +1238,14 @@
                         const result = await res.json();
                         if (result.status === 200 && Array.isArray(result.data)) {
                             tbody.innerHTML = '';
-                            
+
                             if (result.data.length > 0) {
                                 // Check if any parameter is quantitative to decide on the Flag column
                                 const hasQuantitative = result.data.some(item => {
                                     const type = (item.parameter?.inputType || item.parameter?.type || '').toLowerCase().trim();
                                     return type === 'quantitative' || type === ''; // Default is quantitative
                                 });
-                                
+
                                 if (hasQuantitative) {
                                     thead.innerHTML = `
                                         <tr>
@@ -1358,6 +1356,7 @@
             document.getElementById('BtnVerifyAndSign')?.addEventListener('click', async function () {
                 const form = document.getElementById('VerifyTestForm');
                 const orderTestId = form.dataset.orderTestId;
+                const orderId = form.dataset.orderId;
                 const rows = document.querySelectorAll('#verifyResultsTbody tr[data-result-id]');
                 const results = [];
 
@@ -1372,6 +1371,7 @@
 
                 const payload = {
                     orderTestId: orderTestId,
+                    orderId: orderId,
                     results: results,
                     remarks: document.getElementById('verifyRemarks').value,
                     alertPatient: document.getElementById('criticalFlag').checked
@@ -1900,6 +1900,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <button data-order-test-id="${test.pivot.id}"
+                                                data-order-id="${order.id}"
                                                 data-patient-name="${order.name}"
                                                 data-test-name="${test.name}"
                                                 class="btn-open-verify bg-sidebarBg hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md cursor-pointer active:scale-95">
@@ -1951,10 +1952,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">${order.name}</td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-bold text-gray-700">${testsCount}</span>
-                                        <span class="text-xs text-gray-400 ml-1">Tests</span>
-                                    </td>
+                                    
                                     <td class="px-6 py-4 text-right">
                                         <span class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-bold border border-green-100">
                                             Completed
@@ -2197,7 +2195,5 @@
 
         }); 
     </script>
-
 </body>
-
 </html>

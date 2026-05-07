@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
-use App\Mail\VerificationEmail;
+use App\Jobs\SendVerficationEmail;
 use App\Models\User;
 
 class loginController extends Controller
@@ -27,8 +26,8 @@ class loginController extends Controller
 
         $user = User::where('email', $request->email)->first();
         $verificationCode = rand(10000000, 99999999);
+        SendVerficationEmail::dispatch($user->id, $verificationCode);
 
-        Mail::to($user->email)->send(new VerificationEmail($user, $verificationCode));
 
         Session::put([
             'LoginVerificationCode' => $verificationCode,
@@ -62,7 +61,7 @@ class loginController extends Controller
             Session::forget(['LoginVerificationCode', 'LoginPendingUserId']);
 
             $role = strtolower(trim($user->role));
-            
+
             if ($role === 'technician') {
                 if ($user->department && $user->department->type === 'human_based') {
                     $redirectUrl = route('HumanTechnicianDashboard');
@@ -131,7 +130,7 @@ class loginController extends Controller
         }
 
         $verificationCode = rand(10000000, 99999999);
-        Mail::to($user->email)->send(new VerificationEmail($user, $verificationCode));
+        SendVerficationEmail::dispatch($user->id, $verificationCode);
 
         Session::put([
             'ResetVerificationCode' => $verificationCode,

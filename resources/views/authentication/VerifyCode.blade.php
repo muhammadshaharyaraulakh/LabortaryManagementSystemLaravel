@@ -1,5 +1,4 @@
 <x-header />
-
 <body
     class="font-sans antialiased bg-mainBg text-gray-800 flex items-center justify-center min-h-screen relative overflow-hidden">
 
@@ -112,3 +111,4 @@
         });
     </script>
 </body>
+</html>

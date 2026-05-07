@@ -10,10 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let searchTimeout = null;
     let currentView = "active";
     let currentFetchUrl = "/inventory";
-
-    /* ==========================================================================
-       2. MODAL HELPERS & ERROR HANDLING
-       ========================================================================== */
     function openInvModal(backdropId, modalId) {
         const backdrop = document.getElementById(backdropId);
         const modal = document.getElementById(modalId);

@@ -1,5 +1,4 @@
 <x-header />
-
 <body class="bg-gray-50 p-6 md:p-12 text-gray-800">
 
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8 print-border">
@@ -94,5 +93,4 @@
 
     </div>
 </body>
-
 </html>
