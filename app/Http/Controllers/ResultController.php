@@ -168,7 +168,7 @@ class ResultController extends Controller
                 ->where('id', $request->orderTestId)
                 ->update(['status' => 'Completed']);
 
-            $order = \App\Models\Order::with([
+            $order = Order::with([
                 'tests' => function ($q) use ($request) {
                     $q->wherePivot('id', $request->orderTestId);
                 }
