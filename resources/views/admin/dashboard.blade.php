@@ -59,6 +59,20 @@
             </a>
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-promotional-emails" data-title="Promotional Emails">
+                <i
+                    class="ph-duotone ph-megaphone text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Promotional Emails</span>
+            </a>
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-failed-jobs" data-title="Failed Jobs">
+                <i
+                    class="ph-duotone ph-warning-octagon text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Failed Jobs</span>
+            </a>
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-settings" data-title="Settings">
                 <i
                     class="ph-duotone ph-gear-six text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
@@ -685,6 +699,101 @@
                     <div id="inventory-pagination"
                         class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30">
                         <!-- Pagination content will be injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-promotional-emails" class="content-section hidden animate-fade-in w-full max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-megaphone text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-gray-800">Promotional Emails</h2>
+                        <p class="text-sm text-gray-500 font-medium">Send bulk promotional emails to all customers using batch processing</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 p-6 md:p-8">
+                    <form id="PromotionalEmailForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Email Subject</label>
+                            <input type="text" name="subject" placeholder="Ex: Special Discount on Health Packages!"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-purple-400 outline-none transition-all">
+                            <p id="errorPromotionalSubject" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Email Content</label>
+                            <textarea name="content" rows="8" placeholder="Write your promotional message here..."
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-purple-400 outline-none transition-all resize-none"></textarea>
+                            <p id="errorPromotionalContent" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
+                            <p class="text-[10px] text-gray-400 mt-2 font-medium uppercase tracking-wider">Markdown is supported for the content body.</p>
+                        </div>
+                        <div id="errorPromotionalGeneral" class="text-red-500 text-xs font-bold mt-2 hidden text-center"></div>
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                            <div id="batch-progress-container" class="hidden flex-1 mr-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-gray-600" id="batch-status-text">Processing...</span>
+                                    <span class="text-xs font-bold text-purple-600" id="batch-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                    <div id="batch-progress-bar" class="bg-purple-500 h-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <button type="submit" id="btnSendPromotional"
+                                class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-purple-200 flex items-center gap-2 ml-auto">
+                                <i class="ph-bold ph-paper-plane-tilt"></i> Send to All Customers
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="section-failed-jobs" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-warning-octagon text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Failed Jobs</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage failed background tasks and retries</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="btn-retry-all-jobs"
+                            class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                            <i class="ph ph-arrows-counter-clockwise font-bold text-lg"></i> Retry All
+                        </button>
+                        <button id="btn-delete-all-jobs"
+                            class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                            <i class="ph ph-trash font-bold text-lg"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                    <div class="overflow-x-auto min-h-[250px]">
+                        <table class="w-full text-left text-sm">
+                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4">Job Name</th>
+                                    <th scope="col" class="px-6 py-4">Queue</th>
+                                    <th scope="col" class="px-6 py-4">Failed At</th>
+                                    <th scope="col" class="px-6 py-4">Error</th>
+                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="failed-jobs-table">
+                                <tr>
+                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium">
+                                        <i class="ph-duotone ph-spinner animate-spin text-4xl mb-2 text-gray-400"></i>
+                                        <p>Loading failed jobs...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

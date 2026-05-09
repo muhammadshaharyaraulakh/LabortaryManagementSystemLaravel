@@ -1,4 +1,5 @@
 <x-header />
+
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
     <div id="sidebar-backdrop"
         class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer"></div>
@@ -49,6 +50,14 @@
                 <i
                     class="ph-duotone ph-trash text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Archived Tests</span>
+            </a>
+
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-failed-jobs" data-title="Failed Jobs">
+                <i
+                    class="ph-duotone ph-warning-octagon text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Failed Jobs</span>
             </a>
 
             <a href="#"
@@ -601,127 +610,176 @@
                 </div>
             </div>
 
-
-            <div id="section-settings"
-                class="content-section hidden animate-fade-in w-full max-w-2xl mx-auto px-4 py-6">
-                <div class="flex items-center gap-3 mb-10">
-                    <div
-                        class="w-12 h-12 shrink-0 rounded-xl bg-gray-200 text-gray-700 flex items-center justify-center">
-                        <i class="ph-duotone ph-gear-six text-2xl"></i>
+            <div id="section-failed-jobs" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                            <i class="ph-duotone ph-warning-octagon text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Failed Jobs</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage failed background tasks and retries</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="text-2xl font-extrabold text-gray-800">Settings</h2>
-                        <p class="text-sm text-gray-500 font-medium">Manage email, password, and signature</p>
+                    <div class="flex gap-3">
+                        <button id="btn-retry-all-jobs"
+                            class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                            <i class="ph ph-arrows-counter-clockwise font-bold text-lg"></i> Retry All
+                        </button>
+                        <button id="btn-delete-all-jobs"
+                            class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                            <i class="ph ph-trash font-bold text-lg"></i> Clear All
+                        </button>
                     </div>
                 </div>
 
-                <div class="flex flex-col w-full gap-10">
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                    <div class="overflow-x-auto min-h-[250px]">
+                        <table class="w-full text-left text-sm">
+                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4">Job Name</th>
+                                    <th scope="col" class="px-6 py-4">Queue</th>
+                                    <th scope="col" class="px-6 py-4">Failed At</th>
+                                    <th scope="col" class="px-6 py-4">Error</th>
+                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="failed-jobs-table">
+                                <tr>
+                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium">
+                                        <i class="ph-duotone ph-spinner animate-spin text-4xl mb-2 text-gray-400"></i>
+                                        <p>Loading failed jobs...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div id="section-settings"
+                    class="content-section hidden animate-fade-in w-full max-w-2xl mx-auto px-4 py-6">
+                    <div class="flex items-center gap-3 mb-10">
+                        <div
+                            class="w-12 h-12 shrink-0 rounded-xl bg-gray-200 text-gray-700 flex items-center justify-center">
+                            <i class="ph-duotone ph-gear-six text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800">Settings</h2>
+                            <p class="text-sm text-gray-500 font-medium">Manage email, password, and signature</p>
+                        </div>
+                    </div>
 
                     <div class="flex flex-col w-full gap-10">
+
+                        <div class="flex flex-col w-full gap-10">
+                            <div class="flex flex-col gap-4 border-b border-gray-300 pb-10">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                    <h3 class="text-lg font-bold text-gray-800">Update Email</h3>
+                                </div>
+                                <form id="UpdateEmailForm" class="flex flex-col gap-2">
+                                    <div class="w-full">
+                                        <label class="text-sm font-bold text-gray-700 block mb-2">Email Address</label>
+                                        <div class="relative w-full">
+                                            <input type="email" name="email" id="userEmailInput"
+                                                value="{{ auth()->user()->email ?? '' }}"
+                                                placeholder="dr.smith@gmail.com"
+                                                class="w-full border border-gray-400 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors placeholder:text-gray-400">
+                                        </div>
+                                    </div>
+                                    <button type="submit" id="btnSaveEmail"
+                                        class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
+                                        Save Email
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="flex flex-col gap-4 pb-10">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                    <h3 class="text-lg font-bold text-gray-800">Update Password</h3>
+                                </div>
+                                <form id="UpdatePasswordForm" class="flex flex-col gap-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-sm font-bold text-gray-700">Current Password</label>
+                                        <div class="relative w-full">
+                                            <input type="password" name="password" placeholder="••••••••"
+                                                class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
+                                            <i
+                                                class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-sm font-bold text-gray-700">New Password</label>
+                                        <div class="relative w-full">
+                                            <input type="password" name="newPassword" placeholder="••••••••"
+                                                class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
+                                            <i
+                                                class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
+                                        </div>
+                                    </div>
+                                    <button type="submit" id="btnSavePassword"
+                                        class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
+                                        Update Password
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                         <div class="flex flex-col gap-4 border-b border-gray-300 pb-10">
                             <div class="flex items-center gap-2">
                                 <span
-                                    class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
-                                <h3 class="text-lg font-bold text-gray-800">Update Email</h3>
+                                    class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                                <h3 class="text-lg font-bold text-gray-800">Update Signature</h3>
                             </div>
-                            <form id="UpdateEmailForm" class="flex flex-col gap-2">
-                                <div class="w-full">
-                                    <label class="text-sm font-bold text-gray-700 block mb-2">Email Address</label>
-                                    <div class="relative w-full">
-                                        <input type="email" name="email" id="userEmailInput"
-                                            value="{{ auth()->user()->email ?? '' }}" placeholder="dr.smith@gmail.com"
-                                            class="w-full border border-gray-400 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors placeholder:text-gray-400">
-                                    </div>
-                                </div>
-                                <button type="submit" id="btnSaveEmail"
-                                    class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
-                                    Save Email
-                                </button>
-                            </form>
-                        </div>
+                            <p class="text-xs sm:text-sm text-gray-500">This signature will be stamped on verified lab
+                                reports.</p>
 
-                        <div class="flex flex-col gap-4 pb-10">
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                                <h3 class="text-lg font-bold text-gray-800">Update Password</h3>
-                            </div>
-                            <form id="UpdatePasswordForm" class="flex flex-col gap-4">
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-bold text-gray-700">Current Password</label>
-                                    <div class="relative w-full">
-                                        <input type="password" name="password" placeholder="••••••••"
-                                            class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
-                                        <i
-                                            class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-bold text-gray-700">New Password</label>
-                                    <div class="relative w-full">
-                                        <input type="password" name="newPassword" placeholder="••••••••"
-                                            class="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-blue-400 outline-none bg-transparent transition-colors">
-                                        <i
-                                            class="ph ph-eye absolute right-4 top-3.5 text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors toggle-password"></i>
-                                    </div>
-                                </div>
-                                <button type="submit" id="btnSavePassword"
-                                    class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
-                                    Update Password
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-4 border-b border-gray-300 pb-10">
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span>
-                            <h3 class="text-lg font-bold text-gray-800">Update Signature</h3>
-                        </div>
-                        <p class="text-xs sm:text-sm text-gray-500">This signature will be stamped on verified lab
-                            reports.</p>
+                            <div
+                                class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center bg-gray-50 min-h-[200px] w-full">
 
-                        <div
-                            class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center bg-gray-50 min-h-[200px] w-full">
-
-                            <div id="sigUploadState" class="flex flex-col items-center justify-center">
-                                <i class="ph-duotone ph-signature text-5xl text-gray-400 mb-3"></i>
-                                <button type="button" id="btnUploadNewSig"
-                                    class="bg-gray-900 hover:bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer">
-                                    Upload Signature
-                                </button>
-                                <span class="text-xs text-gray-500 mt-3">PNG or JPG (Max 2MB)</span>
-                            </div>
-
-                            <div id="sigPreviewState" class="hidden w-full flex-col items-center justify-center">
-                                <span class="text-xs text-gray-400 mb-3 font-bold uppercase tracking-wider">Current
-                                    Signature</span>
-                                <div
-                                    class="bg-white border border-gray-200 shadow-sm p-4 rounded-lg flex flex-col items-center justify-end h-32 relative w-full max-w-[250px] mb-4">
-                                    <img id="sigPreviewImage" class="max-h-16 object-contain z-10 mb-[-10px]"
-                                        alt="Signature Preview" />
-                                    <div class="w-4/5 border-b-2 border-gray-800 z-0"></div>
-                                    <span
-                                        class="text-xs text-gray-800 font-bold mt-2">{{ auth()->user()->name ?? 'Dr. Smith' }}</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button type="button" id="btnChangeSig"
-                                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
-                                        Change
+                                <div id="sigUploadState" class="flex flex-col items-center justify-center">
+                                    <i class="ph-duotone ph-signature text-5xl text-gray-400 mb-3"></i>
+                                    <button type="button" id="btnUploadNewSig"
+                                        class="bg-gray-900 hover:bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                                        Upload Signature
                                     </button>
-                                    <button type="button" id="btnDeleteSig"
-                                        class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
-                                        Delete
-                                    </button>
+                                    <span class="text-xs text-gray-500 mt-3">PNG or JPG (Max 2MB)</span>
                                 </div>
-                            </div>
 
-                            <input type="file" class="hidden" id="signatureFileInput" name="signature"
-                                accept="image/png, image/jpeg">
+                                <div id="sigPreviewState" class="hidden w-full flex-col items-center justify-center">
+                                    <span class="text-xs text-gray-400 mb-3 font-bold uppercase tracking-wider">Current
+                                        Signature</span>
+                                    <div
+                                        class="bg-white border border-gray-200 shadow-sm p-4 rounded-lg flex flex-col items-center justify-end h-32 relative w-full max-w-[250px] mb-4">
+                                        <img id="sigPreviewImage" class="max-h-16 object-contain z-10 mb-[-10px]"
+                                            alt="Signature Preview" />
+                                        <div class="w-4/5 border-b-2 border-gray-800 z-0"></div>
+                                        <span
+                                            class="text-xs text-gray-800 font-bold mt-2">{{ auth()->user()->name ?? 'Dr. Smith' }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button type="button" id="btnChangeSig"
+                                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
+                                            Change
+                                        </button>
+                                        <button type="button" id="btnDeleteSig"
+                                            class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <input type="file" class="hidden" id="signatureFileInput" name="signature"
+                                    accept="image/png, image/jpeg">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
         </main>
     </div>
@@ -1107,6 +1165,8 @@
                         fetchTests();
                     } else if (targetId === 'section-archived-tests') {
                         fetchArchivedTests();
+                    } else if (targetId === 'section-failed-jobs') {
+                        fetchFailedJobs();
                     } else if (targetId === 'section-add-test') {
                         loadInventoryItems();
                     } else if (targetId === 'section-settings') {
@@ -2193,7 +2253,176 @@
                 }
             });
 
-        }); 
+            async function fetchFailedJobs() {
+                try {
+                    const response = await fetch('/failed-jobs', { headers: fetchHeaders });
+                    const result = await response.json();
+
+                    const tbody = document.getElementById('failed-jobs-table');
+                    if (!tbody) return;
+                    tbody.innerHTML = '';
+
+                    if (response.ok && Array.isArray(result) && result.length > 0) {
+                        result.forEach(job => {
+                            const date = new Date(job.failed_at).toLocaleString();
+                            const row = `
+                                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 text-gray-800 font-medium animate-fade-in group">
+                                    <td class="px-6 py-4 font-bold text-gray-900">
+                                        <div class="flex flex-col">
+                                            <span>${job.job_name.split('\\').pop()}</span>
+                                            <span class="text-[10px] text-gray-400 font-normal truncate max-w-[200px]" title="${job.job_name}">${job.job_name}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">${job.queue}</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-gray-500">${date}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-xs text-red-500 truncate max-w-[250px]" title="${job.full_exception.replace(/"/g, '&quot;')}">
+                                            ${job.exception}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button data-id="${job.id}" class="btn-retry-job bg-sidebarBg hover:bg-gray-800 text-white p-2 rounded-lg transition-colors cursor-pointer shadow-sm" title="Retry Job">
+                                                <i class="ph-bold ph-arrows-counter-clockwise"></i>
+                                            </button>
+                                            <button data-id="${job.id}" class="btn-delete-job bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 p-2 rounded-lg transition-colors cursor-pointer shadow-sm" title="Delete Job">
+                                                <i class="ph-bold ph-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>`;
+                            tbody.insertAdjacentHTML('beforeend', row);
+                        });
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="px-6 py-20 text-center text-gray-500 font-medium">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-4">
+                                            <i class="ph-duotone ph-check-circle text-4xl text-green-500"></i>
+                                        </div>
+                                        <h3 class="text-lg font-bold text-gray-900">All Clear!</h3>
+                                        <p class="text-gray-500 text-sm mt-1 max-w-xs mx-auto">No failed background jobs found. Everything is running smoothly.</p>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    }
+                } catch (error) {
+                    console.error('Error fetching failed jobs:', error);
+                }
+            }
+
+            document.addEventListener('click', async (e) => {
+                const btnRetry = e.target.closest('.btn-retry-job');
+                if (btnRetry) {
+                    const jobId = btnRetry.dataset.id;
+                    const originalHTML = btnRetry.innerHTML;
+                    btnRetry.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i>';
+                    btnRetry.disabled = true;
+
+                    try {
+                        const response = await fetch(`/failed-jobs/${jobId}/retry`, {
+                            method: 'POST',
+                            headers: fetchHeaders
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            showGlobalNotification(result.message, 'success');
+                            btnRetry.closest('tr').remove();
+                            if (document.getElementById('failed-jobs-table').children.length === 0) fetchFailedJobs();
+                        } else {
+                            showGlobalNotification(result.message || 'Failed to retry job', 'error');
+                            btnRetry.innerHTML = originalHTML;
+                            btnRetry.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('Error retrying job:', error);
+                        btnRetry.innerHTML = originalHTML;
+                        btnRetry.disabled = false;
+                    }
+                }
+
+                const btnDelete = e.target.closest('.btn-delete-job');
+                if (btnDelete) {
+                    if (!confirm('Are you sure you want to delete this failed job record?')) return;
+                    const jobId = btnDelete.dataset.id;
+
+                    try {
+                        const response = await fetch(`/failed-jobs/${jobId}`, {
+                            method: 'DELETE',
+                            headers: fetchHeaders
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            showGlobalNotification(result.message, 'success');
+                            btnDelete.closest('tr').remove();
+                            if (document.getElementById('failed-jobs-table').children.length === 0) fetchFailedJobs();
+                        } else {
+                            showGlobalNotification(result.message || 'Failed to delete job', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting job:', error);
+                    }
+                }
+            });
+
+            document.getElementById('btn-retry-all-jobs')?.addEventListener('click', async () => {
+                const btn = document.getElementById('btn-retry-all-jobs');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Retrying...';
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('/failed-jobs/retry-all', {
+                        method: 'POST',
+                        headers: fetchHeaders
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showGlobalNotification(result.message, 'success');
+                        fetchFailedJobs();
+                    } else {
+                        showGlobalNotification(result.message || 'Failed to retry all jobs', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error retrying all jobs:', error);
+                } finally {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                }
+            });
+
+            document.getElementById('btn-delete-all-jobs')?.addEventListener('click', async () => {
+                if (!confirm('Are you sure you want to clear ALL failed job records? This cannot be undone.')) return;
+                const btn = document.getElementById('btn-delete-all-jobs');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Clearing...';
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('/failed-jobs/delete-all', {
+                        method: 'DELETE',
+                        headers: fetchHeaders
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showGlobalNotification(result.message, 'success');
+                        fetchFailedJobs();
+                    } else {
+                        showGlobalNotification(result.message || 'Failed to clear jobs', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error clearing all jobs:', error);
+                } finally {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                }
+            });
+
+        });
     </script>
 </body>
+
 </html>

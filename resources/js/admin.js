@@ -316,4 +316,240 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fetchMonthlyStats();
+
+    // --- Promotional Emails Logic ---
+    const promotionalEmailForm = document.getElementById('PromotionalEmailForm');
+    const batchProgressContainer = document.getElementById('batch-progress-container');
+    const batchProgressBar = document.getElementById('batch-progress-bar');
+    const batchStatusText = document.getElementById('batch-status-text');
+    const batchPercentage = document.getElementById('batch-percentage');
+    const btnSendPromotional = document.getElementById('btnSendPromotional');
+
+    if (promotionalEmailForm) {
+        promotionalEmailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset errors
+            document.querySelectorAll('[id^="errorPromotional"]').forEach(el => {
+                el.classList.add('hidden');
+                el.innerText = '';
+            });
+
+            const formData = new FormData(promotionalEmailForm);
+            const data = Object.fromEntries(formData.entries());
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            btnSendPromotional.disabled = true;
+            btnSendPromotional.innerHTML = '<i class="ph-duotone ph-spinner animate-spin"></i> Dispatched...';
+
+            try {
+                const response = await fetch('/admin/send-promotional-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.status === 422) {
+                    const errors = result.errors;
+                    if (errors.subject) {
+                        const errSub = document.getElementById('errorPromotionalSubject');
+                        errSub.innerText = errors.subject[0];
+                        errSub.classList.remove('hidden');
+                    }
+                    if (errors.content) {
+                        const errCont = document.getElementById('errorPromotionalContent');
+                        errCont.innerText = errors.content[0];
+                        errCont.classList.remove('hidden');
+                    }
+                    btnSendPromotional.disabled = false;
+                    btnSendPromotional.innerHTML = '<i class="ph-bold ph-paper-plane-tilt"></i> Send to All Customers';
+                    return;
+                }
+
+                if (response.ok) {
+                    batchProgressContainer.classList.remove('hidden');
+                    pollBatchStatus(result.batchId);
+                    promotionalEmailForm.reset();
+                } else {
+                    const errGen = document.getElementById('errorPromotionalGeneral');
+                    errGen.innerText = result.message || 'Failed to dispatch batch.';
+                    errGen.classList.remove('hidden');
+                    btnSendPromotional.disabled = false;
+                    btnSendPromotional.innerHTML = '<i class="ph-bold ph-paper-plane-tilt"></i> Send to All Customers';
+                }
+            } catch (error) {
+                console.error('Error sending promotional emails:', error);
+                const errGen = document.getElementById('errorPromotionalGeneral');
+                errGen.innerText = 'A network error occurred. Please try again.';
+                errGen.classList.remove('hidden');
+                btnSendPromotional.disabled = false;
+                btnSendPromotional.innerHTML = '<i class="ph-bold ph-paper-plane-tilt"></i> Send to All Customers';
+            }
+        });
+    }
+
+    function pollBatchStatus(batchId) {
+        const interval = setInterval(async () => {
+            try {
+                const response = await fetch(`/admin/batch-status/${batchId}`);
+                const batch = await response.json();
+
+                if (response.ok) {
+                    const progress = batch.progress;
+                    batchProgressBar.style.width = `${progress}%`;
+                    batchPercentage.innerText = `${progress}%`;
+                    batchStatusText.innerText = batch.finished ? 'Completed!' : `Processing... (${batch.processedJobs}/${batch.totalJobs})`;
+
+                    if (batch.finished || batch.cancelled) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            btnSendPromotional.disabled = false;
+                            btnSendPromotional.innerHTML = '<i class="ph-bold ph-paper-plane-tilt"></i> Send to All Customers';
+                            if (batch.failedJobs > 0) {
+                                const errGen = document.getElementById('errorPromotionalGeneral');
+                                errGen.innerText = `Batch finished with ${batch.failedJobs} failures. Check Failed Jobs section.`;
+                                errGen.classList.remove('hidden');
+                            }
+                        }, 2000);
+                    }
+                }
+            } catch (error) {
+                console.error('Error polling batch status:', error);
+                clearInterval(interval);
+            }
+        }, 2000);
+    }
+
+    // --- Failed Jobs Logic ---
+    const failedJobsTable = document.getElementById('failed-jobs-table');
+    const btnRetryAll = document.getElementById('btn-retry-all-jobs');
+    const btnDeleteAll = document.getElementById('btn-delete-all-jobs');
+
+    async function fetchFailedJobs() {
+        if (!failedJobsTable) return;
+        
+        try {
+            const response = await fetch('/admin/failed-jobs');
+            const jobs = await response.json();
+
+            if (jobs.length === 0) {
+                failedJobsTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium">
+                            <div class="flex flex-col items-center">
+                                <i class="ph-duotone ph-check-circle text-4xl mb-2 text-green-400"></i>
+                                <p>No failed jobs found. Everything is running smoothly!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            failedJobsTable.innerHTML = jobs.map(job => `
+                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" id="job-row-${job.id}">
+                    <td class="px-6 py-4 font-bold text-gray-800">${job.job_name}</td>
+                    <td class="px-6 py-4 text-gray-500"><span class="bg-gray-100 px-2 py-1 rounded-md text-xs font-bold uppercase">${job.queue}</span></td>
+                    <td class="px-6 py-4 text-gray-500 text-xs">${job.failed_at}</td>
+                    <td class="px-6 py-4 max-w-xs">
+                        <p class="text-[10px] text-red-500 font-medium line-clamp-2" title="${job.exception}">${job.exception}</p>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2">
+                            <button onclick="retryJob(${job.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Retry">
+                                <i class="ph-bold ph-arrows-counter-clockwise"></i>
+                            </button>
+                            <button onclick="deleteJob(${job.id})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                <i class="ph-bold ph-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Error fetching failed jobs:', error);
+        }
+    }
+
+    window.retryJob = async (id) => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        try {
+            const response = await fetch(`/admin/failed-jobs/${id}/retry`, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrfToken }
+            });
+            if (response.ok) {
+                document.getElementById(`job-row-${id}`)?.remove();
+                if (failedJobsTable.children.length === 0) fetchFailedJobs();
+            }
+        } catch (error) {
+            console.error('Error retrying job:', error);
+        }
+    };
+
+    window.deleteJob = async (id) => {
+        if (!confirm('Are you sure you want to delete this failed job?')) return;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        try {
+            const response = await fetch(`/admin/failed-jobs/${id}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': csrfToken }
+            });
+            if (response.ok) {
+                document.getElementById(`job-row-${id}`)?.remove();
+                if (failedJobsTable.children.length === 0) fetchFailedJobs();
+            }
+        } catch (error) {
+            console.error('Error deleting job:', error);
+        }
+    };
+
+    if (btnRetryAll) {
+        btnRetryAll.addEventListener('click', async () => {
+            if (!confirm('Retry all failed jobs?')) return;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            btnRetryAll.disabled = true;
+            try {
+                const response = await fetch('/admin/failed-jobs/retry-all', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken }
+                });
+                if (response.ok) fetchFailedJobs();
+            } catch (error) {
+                console.error('Error retrying all jobs:', error);
+            } finally {
+                btnRetryAll.disabled = false;
+            }
+        });
+    }
+
+    if (btnDeleteAll) {
+        btnDeleteAll.addEventListener('click', async () => {
+            if (!confirm('Clear all failed jobs? This cannot be undone.')) return;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            btnDeleteAll.disabled = true;
+            try {
+                const response = await fetch('/admin/failed-jobs/delete-all', {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': csrfToken }
+                });
+                if (response.ok) fetchFailedJobs();
+            } catch (error) {
+                console.error('Error deleting all jobs:', error);
+            } finally {
+                btnDeleteAll.disabled = false;
+            }
+        });
+    }
+
+    // Initial load for failed jobs when section is shown
+    document.querySelectorAll('[data-target="section-failed-jobs"]').forEach(link => {
+        link.addEventListener('click', fetchFailedJobs);
+    });
 });

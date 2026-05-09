@@ -12,6 +12,7 @@ use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SampleCollectorController;
 use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\AdminPromotionalEmailController;
 
 
 Route::get('/', function () {
@@ -106,6 +107,20 @@ Route::middleware(['auth', 'check.role:admin'])->group(function () {
     });
     Route::get('/stats/monthly', [StatisticsController::class, 'fetchMonthlyDetails']);
     Route::post('/stats/search', [StatisticsController::class, 'Search']);
+
+    // Promotional Emails
+    Route::post('/admin/send-promotional-emails', [AdminPromotionalEmailController::class, 'send']);
+    Route::get('/admin/batch-status/{batchId}', [AdminPromotionalEmailController::class, 'batchStatus']);
+
+    // Failed Jobs Management for Admin
+    Route::prefix('admin/failed-jobs')->controller(\App\Http\Controllers\JobManagementController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/retry-all', 'retryAll');
+        Route::delete('/delete-all', 'deleteAll');
+        Route::post('/{id}/retry', 'retry');
+        Route::delete('/{id}', 'delete');
+    });
+
 });
 
 Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
@@ -118,6 +133,16 @@ Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
     Route::get('/orders/{trackingId}/summary', [OrderController::class, 'showSummary']);
     Route::get('/stats', [StatisticsController::class, 'fetchDailyStats']);
     Route::post('/search', [StatisticsController::class, 'SearchForReceptionist']);
+
+    // Failed Jobs Management for Receptionist
+    Route::prefix('receptionist/failed-jobs')->controller(\App\Http\Controllers\JobManagementController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/retry-all', 'retryAll');
+        Route::delete('/delete-all', 'deleteAll');
+        Route::post('/{id}/retry', 'retry');
+        Route::delete('/{id}', 'delete');
+    });
+
 });
 Route::middleware(['auth', 'check.role:samplecollector'])->group(function () {
     Route::view('/SampleCollector', 'SampleCollector.dashboard')->name('samplecollector.dashboard');
@@ -150,6 +175,15 @@ Route::middleware(['auth', 'check.role:pathologist'])->group(function () {
     Route::put('/tests/{id}', [TestController::class, 'update']);
     Route::delete('/tests/{id}', [TestController::class, 'destroy']);
     Route::post('/tests/{id}/restore', [TestController::class, 'restore']);
+
+    // Failed Jobs Management
+    Route::prefix('failed-jobs')->controller(\App\Http\Controllers\JobManagementController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/retry-all', 'retryAll');
+        Route::delete('/delete-all', 'deleteAll');
+        Route::post('/{id}/retry', 'retry');
+        Route::delete('/{id}', 'delete');
+    });
 });
 
 Route::get('/tests/{id}', [TestController::class, 'show']);

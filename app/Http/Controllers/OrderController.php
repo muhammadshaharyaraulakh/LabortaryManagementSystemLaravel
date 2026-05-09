@@ -14,6 +14,9 @@ use \Barryvdh\DomPDF\Facade\Pdf;
 use \Symfony\Component\HttpFoundation\Response;
 use Milon\Barcode\Facades\DNS1DFacade;
 use Carbon\Carbon;
+use App\Jobs\SyncOrderWithFia;
+use App\Jobs\VoidOrderWithFia;
+
 
 class OrderController extends Controller
 {
@@ -53,26 +56,8 @@ class OrderController extends Controller
             $grandTotal = $afterDiscount + $tax;
             $trackingId = 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(4));
 
-            if (app()->environment('local')) {
-                Http::fake([
-                    'api.fia.gov.pk/*' => Http::response([
-                        'status' => 'success',
-                        'receipt_number' => 'FIA-TEST-' . uniqid() . rand(100000, 999999)
-                    ], Response::HTTP_OK)
-                ]);
-            }
-
-            $fiaResponse = Http::timeout(10)->post('https://api.fia.gov.pk/tax/sync', [
-                'tracking_id' => $trackingId,
-                'tax_amount' => $tax,
-                'total_amount' => $grandTotal,
-                'lab_id' => env('FIA_LAB_KEY', 'TEST_KEY_123')
-            ]);
-
             $fiaReceiptNo = null;
-            if ($fiaResponse->successful()) {
-                $fiaReceiptNo = $fiaResponse->json('receipt_number');
-            }
+
 
             $order = Order::create([
                 'trackingId' => $trackingId,
@@ -88,6 +73,10 @@ class OrderController extends Controller
                 'fiaReceiptNo' => $fiaReceiptNo,
                 'userId' => Auth()->user()->id
             ]);
+
+            SyncOrderWithFia::dispatch($order)->afterCommit();
+
+
 
             $BarcodeData = [];
 
@@ -169,29 +158,9 @@ class OrderController extends Controller
                 ], Response::HTTP_BAD_REQUEST);
             }
 
-            if (app()->environment('local')) {
-                Http::fake([
-                    'api.fia.gov.pk/*' => Http::response([
-                        'status' => 'success',
-                        'message' => 'Receipt voided successfully'
-                    ], 200)
-                ]);
-            }
+            VoidOrderWithFia::dispatch($order->trackingId, $order->fiaReceiptNo)->afterCommit();
 
-            $fiaResponse = Http::timeout(10)->post('https://api.fia.gov.pk/tax/void', [
-                'tracking_id' => $order->trackingId,
-                'receipt_number' => $order->fiaReceiptNo,
-                'lab_id' => env('FIA_LAB_KEY', 'TEST_KEY_123'),
-                'reason' => 'Patient cancelled order'
-            ]);
 
-            if (!$fiaResponse->successful()) {
-                DB::rollBack();
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Failed to cancel tax receipt with FIA API.'
-                ], Response::HTTP_BAD_REQUEST);
-            }
             $order->delete();
             DB::commit();
 
