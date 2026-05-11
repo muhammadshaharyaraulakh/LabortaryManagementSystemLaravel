@@ -398,9 +398,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const interval = setInterval(async () => {
             try {
                 const response = await fetch(`/admin/batch-status/${batchId}`);
-                const batch = await response.json();
+                const result = await response.json();
 
-                if (response.ok) {
+                if (response.ok && result.data) {
+                    const batch = result.data;
                     const progress = batch.progress;
                     batchProgressBar.style.width = `${progress}%`;
                     batchPercentage.innerText = `${progress}%`;
@@ -431,12 +432,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnRetryAll = document.getElementById('btn-retry-all-jobs');
     const btnDeleteAll = document.getElementById('btn-delete-all-jobs');
 
+    const showFailedJobsMessage = (msg, isError = false) => {
+        const msgEl = document.getElementById('failed-jobs-inline-msg');
+        if (!msgEl) return;
+        msgEl.innerText = msg;
+        msgEl.className = `mb-4 p-3 rounded-xl font-bold text-sm ${isError ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`;
+        msgEl.classList.remove('hidden');
+        setTimeout(() => msgEl.classList.add('hidden'), 5000);
+    };
+
     async function fetchFailedJobs() {
         if (!failedJobsTable) return;
         
         try {
             const response = await fetch('/admin/failed-jobs');
-            const jobs = await response.json();
+            const result = await response.json();
+            const jobs = result.data || [];
 
             if (jobs.length === 0) {
                 failedJobsTable.innerHTML = `
@@ -482,47 +493,62 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch(`/admin/failed-jobs/${id}/retry`, {
                 method: 'POST',
-                headers: { 'X-CSRF-TOKEN': csrfToken }
+                headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
             });
-            if (response.ok) {
+            const result = await response.json();
+            if (result.status === true) {
                 document.getElementById(`job-row-${id}`)?.remove();
+                showFailedJobsMessage(result.message || 'Job retried successfully.');
                 if (failedJobsTable.children.length === 0) fetchFailedJobs();
+            } else {
+                showFailedJobsMessage(result.message || 'Failed to retry job.', true);
             }
         } catch (error) {
             console.error('Error retrying job:', error);
+            showFailedJobsMessage('A network error occurred.', true);
         }
     };
 
     window.deleteJob = async (id) => {
-        if (!confirm('Are you sure you want to delete this failed job?')) return;
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         try {
             const response = await fetch(`/admin/failed-jobs/${id}`, {
                 method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': csrfToken }
+                headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
             });
-            if (response.ok) {
+            const result = await response.json();
+            if (result.status === true) {
                 document.getElementById(`job-row-${id}`)?.remove();
+                showFailedJobsMessage(result.message || 'Job deleted successfully.');
                 if (failedJobsTable.children.length === 0) fetchFailedJobs();
+            } else {
+                showFailedJobsMessage(result.message || 'Failed to delete job.', true);
             }
         } catch (error) {
             console.error('Error deleting job:', error);
+            showFailedJobsMessage('A network error occurred.', true);
         }
     };
 
     if (btnRetryAll) {
         btnRetryAll.addEventListener('click', async () => {
-            if (!confirm('Retry all failed jobs?')) return;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             btnRetryAll.disabled = true;
             try {
                 const response = await fetch('/admin/failed-jobs/retry-all', {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrfToken }
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
                 });
-                if (response.ok) fetchFailedJobs();
+                const result = await response.json();
+                if (result.status === true) {
+                    showFailedJobsMessage(result.message || 'All jobs have been queued for retry.');
+                    fetchFailedJobs();
+                } else {
+                    showFailedJobsMessage(result.message || 'Failed to retry all jobs.', true);
+                }
             } catch (error) {
                 console.error('Error retrying all jobs:', error);
+                showFailedJobsMessage('A network error occurred.', true);
             } finally {
                 btnRetryAll.disabled = false;
             }
@@ -531,17 +557,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (btnDeleteAll) {
         btnDeleteAll.addEventListener('click', async () => {
-            if (!confirm('Clear all failed jobs? This cannot be undone.')) return;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             btnDeleteAll.disabled = true;
             try {
                 const response = await fetch('/admin/failed-jobs/delete-all', {
                     method: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': csrfToken }
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
                 });
-                if (response.ok) fetchFailedJobs();
+                const result = await response.json();
+                if (result.status === true) {
+                    showFailedJobsMessage(result.message || 'All failed jobs have been cleared.');
+                    fetchFailedJobs();
+                } else {
+                    showFailedJobsMessage(result.message || 'Failed to delete all jobs.', true);
+                }
             } catch (error) {
                 console.error('Error deleting all jobs:', error);
+                showFailedJobsMessage('A network error occurred.', true);
             } finally {
                 btnDeleteAll.disabled = false;
             }

@@ -931,8 +931,8 @@
                     msgDiv.classList.remove('hidden');
                     setTimeout(() => msgDiv.classList.add('hidden'), 3000);
                 } else {
-                    // Fallback to alert if no inline div is found for the active section
-                    if (message) alert(message);
+                    // Fallback to console log instead of alert
+                    if (message) console.log(message);
                 }
             }
 
@@ -1122,7 +1122,7 @@
                 try {
                     const response = await fetch('/receptionist/failed-jobs', { headers: fetchHeaders });
                     const result = await response.json();
-                    renderFailedJobs(result);
+                    renderFailedJobs(result.data || []);
                 } catch (error) {
                     failedJobsTable.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-red-500 font-medium"><p>Failed to load jobs.</p></td></tr>`;
                 }
@@ -1140,7 +1140,7 @@
                 <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4 font-bold text-gray-800">${job.job_name}</td>
                     <td class="px-6 py-4 font-medium text-gray-500">${job.queue}</td>
-                    <td class="px-6 py-4 text-xs font-bold text-gray-600">${new Date(job.failed_at).toLocaleString()}</td>
+                    <td class="px-6 py-4 text-xs font-bold text-gray-600">${job.failed_at}</td>
                     <td class="px-6 py-4">
                         <div class="max-w-xs truncate text-xs text-red-500 font-medium" title="${job.full_exception}">${job.exception}</div>
                     </td>
@@ -1157,17 +1157,16 @@
                 try {
                     const response = await fetch(`/receptionist/failed-jobs/${id}/retry`, { method: 'POST', headers: fetchHeaders });
                     const result = await response.json();
-                    showNotification(result.message, !response.ok);
+                    showNotification(result.message, result.status !== true);
                     fetchFailedJobs();
                 } catch (error) { showNotification("Error retrying job", true); }
             };
 
             window.deleteJob = async function(id) {
-                if (!confirm('Are you sure you want to delete this job?')) return;
                 try {
                     const response = await fetch(`/receptionist/failed-jobs/${id}`, { method: 'DELETE', headers: fetchHeaders });
                     const result = await response.json();
-                    showNotification(result.message, !response.ok);
+                    showNotification(result.message, result.status !== true);
                     fetchFailedJobs();
                 } catch (error) { showNotification("Error deleting job", true); }
             };
@@ -1176,17 +1175,16 @@
                 try {
                     const response = await fetch('/receptionist/failed-jobs/retry-all', { method: 'POST', headers: fetchHeaders });
                     const result = await response.json();
-                    showNotification(result.message, !response.ok);
+                    showNotification(result.message, result.status !== true);
                     fetchFailedJobs();
                 } catch (error) { showNotification("Error retrying all jobs", true); }
             });
 
             btnDeleteAllJobs?.addEventListener('click', async () => {
-                if (!confirm('Are you sure you want to delete all failed jobs?')) return;
                 try {
                     const response = await fetch('/receptionist/failed-jobs/delete-all', { method: 'DELETE', headers: fetchHeaders });
                     const result = await response.json();
-                    showNotification(result.message, !response.ok);
+                    showNotification(result.message, result.status !== true);
                     fetchFailedJobs();
                 } catch (error) { showNotification("Error deleting all jobs", true); }
             });

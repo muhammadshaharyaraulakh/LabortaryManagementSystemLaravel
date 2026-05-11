@@ -724,16 +724,15 @@
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Email Content</label>
-                            <textarea name="content" rows="8" placeholder="Write your promotional message here..."
+                            <textarea name="content" rows="8" placeholder="Write your promotional message here"
                                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-purple-400 outline-none transition-all resize-none"></textarea>
                             <p id="errorPromotionalContent" class="text-red-500 text-xs font-medium mt-1 hidden"></p>
-                            <p class="text-[10px] text-gray-400 mt-2 font-medium uppercase tracking-wider">Markdown is supported for the content body.</p>
                         </div>
                         <div id="errorPromotionalGeneral" class="text-red-500 text-xs font-bold mt-2 hidden text-center"></div>
                         <div class="flex items-center justify-between pt-4 border-t border-gray-50">
                             <div id="batch-progress-container" class="hidden flex-1 mr-6">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="text-xs font-bold text-gray-600" id="batch-status-text">Processing...</span>
+                                    <span class="text-xs font-bold text-gray-600" id="batch-status-text">Processing</span>
                                     <span class="text-xs font-bold text-purple-600" id="batch-percentage">0%</span>
                                 </div>
                                 <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
@@ -741,7 +740,7 @@
                                 </div>
                             </div>
                             <button type="submit" id="btnSendPromotional"
-                                class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-purple-200 flex items-center gap-2 ml-auto">
+                                class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg hover:shadow-purple-200 flex items-center gap-2 ml-auto">
                                 <i class="ph-bold ph-paper-plane-tilt"></i> Send to All Customers
                             </button>
                         </div>
@@ -771,6 +770,8 @@
                         </button>
                     </div>
                 </div>
+
+                <div id="failed-jobs-inline-msg" class="mb-4 hidden p-3 rounded-xl font-bold text-sm"></div>
 
                 <div
                     class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">

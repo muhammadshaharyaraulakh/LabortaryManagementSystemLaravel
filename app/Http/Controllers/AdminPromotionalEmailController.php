@@ -8,12 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Response;
 
 class AdminPromotionalEmailController extends Controller
 {
-    /**
-     * Send promotional emails to all customers in a batch.
-     */
+
     public function send(Request $request)
     {
         $request->validate([
@@ -24,7 +23,6 @@ class AdminPromotionalEmailController extends Controller
         $subject = $request->subject;
         $content = $request->content;
 
-        // Get unique emails from orders table
         $emails = Order::whereNotNull('email')
             ->distinct()
             ->pluck('email');
@@ -33,7 +31,7 @@ class AdminPromotionalEmailController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'No customer emails found in the records.'
-            ], 404);
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $jobs = [];
@@ -50,21 +48,25 @@ class AdminPromotionalEmailController extends Controller
             'message' => 'Promotional email batch has been dispatched.',
             'batchId' => $batch->id,
             'totalJobs' => count($jobs)
-        ]);
+        ], Response::HTTP_OK);
     }
 
-    /**
-     * Get the status of a specific batch.
-     */
+
     public function batchStatus($batchId)
     {
         $batch = Bus::findBatch($batchId);
 
-        if (!$batch) {
-            return response()->json(['status' => false, 'message' => 'Batch not found.'], 404);
+        if (empty($batch)) {
+            return response()->json([
+                'status' => false,
+                 'message' => 'Batch not found.'],
+                  Response::HTTP_NOT_FOUND);
         }
 
         return response()->json([
+            'status' => true,
+            'message' => 'Promotional email batch status.',
+            'data' => [
             'id' => $batch->id,
             'name' => $batch->name,
             'totalJobs' => $batch->totalJobs,
@@ -74,6 +76,7 @@ class AdminPromotionalEmailController extends Controller
             'progress' => $batch->progress(),
             'finished' => $batch->finished(),
             'cancelled' => $batch->cancelled(),
-        ]);
+            ]
+        ], Response::HTTP_OK);
     }
 }
