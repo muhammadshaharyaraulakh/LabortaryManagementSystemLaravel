@@ -6,3 +6,4 @@ import "./stock.js";
 import "./settings.js";
 import "./department.js";
 import "./login.js";
+import './reverb.js';

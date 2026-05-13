@@ -8,7 +8,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @auth
         <meta name="user-id" content="{{ auth()->id() }}">
+        <meta name="user-role" content="{{ auth()->user()->role }}">
     @endauth
+
     @php
         $viteAssets = ['resources/css/app.css', 'resources/js/app.js'];
 

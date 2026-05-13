@@ -890,6 +890,7 @@
 
             fetchStats();
         });
+
     </script>
 </body>
 </html>

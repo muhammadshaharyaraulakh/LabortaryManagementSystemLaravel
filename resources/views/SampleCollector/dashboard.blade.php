@@ -444,7 +444,14 @@
             }
 
             fetchPendingOrders();
+
+            // Listen for real-time sample rejection notifications
+            document.addEventListener('sample-rejected', (e) => {
+                console.log('Refreshing list due to sample rejection:', e.detail);
+                fetchPendingOrders();
+            });
         });
+
     </script>
 </body>
 </html>

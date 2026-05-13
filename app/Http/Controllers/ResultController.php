@@ -9,11 +9,17 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+
 use Symfony\Component\HttpFoundation\Response;
 use App\Jobs\ProcessTestResult;
 use App\Jobs\SendResultEmailJob;
 use App\Jobs\DeleteReportPdf;
+use App\Models\User;
+use App\Models\Test;
+use App\Events\SampleRejected;
+
 
 
 class ResultController extends Controller
@@ -236,6 +242,8 @@ class ResultController extends Controller
             'reason' => 'required|string'
         ]);
 
+        $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
+
         DB::table('order_test')
             ->where('id', $request->orderTestId)
             ->update([
@@ -244,9 +252,30 @@ class ResultController extends Controller
                 'rejectedBy' => Auth::user()->name
             ]);
 
+        $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
+
+        $collector = User::find($orderTest->collectedBy);
+
+        $test = Test::find($orderTest->testId);
+
+        if ($collector && $test) {
+            Log::info('Broadcasting SampleRejected event', [
+                'orderTestId' => $orderTest->id,
+                'collector' => $collector->name,
+                'test' => $test->name
+            ]);
+            broadcast(new SampleRejected(
+                $orderTest,
+                $collector,
+                $test
+            ));
+        }
+
+
         return response()->json([
             'status' => 200,
             'message' => 'Sample rejected successfully.'
         ]);
     }
+
 }
