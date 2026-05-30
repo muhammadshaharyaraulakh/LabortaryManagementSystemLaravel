@@ -238,21 +238,37 @@ class ResultController extends Controller
     public function rejectSample(Request $request)
     {
         $request->validate([
-            'orderTestId' => 'required|exists:order_test,id',
+            'orderTestId' => 'nullable|exists:order_test,id',
+            'barcode' => 'nullable|string',
             'reason' => 'required|string'
         ]);
 
-        $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
+        if (!$request->orderTestId && !$request->barcode) {
+            return response()->json(['status' => 400, 'message' => 'Provide orderTestId or barcode.']);
+        }
+
+        $query = DB::table('order_test');
+        if ($request->orderTestId) {
+            $query->where('id', $request->orderTestId);
+        } else {
+            $query->where('vialBarcode', $request->barcode);
+        }
+        
+        $orderTest = $query->first();
+
+        if (!$orderTest) {
+            return response()->json(['status' => 404, 'message' => 'Order test not found.']);
+        }
 
         DB::table('order_test')
-            ->where('id', $request->orderTestId)
+            ->where('id', $orderTest->id)
             ->update([
                 'status' => 'Rejected',
                 'rejectionReason' => $request->reason,
                 'rejectedBy' => Auth::user()->name
             ]);
 
-        $orderTest = DB::table('order_test')->where('id', $request->orderTestId)->first();
+        $orderTest = DB::table('order_test')->where('id', $orderTest->id)->first();
 
         $collector = User::find($orderTest->collectedBy);
 

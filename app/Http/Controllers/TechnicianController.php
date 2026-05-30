@@ -254,6 +254,35 @@ class TechnicianController extends Controller
         ], Response::HTTP_OK);
     }
 
+    public function HumanTechnicianRejectedSamples()
+    {
+        $user = Auth::user();
+        $department = $user->department;
+
+        if (!$department || $department->type !== 'human_based') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized or invalid department type.'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $orders = Order::whereHas('tests', function ($query) use ($department, $user) {
+            $query->where('tests.departmentId', $department->id)
+                ->where('order_test.status', 'Rejected');
+        })->with([
+            'tests' => function ($query) use ($department, $user) {
+                $query->where('tests.departmentId', $department->id)
+                    ->where('order_test.status', 'Rejected');
+            }
+        ])->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Rejected samples retrieved successfully.',
+            'data' => $orders
+        ], Response::HTTP_OK);
+    }
+
     public function StartHumanTest(Request $request)
     {
         $request->validate([

@@ -40,6 +40,13 @@
             </a>
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
+                data-target="section-rejected" data-title="Rejected Samples">
+                <i
+                    class="ph-duotone ph-warning-circle text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
+                <span class="ml-3 nav-text whitespace-nowrap">Rejected Samples</span>
+            </a>
+            <a href="#"
+                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-settings" data-title="Settings">
                 <i
                     class="ph-duotone ph-gear-six text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
@@ -204,6 +211,35 @@
                     </div>
                 </div>
             </div>
+            </div>
+
+            <div id="section-rejected" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
+                <div
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
+                    <div
+                        class="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-bold text-gray-800">Rejected Samples</h3>
+                            <span id="rejected-count-badge"
+                                class="bg-red-100 text-red-700 px-2 py-0.5 rounded-md text-xs font-bold">0 Samples</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-gray-50 text-gray-700 font-bold border-b border-gray-100">
+                                <tr>
+                                    <th class="px-6 py-4">Patient Info</th>
+                                    <th class="px-6 py-4">Test Assigned</th>
+                                    <th class="px-6 py-4">Reason</th>
+                                    <th class="px-6 py-4 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rejectedTableBody" class="divide-y divide-gray-50">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
             <x-settings />
         </main>
@@ -278,13 +314,36 @@
                     <input type="text" id="humanBarcodeScannerInput" placeholder="Enter barcode..." required
                         class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-100 outline-none font-mono tracking-wider text-center">
                 </div>
+                <div class="mb-4" id="humanRejectReasonContainer" style="display: none;">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Reason for Rejection <span class="text-red-500">*</span></label>
+                    <select id="humanRejectReasonSelect"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-100 outline-none bg-gray-50/50 mb-4 cursor-pointer">
+                        <option disabled selected value="">Select a reason...</option>
+                        <option>Hemolyzed Sample</option>
+                        <option>Insufficient Quantity</option>
+                        <option>Clotted Sample</option>
+                        <option>Wrong Container/Tube</option>
+                        <option>Other (Specify below)</option>
+                    </select>
+                    <textarea id="humanRejectReasonText" rows="2"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-100 outline-none bg-gray-50/50 resize-none"
+                        placeholder="Additional details..."></textarea>
+                </div>
                 <div class="flex justify-end gap-3 mt-6">
                     <button type="button"
                         class="close-modal-btn px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer"
                         data-modal="BarcodeEntryModalBackdrop">Cancel</button>
+                    <button type="button" id="btn-human-reject-toggle"
+                        class="px-5 py-2.5 text-sm font-bold text-red-600 bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 shadow-sm transition-all cursor-pointer flex items-center gap-2">
+                        <i class="ph-bold ph-x"></i> Reject Sample
+                    </button>
+                    <button type="button" id="btn-human-reject-submit" style="display: none;"
+                        class="px-5 py-2.5 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all cursor-pointer flex items-center gap-2">
+                        <i class="ph-bold ph-warning-circle"></i> Confirm Rejection
+                    </button>
                     <button type="submit" id="btn-human-barcode-submit"
                         class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all cursor-pointer flex items-center gap-2">
-                        <i class="ph-bold ph-check"></i> Submit
+                        <i class="ph-bold ph-check"></i> Accept Sample
                     </button>
                 </div>
             </form>
@@ -453,6 +512,87 @@
             });
 
             const barcodeForm = document.getElementById('BarcodeEntryForm');
+            const rejectToggleBtn = document.getElementById('btn-human-reject-toggle');
+            const rejectSubmitBtn = document.getElementById('btn-human-reject-submit');
+            const acceptSubmitBtn = document.getElementById('btn-human-barcode-submit');
+            const rejectReasonContainer = document.getElementById('humanRejectReasonContainer');
+
+            if (rejectToggleBtn) {
+                rejectToggleBtn.addEventListener('click', () => {
+                    rejectToggleBtn.style.display = 'none';
+                    acceptSubmitBtn.style.display = 'none';
+                    rejectReasonContainer.style.display = 'block';
+                    rejectSubmitBtn.style.display = 'flex';
+                });
+            }
+
+            if (rejectSubmitBtn) {
+                rejectSubmitBtn.addEventListener('click', async () => {
+                    const input = document.getElementById('humanBarcodeScannerInput');
+                    const barcode = input.value.trim();
+                    const reasonSelect = document.getElementById('humanRejectReasonSelect');
+                    const reasonText = document.getElementById('humanRejectReasonText');
+                    let reason = reasonSelect.value;
+                    if (reason === 'Other (Specify below)') reason = reasonText.value;
+
+                    if (!barcode) {
+                        alert("Please enter a barcode.");
+                        return;
+                    }
+                    if (!reason || reason === 'Select a reason...') {
+                        alert("Please provide a rejection reason.");
+                        return;
+                    }
+
+                    const originalHtml = rejectSubmitBtn.innerHTML;
+                    rejectSubmitBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Rejecting...';
+                    rejectSubmitBtn.disabled = true;
+
+                    try {
+                        const res = await fetch('/rejectSample', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ barcode, reason })
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.status === 200) {
+                            closeModal('BarcodeEntryModalBackdrop');
+                            input.value = '';
+                            reasonSelect.value = '';
+                            reasonText.value = '';
+                            resetBarcodeModal();
+                            fetchStats();
+                            fetchPendingPatients();
+                            fetchWorklist();
+                            fetchRejectedSamples();
+                        } else {
+                            alert(data.message || 'Failed to reject sample.');
+                        }
+                    } catch (err) {
+                        alert('Network Error');
+                    } finally {
+                        rejectSubmitBtn.innerHTML = originalHtml;
+                        rejectSubmitBtn.disabled = false;
+                    }
+                });
+            }
+
+            function resetBarcodeModal() {
+                if(rejectToggleBtn) rejectToggleBtn.style.display = 'flex';
+                if(acceptSubmitBtn) acceptSubmitBtn.style.display = 'flex';
+                if(rejectReasonContainer) rejectReasonContainer.style.display = 'none';
+                if(rejectSubmitBtn) rejectSubmitBtn.style.display = 'none';
+            }
+
+            // Hook close modal buttons to also reset
+            document.querySelectorAll('.close-modal-btn[data-modal="BarcodeEntryModalBackdrop"]').forEach(btn => {
+                btn.addEventListener('click', resetBarcodeModal);
+            });
+
             if (barcodeForm) {
                 barcodeForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
@@ -462,7 +602,7 @@
                     if (!barcode) return;
 
                     const originalHtml = btn.innerHTML;
-                    btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Adding...';
+                    btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Accepting...';
                     btn.disabled = true;
 
                     try {
@@ -479,6 +619,7 @@
                         if (res.ok && data.status === true) {
                             closeModal('BarcodeEntryModalBackdrop');
                             input.value = '';
+                            resetBarcodeModal();
                             fetchStats();
                             fetchPendingPatients();
                             fetchWorklist();
@@ -954,10 +1095,78 @@
                 });
             }
 
+            async function fetchRejectedSamples() {
+                try {
+                    const response = await fetch('/HumanTechnicianRejectedSamples');
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.status === true) {
+                            renderRejectedSamples(result.data);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching rejected samples:', error);
+                }
+            }
+
+            function renderRejectedSamples(orders) {
+                const tbody = document.getElementById('rejectedTableBody');
+                const badge = document.getElementById('rejected-count-badge');
+                tbody.innerHTML = '';
+                
+                let count = 0;
+
+                if (!orders || orders.length === 0) {
+                    badge.textContent = '0 Samples';
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 font-medium">No rejected samples found.</td></tr>`;
+                    return;
+                }
+
+                orders.forEach(order => {
+                    if (order.tests && order.tests.length > 0) {
+                        order.tests.forEach(test => {
+                            count++;
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-gray-50 transition-colors animate-fade-in';
+                            tr.innerHTML = `
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-gray-800">${order.name}</div>
+                                    <div class="text-xs text-gray-500">Tracking: ${order.trackingId}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-gray-800">${test.name}</div>
+                                    <div class="font-mono text-xs text-blue-600 bg-blue-50 inline-block px-2 py-0.5 rounded mt-1">${test.pivot.vialBarcode}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold border border-red-100 flex items-center gap-1 w-max">
+                                        <i class="ph-bold ph-warning"></i> Rejected
+                                    </span>
+                                    <div class="text-xs text-gray-500 mt-1 max-w-[200px] truncate" title="${test.pivot.rejectionReason}">${test.pivot.rejectionReason}</div>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex flex-col gap-2 items-end">
+                                        <button class="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1" onclick="window.location.href='tel:${order.phone}'">
+                                            <i class="ph-bold ph-phone"></i> Contact Patient
+                                        </button>
+                                        <span class="text-xs text-orange-600 font-bold bg-orange-50 px-2 py-1 rounded border border-orange-100">
+                                            Needs Re-Collection
+                                        </span>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                });
+
+                badge.textContent = `${count} Sample${count !== 1 ? 's' : ''}`;
+            }
+
             fetchStats();
             fetchPendingPatients();
             fetchWorklist();
             fetchPendingVerifications();
+            fetchRejectedSamples();
         });
     </script>
 </body>

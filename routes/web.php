@@ -158,6 +158,7 @@ Route::middleware(['auth', 'check.role:technician'])->group(function () {
     Route::view('/TechnicianDashboard', 'Technician.HumanBasedTechnician')->name('HumanTechnicianDashboard');
     Route::get('/HumanTechnicianStats', [TechnicianController::class, 'getHumanDashboardStats']);
     Route::get('/HumanTechnicianPendingWorklist', [TechnicianController::class, 'HumanTechnicianPendingWorklist']);
+    Route::get('/HumanTechnicianRejectedSamples', [TechnicianController::class, 'HumanTechnicianRejectedSamples']);
     Route::post('/StartHumanTest', [TechnicianController::class, 'StartHumanTest']);
     Route::post('/uploadHumanResultFile', [TechnicianController::class, 'uploadHumanResultFile']);
 });
