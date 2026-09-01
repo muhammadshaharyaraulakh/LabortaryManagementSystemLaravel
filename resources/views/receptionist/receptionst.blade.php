@@ -50,13 +50,6 @@
                 <span class="ml-3 nav-text whitespace-nowrap">Manage Orders</span>
             </a>
 
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-failed-jobs" data-title="Failed Jobs">
-                <i
-                    class="ph-duotone ph-warning-octagon text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Failed Jobs</span>
-            </a>
 
 
             <a href="#"
@@ -410,57 +403,7 @@
                     </div>
                 </div>
             </div>
-            <div id="section-failed-jobs" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
-                            <i class="ph-duotone ph-warning-octagon text-2xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-gray-800">Failed Jobs</h2>
-                            <p class="text-sm text-gray-500 font-medium">Manage failed background tasks and retries</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <button id="btn-retry-all-jobs"
-                            class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                            <i class="ph ph-arrows-counter-clockwise font-bold text-lg"></i> Retry All
-                        </button>
-                        <button id="btn-delete-all-jobs"
-                            class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                            <i class="ph ph-trash font-bold text-lg"></i> Clear All
-                        </button>
-                    </div>
-                </div>
 
-                <div id="failed-jobs-inline-msg" class="mb-4 hidden p-3 rounded-xl font-bold text-sm"></div>
-
-                <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
-
-                    <div class="overflow-x-auto min-h-[250px]">
-                        <table class="w-full text-left text-sm">
-                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
-                                <tr>
-                                    <th scope="col" class="px-6 py-4">Job Name</th>
-                                    <th scope="col" class="px-6 py-4">Queue</th>
-                                    <th scope="col" class="px-6 py-4">Failed At</th>
-                                    <th scope="col" class="px-6 py-4">Error</th>
-                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="failed-jobs-table">
-                                <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium">
-                                        <i class="ph-duotone ph-spinner animate-spin text-4xl mb-2 text-gray-400"></i>
-                                        <p>Loading failed jobs...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
             <x-settings />
 
 
@@ -536,7 +479,7 @@
                     fetchUserOrders();
                 }
                 if (targetId === 'section-dashboard') fetchDashboardTodayStats();
-                if (targetId === 'section-failed-jobs') fetchFailedJobs();
+
 
                 if (targetId === 'section-create-order' && allAvailableTests.length === 0) {
                     loadAllTestsForSearch();
@@ -919,9 +862,7 @@
             function showNotification(message, isError = true) {
                 let msgDiv = null;
                 
-                if (document.getElementById('section-failed-jobs').classList.contains('block')) {
-                    msgDiv = document.getElementById('failed-jobs-inline-msg');
-                } else if (document.getElementById('section-manage-orders').classList.contains('block')) {
+                if (document.getElementById('section-manage-orders').classList.contains('block')) {
                     msgDiv = document.getElementById('manage-orders-inline-msg');
                 }
 
@@ -1111,83 +1052,6 @@
                 });
             }
 
-            // Failed Jobs Management
-            const failedJobsTable = document.getElementById('failed-jobs-table');
-            const btnRetryAllJobs = document.getElementById('btn-retry-all-jobs');
-            const btnDeleteAllJobs = document.getElementById('btn-delete-all-jobs');
-
-            async function fetchFailedJobs() {
-                if (!failedJobsTable) return;
-                failedJobsTable.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium"><i class="ph-duotone ph-spinner animate-spin text-4xl mb-2 text-gray-400"></i><p>Loading failed jobs...</p></td></tr>`;
-                try {
-                    const response = await fetch('/receptionist/failed-jobs', { headers: fetchHeaders });
-                    const result = await response.json();
-                    renderFailedJobs(result.data || []);
-                } catch (error) {
-                    failedJobsTable.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-red-500 font-medium"><p>Failed to load jobs.</p></td></tr>`;
-                }
-            }
-
-            function renderFailedJobs(jobs) {
-                if (!failedJobsTable) return;
-                failedJobsTable.innerHTML = '';
-                if (!jobs || jobs.length === 0) {
-                    failedJobsTable.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium"><i class="ph-duotone ph-check-circle text-4xl mb-2 text-green-400"></i><p>No failed jobs found.</p></td></tr>`;
-                    return;
-                }
-                jobs.forEach(job => {
-                    failedJobsTable.innerHTML += `
-                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 font-bold text-gray-800">${job.job_name}</td>
-                    <td class="px-6 py-4 font-medium text-gray-500">${job.queue}</td>
-                    <td class="px-6 py-4 text-xs font-bold text-gray-600">${job.failed_at}</td>
-                    <td class="px-6 py-4">
-                        <div class="max-w-xs truncate text-xs text-red-500 font-medium" title="${job.full_exception}">${job.exception}</div>
-                    </td>
-                    <td class="px-6 py-4 text-right flex justify-end gap-2">
-                        <button onclick="retryJob(${job.id})" class="text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer">Retry</button>
-                        <button onclick="deleteJob(${job.id})" class="text-red-600 hover:text-red-800 font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer">Delete</button>
-                    </td>
-                </tr>
-            `;
-                });
-            }
-
-            window.retryJob = async function(id) {
-                try {
-                    const response = await fetch(`/receptionist/failed-jobs/${id}/retry`, { method: 'POST', headers: fetchHeaders });
-                    const result = await response.json();
-                    showNotification(result.message, result.status !== true);
-                    fetchFailedJobs();
-                } catch (error) { showNotification("Error retrying job", true); }
-            };
-
-            window.deleteJob = async function(id) {
-                try {
-                    const response = await fetch(`/receptionist/failed-jobs/${id}`, { method: 'DELETE', headers: fetchHeaders });
-                    const result = await response.json();
-                    showNotification(result.message, result.status !== true);
-                    fetchFailedJobs();
-                } catch (error) { showNotification("Error deleting job", true); }
-            };
-
-            btnRetryAllJobs?.addEventListener('click', async () => {
-                try {
-                    const response = await fetch('/receptionist/failed-jobs/retry-all', { method: 'POST', headers: fetchHeaders });
-                    const result = await response.json();
-                    showNotification(result.message, result.status !== true);
-                    fetchFailedJobs();
-                } catch (error) { showNotification("Error retrying all jobs", true); }
-            });
-
-            btnDeleteAllJobs?.addEventListener('click', async () => {
-                try {
-                    const response = await fetch('/receptionist/failed-jobs/delete-all', { method: 'DELETE', headers: fetchHeaders });
-                    const result = await response.json();
-                    showNotification(result.message, result.status !== true);
-                    fetchFailedJobs();
-                } catch (error) { showNotification("Error deleting all jobs", true); }
-            });
 
         });
     </script>

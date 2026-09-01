@@ -26,7 +26,7 @@ class SendVerficationEmail implements ShouldQueue
         $user = User::find($this->userId);
 
         if (!$user) {
-            logger()->error("Queue: User not found", [
+            logger()->error("User not found", [
                 'user_id' => $this->userId
             ]);
             return;

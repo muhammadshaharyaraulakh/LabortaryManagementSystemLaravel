@@ -1,41 +1,4 @@
-
-document.addEventListener('DOMContentLoaded', () => {
-    const userIdMeta = document.querySelector("meta[name='user-id']");
-
-    if (userIdMeta && window.Echo) {
-        const userId = userIdMeta.content;
-        const userRole = document.querySelector("meta[name='user-role']")?.content?.toLowerCase() || '';
-
-        if (userRole === 'samplecollector') {
-            console.log(`Connecting to private channel: App.Models.User.${userId}`);
-
-            window.Echo.private(`App.Models.User.${userId}`)
-                .subscribed(() => {
-                    console.log('Successfully subscribed to private channel!');
-                })
-                .error((error) => {
-                    console.error('Broadcasting subscription error:', error);
-                })
-                .listen('SampleRejected', (e) => {
-                    console.log('Sample Rejected Event Received:', e);
-
-                    showToast(
-                        'Sample Rejected',
-                        `Test: ${e.Test.name}\nReason: ${e.Sample.rejectionReason || 'No reason provided'}`,
-                        'error'
-                    );
-
-                    document.dispatchEvent(new CustomEvent('sample-rejected', {
-                        detail: {
-                            orderTestId: e.Sample.id,
-                            testName: e.Test.name,
-                            reason: e.Sample.rejectionReason
-                        }
-                    }));
-                });
-        }
-    }
-});
+// Echo removed
 
 /**
  * Modern Toast Notification System

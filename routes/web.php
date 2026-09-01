@@ -112,14 +112,7 @@ Route::middleware(['auth', 'check.role:admin'])->group(function () {
     Route::post('/admin/send-promotional-emails', [AdminPromotionalEmailController::class, 'send']);
     Route::get('/admin/batch-status/{batchId}', [AdminPromotionalEmailController::class, 'batchStatus']);
 
-    // Failed Jobs Management for Admin
-    Route::prefix('admin/failed-jobs')->controller(\App\Http\Controllers\JobManagementController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/retry-all', 'retryAll');
-        Route::delete('/delete-all', 'deleteAll');
-        Route::post('/{id}/retry', 'retry');
-        Route::delete('/{id}', 'delete');
-    });
+
 
 });
 
@@ -134,14 +127,7 @@ Route::middleware(['auth', 'check.role:receptionist'])->group(function () {
     Route::get('/stats', [StatisticsController::class, 'fetchDailyStats']);
     Route::post('/search', [StatisticsController::class, 'SearchForReceptionist']);
 
-    // Failed Jobs Management for Receptionist
-    Route::prefix('receptionist/failed-jobs')->controller(\App\Http\Controllers\JobManagementController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/retry-all', 'retryAll');
-        Route::delete('/delete-all', 'deleteAll');
-        Route::post('/{id}/retry', 'retry');
-        Route::delete('/{id}', 'delete');
-    });
+
 
 });
 Route::middleware(['auth', 'check.role:samplecollector'])->group(function () {
@@ -177,14 +163,7 @@ Route::middleware(['auth', 'check.role:pathologist'])->group(function () {
     Route::delete('/tests/{id}', [TestController::class, 'destroy']);
     Route::post('/tests/{id}/restore', [TestController::class, 'restore']);
 
-    // Failed Jobs Management
-    Route::prefix('failed-jobs')->controller(\App\Http\Controllers\JobManagementController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/retry-all', 'retryAll');
-        Route::delete('/delete-all', 'deleteAll');
-        Route::post('/{id}/retry', 'retry');
-        Route::delete('/{id}', 'delete');
-    });
+
 });
 
 Route::get('/tests/{id}', [TestController::class, 'show']);

@@ -64,13 +64,7 @@
                     class="ph-duotone ph-megaphone text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
                 <span class="ml-3 nav-text whitespace-nowrap">Promotional Emails</span>
             </a>
-            <a href="#"
-                class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
-                data-target="section-failed-jobs" data-title="Failed Jobs">
-                <i
-                    class="ph-duotone ph-warning-octagon text-2xl w-7 text-center text-gray-400 group-hover:text-white transition-colors nav-icon"></i>
-                <span class="ml-3 nav-text whitespace-nowrap">Failed Jobs</span>
-            </a>
+
             <a href="#"
                 class="nav-link flex items-center px-6 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors group cursor-pointer"
                 data-target="section-settings" data-title="Settings">
@@ -748,56 +742,7 @@
                 </div>
             </div>
 
-            <div id="section-failed-jobs" class="content-section hidden animate-fade-in w-full max-w-7xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
-                            <i class="ph-duotone ph-warning-octagon text-2xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-gray-800">Failed Jobs</h2>
-                            <p class="text-sm text-gray-500 font-medium">Manage failed background tasks and retries</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <button id="btn-retry-all-jobs"
-                            class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                            <i class="ph ph-arrows-counter-clockwise font-bold text-lg"></i> Retry All
-                        </button>
-                        <button id="btn-delete-all-jobs"
-                            class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
-                            <i class="ph ph-trash font-bold text-lg"></i> Clear All
-                        </button>
-                    </div>
-                </div>
 
-                <div id="failed-jobs-inline-msg" class="mb-4 hidden p-3 rounded-xl font-bold text-sm"></div>
-
-                <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full">
-                    <div class="overflow-x-auto min-h-[250px]">
-                        <table class="w-full text-left text-sm">
-                            <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
-                                <tr>
-                                    <th scope="col" class="px-6 py-4">Job Name</th>
-                                    <th scope="col" class="px-6 py-4">Queue</th>
-                                    <th scope="col" class="px-6 py-4">Failed At</th>
-                                    <th scope="col" class="px-6 py-4">Error</th>
-                                    <th scope="col" class="px-6 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="failed-jobs-table">
-                                <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium">
-                                        <i class="ph-duotone ph-spinner animate-spin text-4xl mb-2 text-gray-400"></i>
-                                        <p>Loading failed jobs...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
             <x-settings />
 

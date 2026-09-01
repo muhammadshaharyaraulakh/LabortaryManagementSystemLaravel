@@ -1,368 +1,79 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Lab - Premium Diagnostics</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Laboratory Managemnet System</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        sidebarBg: '#1b2033',
-                        mainBg: '#f4f6f9',
-                        inputBg: '#f3f4f6',
-                        brandAccent: '#3b82f6',
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        .delay-100 {
-            animation-delay: 100ms;
+        .neo-shadow {
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
         }
-
-        .delay-200 {
-            animation-delay: 200ms;
+        .neo-shadow-sm {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
         }
-
-        .delay-300 {
-            animation-delay: 300ms;
+        .neo-hover:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
         }
-
-        .opacity-0-initial {
-            opacity: 0;
+        .neo-active:active {
+            transform: translate(8px, 8px);
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1) !important;
         }
     </style>
 </head>
+<body class="font-sans antialiased bg-nbg text-black min-h-screen flex flex-col p-4 md:p-8">
 
-<body class="font-sans antialiased bg-mainBg text-gray-800 overflow-x-hidden">
-
-    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="shrink-0 flex items-center gap-2 cursor-pointer">
-                    <div class="w-10 h-10 bg-sidebarBg rounded-lg flex items-center justify-center text-white">
-                        <i class="ph-duotone ph-microscope text-2xl"></i>
-                    </div>
-                    <span class="text-2xl font-extrabold text-sidebarBg tracking-tight">My Lab</span>
-                </div>
-
-                <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#home" class="text-gray-600 hover:text-sidebarBg font-semibold transition-colors">Home</a>
-                    <a href="#about"
-                        class="text-gray-600 hover:text-sidebarBg font-semibold transition-colors">About</a>
-                    <a href="#services"
-                        class="text-gray-600 hover:text-sidebarBg font-semibold transition-colors">Services</a>
-                    <a href="#track-report"
-                        class="text-gray-600 hover:text-sidebarBg font-semibold transition-colors">Track Report</a>
-                </div>
-
-                <div class="md:hidden flex items-center">
-                    <button class="text-gray-600 hover:text-sidebarBg focus:outline-none text-3xl">
-                        <i class="ph ph-list"></i>
-                    </button>
-                </div>
+    <!-- Header -->
+    <header class="w-full max-w-5xl mx-auto flex justify-between items-center bg-white border-4 border-black neo-shadow p-4 mb-12">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-npink border-4 border-black flex items-center justify-center neo-shadow-sm">
+                <i class="ph-bold ph-microscope text-2xl text-black"></i>
             </div>
+            <span class="text-3xl font-black uppercase tracking-tighter">Laboratory Management System</span>
         </div>
-    </nav>
+        <div class="hidden sm:block text-xl font-bold uppercase">
+            Download Reports
+        </div>
+    </header>
 
-    <section id="home"
-        class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat"
-        style="background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2000');">
-
-        <div class="absolute inset-0 bg-sidebarBg/85 backdrop-blur-[2px]"></div>
-
-        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto animate-fade-in-up">
-
-            <div
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 text-blue-200 border border-blue-500/30 font-semibold text-sm mb-6">
-                <i class="ph-fill ph-sparkle"></i> Smart results powered by AI
-            </div>
-
-            <h1 class="text-5xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-6">
-                Your Health,<br>
-                <span class="text-transparent bg-clip-text bg-linear-to-r from-brandAccent to-purple-400">Clearly
-                    Understood.</span>
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-3xl mx-auto flex flex-col items-center justify-center">
+        
+        <div class="w-full bg-white border-4 border-black neo-shadow p-8 md:p-12 text-center mb-12">
+            <h1 class="text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6 bg-npink inline-block px-4 border-4 border-black -rotate-2">
+                Track Report
             </h1>
+            <p class="text-xl font-bold mb-8 uppercase">Enter your Tracking ID below</p>
 
-            <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                Access your lab results instantly, track your health history, and decode complex medical reports using
-                our advanced AI analysis tool.
-            </p>
-
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#track-report"
-                    class="px-8 py-4 bg-brandAccent text-white rounded-xl font-bold text-lg hover:bg-blue-600 transition-all shadow-lg hover:shadow-brandAccent/30 flex items-center justify-center gap-2">
-                    Track Your Report <i class="ph-bold ph-arrow-right"></i>
-                </a>
-                <a href="#services"
-                    class="px-8 py-4 bg-white/10 text-white border border-white/20 hover:bg-white/20 rounded-xl font-bold text-lg transition-all shadow-sm flex items-center justify-center gap-2 backdrop-blur-md">
-                    Explore Services
-                </a>
-            </div>
-
+            <form id="tracking-form" class="flex flex-col md:flex-row gap-4 mb-4">
+                <input type="text" id="tracking-id-input" placeholder="e.g. ORD-20260424-ABCD"
+                    class="flex-1 bg-white border-4 border-black p-4 text-xl font-bold uppercase placeholder-gray-400 focus:outline-none focus:bg-yellow-50 neo-shadow-sm focus:translate-y-1 transition-transform">
+                
+                <button type="submit" id="track-report-btn"
+                    class="bg-nbrand text-white border-4 cursor-pointer border-black px-8 py-4 text-2xl font-black uppercase neo-shadow neo-hover neo-active transition-all flex items-center justify-center gap-2">
+                    <span id="btn-text">Search</span>
+                    <i id="btn-spinner" class="ph-bold ph-spinner animate-spin hidden"></i>
+                </button>
+            </form>
         </div>
-    </section>
 
-    <section id="about" class="py-24 bg-white overflow-hidden flex items-center justify-center">
-        <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center animate-fade-in-up opacity-0-initial">
-
-            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
-                Committed to Accuracy,<br> Driven by Innovation.
-            </h2>
-
-            <p class="text-lg text-gray-500 font-light mb-16 leading-relaxed max-w-3xl mx-auto">
-                At My Lab, we believe that understanding your health shouldn't require a medical degree. We combine
-                state-of-the-art laboratory equipment with proprietary AI technology to give you clarity and peace of
-                mind.
-            </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 text-center">
-                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">ISO Certified</h4>
-                    <p class="text-gray-500 font-light text-sm leading-relaxed">Adhering to strict, internationally
-                        recognized standards for laboratory testing and quality control.</p>
-                </div>
-
-                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Instant Reporting</h4>
-                    <p class="text-gray-500 font-light text-sm leading-relaxed">Access your diagnostic results securely
-                        and instantly the very moment they are verified.</p>
-                </div>
-
-                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">AI-Powered Clarity</h4>
-                    <p class="text-gray-500 font-light text-sm leading-relaxed">Complex medical data and terminology
-                        automatically translated into plain, understandable English.</p>
-                </div>
-            </div>
-
+        <!-- Results Container -->
+        <div id="tracking-results-container" class="w-full max-w-4xl mx-auto hidden flex-col gap-8 mb-12">
+            <!-- Results injected here via JS -->
         </div>
-    </section>
 
-    <section id="services" class="py-24 bg-mainBg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 animate-fade-in-up opacity-0-initial">
-                <h2 class="text-3xl md:text-4xl font-extrabold text-sidebarBg mb-4">Our Services</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto font-medium">We provide comprehensive, state-of-the-art
-                    diagnostic testing with rapid turnaround times.</p>
-            </div>
+    </main>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                <div
-                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial">
-                    <div class="w-14 h-14 bg-red-50 text-red-500 rounded-xl flex items-center justify-center mb-6">
-                        <i class="ph-duotone ph-drop text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-sidebarBg mb-3">Blood Pathology</h3>
-                    <p class="text-gray-500 font-medium leading-relaxed">Complete blood count, lipid profiles, and
-                        comprehensive metabolic panels analyzed with precision.</p>
-                </div>
-
-                <div
-                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-100">
-                    <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mb-6">
-                        <i class="ph-duotone ph-dna text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-sidebarBg mb-3">Genetics & DNA</h3>
-                    <p class="text-gray-500 font-medium leading-relaxed">Advanced genetic screening and molecular
-                        diagnostics to help predict and prevent conditions.</p>
-                </div>
-
-                <div
-                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-200">
-                    <div
-                        class="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center mb-6">
-                        <i class="ph-duotone ph-flask text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-sidebarBg mb-3">Biochemistry</h3>
-                    <p class="text-gray-500 font-medium leading-relaxed">Detailed analysis of bodily fluids to evaluate
-                        organ function and detect underlying diseases.</p>
-                </div>
-
-                <div
-                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial">
-                    <div class="w-14 h-14 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mb-6">
-                        <i class="ph-duotone ph-virus text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-sidebarBg mb-3">Microbiology</h3>
-                    <p class="text-gray-500 font-medium leading-relaxed">Culturing and identifying bacteria, fungi, and
-                        viruses to accurately diagnose infections.</p>
-                </div>
-
-                <div
-                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-100">
-                    <div
-                        class="w-14 h-14 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center mb-6">
-                        <i class="ph-duotone ph-activity text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-sidebarBg mb-3">Hormonal Assays</h3>
-                    <p class="text-gray-500 font-medium leading-relaxed">Precise measurements of thyroid, reproductive,
-                        and metabolic hormones to monitor endocrine health.</p>
-                </div>
-
-                <div
-                    class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in-up opacity-0-initial delay-200">
-                    <div
-                        class="w-14 h-14 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-6">
-                        <i class="ph-duotone ph-shield-plus text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-sidebarBg mb-3">Immunology</h3>
-                    <p class="text-gray-500 font-medium leading-relaxed">Testing immune system function to detect
-                        autoimmune disorders, allergies, and specific antibodies.</p>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="track-report" class="py-24 bg-sidebarBg relative overflow-hidden">
-        <div class="absolute inset-0 opacity-5"
-            style="background-image: radial-gradient(#ffffff 2px, transparent 2px); background-size: 30px 30px;"></div>
-
-        <div class="max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10 animate-fade-in-up opacity-0-initial">
-
-            <div class="text-center mb-10">
-                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-4">View Your Report</h2>
-                <p class="text-gray-400 font-medium text-lg">Enter your tracking ID below to instantly access your
-                    results.</p>
-            </div>
-
-            <div class="bg-white rounded-3xl p-6 md:p-10 shadow-2xl">
-                <form id="tracking-form" class="flex flex-col md:flex-row gap-4 mb-4">
-                    <div class="flex-1">
-                        <input type="text" id="tracking-id-input"
-                            placeholder="Enter Tracking ID (e.g., ORD-20260424-ABCD)"
-                            class="w-full bg-inputBg border border-gray-200 rounded-xl px-6 py-4 text-gray-800 font-bold placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brandAccent transition-all text-lg">
-                    </div>
-
-                    <button type="submit" id="track-report-btn"
-                        class="px-8 py-4 bg-sidebarBg text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg whitespace-nowrap flex items-center justify-center gap-2">
-                        <span id="btn-text">View Report</span>
-                        <i id="btn-spinner" class="ph-bold ph-spinner animate-spin hidden"></i>
-                    </button>
-                </form>
-
-                <div id="tracking-results-container" class="mt-8 hidden">
-                    <!-- Results will be injected here -->
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-gray-100 mt-4">
-                    <button type="button"
-                        class="text-brandAccent font-bold text-sm hover:text-blue-700 flex items-center gap-1 transition-colors">
-                        <i class="ph-bold ph-sparkle"></i> Analyze with AI
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-white pt-16 pb-8 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-brandAccent">
-                            <i class="ph-duotone ph-microscope text-2xl"></i>
-                        </div>
-                        <span class="text-2xl font-extrabold text-sidebarBg tracking-tight">My Lab</span>
-                    </div>
-                    <p class="text-gray-600 font-medium max-w-sm leading-relaxed">
-                        Empowering patients with AI-driven diagnostics, seamless access to medical records, and clear,
-                        understandable health data.
-                    </p>
-                </div>
-
-                <div>
-                    <h4 class="text-sidebarBg font-bold mb-6 tracking-wide uppercase text-sm">Quick Links</h4>
-                    <ul class="space-y-4">
-                        <li><a href="#home" class="text-gray-600 hover:text-brandAccent transition-colors">Home</a></li>
-                        <li><a href="#about" class="text-gray-600 hover:text-brandAccent transition-colors">About Us</a>
-                        </li>
-                        <li><a href="#services"
-                                class="text-gray-600 hover:text-brandAccent transition-colors">Services</a></li>
-                        <li><a href="#track-report" class="text-gray-600 hover:text-brandAccent transition-colors">Track
-                                Report</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-sidebarBg font-bold mb-6 tracking-wide uppercase text-sm">Contact Support</h4>
-                    <ul class="space-y-4">
-                        <li
-                            class="flex items-center gap-3 text-gray-600 hover:text-brandAccent transition-colors cursor-pointer">
-                            <i class="ph-fill ph-envelope-simple text-xl text-brandAccent"></i> support@mylab.com
-                        </li>
-                        <li
-                            class="flex items-center gap-3 text-gray-600 hover:text-brandAccent transition-colors cursor-pointer">
-                            <i class="ph-fill ph-phone text-xl text-brandAccent"></i> +1 (800) 123-4567
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                <p class="text-gray-500 text-sm">© 2026 My Lab Diagnostics. All rights reserved.</p>
-                <div class="flex gap-4 text-gray-400">
-                    <a href="#" class="hover:text-brandAccent transition-transform hover:scale-110"><i
-                            class="ph-fill ph-twitter-logo text-2xl"></i></a>
-                    <a href="#" class="hover:text-brandAccent transition-transform hover:scale-110"><i
-                            class="ph-fill ph-linkedin-logo text-2xl"></i></a>
-                    <a href="#" class="hover:text-brandAccent transition-transform hover:scale-110"><i
-                            class="ph-fill ph-facebook-logo text-2xl"></i></a>
-                </div>
-            </div>
-        </div>
+    <!-- Footer -->
+    <footer class="w-full max-w-5xl mx-auto bg-white border-4 border-black p-6 mt-auto neo-shadow text-center font-bold uppercase text-lg">
+        © 2026 LABORATORY MANAGEMENT SYSTEM.
     </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.15
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.remove('opacity-0-initial');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const animatedElements = document.querySelectorAll('.animate-fade-in-up');
-            animatedElements.forEach(el => observer.observe(el));
-
             const trackingForm = document.getElementById('tracking-form');
             const trackingInput = document.getElementById('tracking-id-input');
             const resultsContainer = document.getElementById('tracking-results-container');
@@ -375,13 +86,19 @@
                 const trackingId = trackingInput.value.trim();
 
                 if (!trackingId) {
-                    alert('Please enter a Tracking ID');
+                    resultsContainer.innerHTML = `
+                        <div class="bg-nbg border-4 border-black neo-shadow p-8 text-center">
+                            <i class="ph-bold ph-warning-circle text-6xl mb-4 block"></i>
+                            <h2 class="text-3xl font-black uppercase">Input Required</h2>
+                            <p class="text-xl font-bold mt-2 uppercase">Please enter a Tracking ID!</p>
+                        </div>
+                    `;
+                    resultsContainer.classList.remove('hidden');
                     return;
                 }
 
-                // Show loading state
                 trackBtn.disabled = true;
-                btnText.textContent = 'Searching...';
+                btnText.textContent = 'SEARCHING...';
                 btnSpinner.classList.remove('hidden');
                 resultsContainer.classList.add('hidden');
 
@@ -390,44 +107,43 @@
                     const result = await response.json();
 
                     if (response.ok && result.status === 200) {
-                        const order = result.orders[0];
-                        renderResults(order);
+                        renderResults(result.orders[0]);
                     } else {
                         resultsContainer.innerHTML = `
-                            <div class="p-6 bg-red-50 border border-red-100 rounded-2xl text-center text-red-600 font-bold">
-                                <i class="ph-bold ph-warning-circle text-3xl mb-2 block"></i>
-                                ${result.message || 'No record found with this Tracking ID.'}
+                            <div class="bg-nbrand text-white border-4 border-black neo-shadow p-8 text-center">
+                                <i class="ph-bold ph-warning-circle text-6xl mb-4 block"></i>
+                                <h2 class="text-3xl font-black uppercase">Not Found</h2>
+                                <p class="text-xl font-bold mt-2 uppercase">${result.message || 'NO RECORD FOUND'}</p>
                             </div>
                         `;
                         resultsContainer.classList.remove('hidden');
                     }
                 } catch (error) {
-                    console.error('Error fetching report:', error);
-                    alert('An error occurred while fetching your report. Please try again.');
+                    console.error('Error:', error);
+                    resultsContainer.innerHTML = `
+                        <div class="bg-npink border-4 border-black neo-shadow p-8 text-center">
+                            <i class="ph-bold ph-x-circle text-6xl mb-4 block"></i>
+                            <h2 class="text-3xl font-black uppercase">Network Error</h2>
+                            <p class="text-xl font-bold mt-2 uppercase">Failed to fetch report. Please try again.</p>
+                        </div>
+                    `;
+                    resultsContainer.classList.remove('hidden');
                 } finally {
                     trackBtn.disabled = false;
-                    btnText.textContent = 'View Report';
+                    btnText.textContent = 'Search';
                     btnSpinner.classList.add('hidden');
                 }
             });
 
             function renderResults(order) {
                 let html = `
-                    <div class="p-4 md:p-6 bg-gray-50 rounded-3xl border border-gray-100 mb-6 shadow-sm">
-                        <div class="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
-                            <div>
-                                <h3 class="text-2xl font-black text-sidebarBg mb-1">${order.name}</h3>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tracking ID</span>
-                                    <span class="px-2 py-0.5 bg-sidebarBg text-white text-[10px] font-black rounded uppercase">${order.trackingId}</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="px-4 py-1.5 bg-green-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm shadow-green-200">Record Verified</span>
-                                <span class="text-[10px] text-gray-400 font-bold italic">Last updated: ${new Date().toLocaleDateString()}</span>
-                            </div>
+                    <div class="bg-white border-4 border-black neo-shadow p-6 md:p-8">
+                        <div class="border-b-4 border-black pb-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
+                            <h3 class="text-4xl font-black uppercase bg-npink inline-block px-2 border-4 border-black break-all sm:break-normal">${order.name}</h3>
+                            <span class="inline-block bg-nblue text-white px-3 py-1 font-black text-lg uppercase border-4 border-black">ID: ${order.trackingId}</span>
                         </div>
-                        <div class="space-y-6">
+                        
+                        <div class="flex flex-col gap-8">
                 `;
 
                 order.tests.forEach(test => {
@@ -436,140 +152,38 @@
                     const results = test.results || [];
 
                     html += `
-                        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-                            <!-- Test Header -->
-                            <div class="p-4 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-xl bg-sidebarBg text-white flex items-center justify-center shadow-lg shadow-sidebarBg/20">
-                                        <i class="ph-bold ph-test-tube text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-black text-sidebarBg text-lg">${test.name}</h4>
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[10px] font-black uppercase tracking-tighter ${isCompleted ? 'text-green-600' : 'text-orange-500'}">
-                                                ${status}
-                                            </span>
-                                            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                            <span class="text-[10px] text-gray-400 font-bold uppercase">${test.sampleType || 'Standard Sample'}</span>
-                                        </div>
+                        <div class="border-4 border-black bg-gray-100 neo-shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center p-4 gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-nbg border-4 border-black flex items-center justify-center">
+                                    <i class="ph-bold ph-test-tube text-2xl"></i>
+                                </div>
+                                <div class="flex flex-col items-start gap-1">
+                                    <h4 class="font-black text-2xl uppercase leading-none">${test.name}</h4>
+                                    <div class="font-bold uppercase text-sm px-2 py-0.5 inline-block border-2 border-black ${isCompleted ? 'bg-[#00ff00]' : 'bg-[#ff9900]'}">
+                                        ${status} - ${test.sampleType || 'STANDARD'}
                                     </div>
                                 </div>
-                                
-                                ${isCompleted ? `
-                                    <a href="/orders/${order.trackingId}/test/${test.id}/report" 
-                                       class="px-6 py-2.5 bg-brandAccent text-white rounded-xl text-xs font-black hover:bg-blue-600 transition-all shadow-lg shadow-brandAccent/20 flex items-center justify-center gap-2 active:scale-95">
-                                        <i class="ph-bold ph-download-simple"></i> Download PDF
-                                    </a>
-                                ` : `
-                                    <div class="flex items-center gap-2 text-xs text-orange-500 font-black uppercase tracking-tighter bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-100">
-                                        <i class="ph-bold ph-hourglass-high animate-spin"></i> Processing
-                                    </div>
-                                `}
                             </div>
-
-                            <!-- Results Section -->
-                            ${isCompleted && results.length > 0 ? `
-                                <div class="p-4">
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full text-left border-separate border-spacing-y-2">
-                                            <thead class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                <tr>
-                                                    <th class="px-2 py-1">Parameter</th>
-                                                    <th class="px-2 py-1">Result</th>
-                                                    <th class="px-2 py-1">Unit / Range</th>
-                                                    <th class="px-2 py-1 text-center">Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="text-sm">
-                                                ${results.map(res => {
-                        let pType = (res.parameter?.inputType || res.parameter?.type || '').toLowerCase().trim();
-                        const val = res.resultValue || '';
-
-                        // Auto-detect image type if it looks like a JSON array
-                        if (!pType && val.startsWith('[') && val.endsWith(']')) {
-                            pType = 'image';
-                        }
-                        if (!pType) pType = 'quantitative';
-
-                        const flag = res.statusFlag || 'Normal';
-                        const flagClass = flag.toLowerCase() === 'high' ? 'bg-red-50 text-red-600 border-red-100' :
-                            (flag.toLowerCase() === 'low' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-600 border-green-100');
-
-                        let resultValueHtml = `<span class="font-black text-sidebarBg">${val || 'N/A'}</span>`;
-
-                        if (pType === 'image') {
-                            let paths = [];
-                            try {
-                                paths = typeof val === 'string' && val.startsWith('[') ? JSON.parse(val) : (Array.isArray(val) ? val : []);
-                            } catch (e) { }
-
-                            resultValueHtml = `
-                                                            <div class="flex flex-wrap gap-1">
-                                                                ${paths.map(p => `
-                                                                    <a href="/${p.replace(/^\//, '')}" target="_blank" class="w-8 h-8 bg-blue-50 text-blue-500 rounded border border-blue-100 flex items-center justify-center hover:bg-blue-100 transition-colors" title="View Image">
-                                                                        <i class="ph-bold ph-image text-xs"></i>
-                                                                    </a>
-                                                                `).join('')}
-                                                                ${paths.length === 0 ? '<span class="text-xs text-gray-400 italic">No images</span>' : ''}
-                                                            </div>
-                                                        `;
-                        }
-
-                        return `
-                                                        <tr class="bg-gray-50/30 rounded-xl group hover:bg-gray-50 transition-colors">
-                                                            <td class="px-2 py-3 border-l-4 ${flag.toLowerCase() === 'high' ? 'border-red-400' : (flag.toLowerCase() === 'low' ? 'border-orange-400' : 'border-green-400')} rounded-l-lg">
-                                                                <span class="font-bold text-gray-700">${res.parameter?.parameterName || 'Unknown'}</span>
-                                                            </td>
-                                                            <td class="px-2 py-3">${resultValueHtml}</td>
-                                                            <td class="px-2 py-3">
-                                                                <div class="flex flex-col">
-                                                                    <span class="text-[10px] font-black text-gray-400 uppercase">${res.parameter?.unit || '-'}</span>
-                                                                    <span class="text-[9px] text-gray-400 italic">${res.parameter?.normalRange || 'N/A'}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="px-2 py-3 text-center">
-                                                                <span class="px-2 py-0.5 ${flagClass} border rounded text-[9px] font-black uppercase tracking-tighter">
-                                                                    ${flag}
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    `;
-                    }).join('')}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    ${results[0]?.remarks ? `
-                                        <div class="mt-4 p-4 bg-orange-50/50 border border-orange-100 rounded-xl">
-                                            <div class="flex items-center gap-2 mb-1 text-orange-800">
-                                                <i class="ph-fill ph-chat-centered-dots"></i>
-                                                <span class="text-[10px] font-black uppercase tracking-widest">Medical Remarks</span>
-                                            </div>
-                                            <p class="text-sm text-gray-700 leading-relaxed">${results[0].remarks}</p>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            ` : (isCompleted ? `
-                                <div class="p-8 text-center bg-gray-50/50">
-                                    <i class="ph-duotone ph-file-search text-4xl text-gray-300 mb-2"></i>
-                                    <p class="text-gray-400 text-sm font-medium">Detailed results are currently only available in the PDF report.</p>
-                                </div>
-                            ` : '')}
+                            ${isCompleted ? `
+                                <a href="/orders/${order.trackingId}/test/${test.id}/report" 
+                                   class="bg-nbrand text-white border-4 border-black px-6 py-2 font-black uppercase hover:bg-black transition-colors neo-shadow-sm neo-active flex items-center gap-2 text-lg">
+                                    <i class="ph-bold ph-download-simple"></i> PDF
+                                </a>
+                            ` : ''}
                         </div>
                     `;
                 });
 
                 html += `
+                        </div>
                     </div>
                 `;
 
                 resultsContainer.innerHTML = html;
                 resultsContainer.classList.remove('hidden');
-
                 resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         });
     </script>
 </body>
-
 </html>
