@@ -29,9 +29,6 @@
     <!-- Header -->
     <header class="w-full max-w-5xl mx-auto flex justify-between items-center bg-white border-4 border-black neo-shadow p-4 mb-12">
         <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-npink border-4 border-black flex items-center justify-center neo-shadow-sm">
-                <i class="ph-bold ph-microscope text-2xl text-black"></i>
-            </div>
             <span class="text-3xl font-black uppercase tracking-tighter">Laboratory Management System</span>
         </div>
         <div class="hidden sm:block text-xl font-bold uppercase">
