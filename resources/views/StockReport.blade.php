@@ -2,170 +2,369 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Laboratory Inventory Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-
+    <title>Laboratory Inventory Stock Report</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 12px;
-            color: #1f2937;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #1e293b;
+            background-color: #ffffff;
             margin: 0;
-            padding: 0;
+            padding: 28px;
+            line-height: 1.5;
         }
 
-        .header {
-            border-bottom: 2px solid #f97316;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+        .text-gray { color: #64748b; }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 16px;
+            margin-bottom: 22px;
         }
 
-        .header-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0;
+        .brand-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 3px 0;
+            letter-spacing: -0.3px;
         }
 
-        .header-subtitle {
-            font-size: 12px;
+        .brand-sub {
+            font-size: 11px;
             font-weight: 500;
-            color: #6b7280;
-            margin-top: 4px;
+            color: #64748b;
+            margin: 0;
         }
 
-        table {
+        .tracking-card {
+            background-color: #ffffff;
+            border: 2px dashed #0f172a;
+            border-radius: 6px;
+            padding: 8px 16px;
+            text-align: right;
+            display: inline-block;
+        }
+
+        .tracking-label {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            margin-bottom: 2px;
+        }
+
+        .tracking-val {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .patient-box {
+            background-color: #ffffff;
+            border: 2px dashed #0f172a;
+            border-radius: 6px;
+            margin-bottom: 22px;
+            padding: 12px 14px;
+        }
+
+        .patient-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        thead {
-            background-color: #f9fafb;
+        .patient-table td {
+            padding: 6px 10px;
+            vertical-align: top;
         }
 
-        th {
-            text-align: left;
-            padding: 12px;
-            font-size: 10px;
-            font-weight: 700;
-            color: #6b7280;
+        .field-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: #64748b;
             text-transform: uppercase;
-            border-bottom: 1px solid #e5e7eb;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
         }
 
-        td {
-            padding: 12px;
+        .field-value {
             font-size: 12px;
-            color: #374151;
-            border-bottom: 1px solid #f3f4f6;
+            font-weight: 600;
+            color: #0f172a;
         }
 
-        .font-bold {
-            font-weight: 700;
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 22px;
+            border: 1.5px solid #000000;
+            background-color: #ffffff;
         }
 
-        .text-sm {
+        .items-table th {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 9px 12px;
             font-size: 10px;
-            color: #9ca3af;
-        }
-
-        .text-gray-400 {
-            color: #9ca3af;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 12px;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1.5px solid #000000;
+        }
+
+        .items-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #000000;
             font-size: 11px;
+            vertical-align: middle;
+            background-color: #ffffff;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 12px;
+            color: #000000;
+        }
+
+        .item-unit {
+            font-size: 9px;
+            font-weight: 500;
+            color: #64748b;
+            margin-top: 1px;
+        }
+
+        .dept-tag {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #000000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
             display: inline-block;
         }
 
         .badge-optimal {
             background-color: #f0fdf4;
-            color: #16a34a;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .badge-low {
             background-color: #fef2f2;
-            color: #dc2626;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .badge-trashed {
-            background-color: #f3f4f6;
-            color: #6b7280;
+            background-color: #f8fafc;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
         }
 
+        .summary-wrapper {
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .notice-card {
+            width: 100%;
+            background-color: #fefce8;
+            border: 1px solid #fef08a;
+            border-radius: 6px;
+            padding: 12px 14px;
+        }
+
+        .notice-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #854d0e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .notice-list {
+            margin: 0;
+            padding: 0 0 0 14px;
+            font-size: 9.5px;
+            color: #713f12;
+            line-height: 1.5;
+        }
+
+        .notice-list li {
+            margin-bottom: 4px;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
 
         .footer {
-            position: fixed;
-            bottom: -20px;
-            left: 0;
-            right: 0;
-            height: 30px;
+            margin-top: 24px;
             text-align: center;
-            font-size: 10px;
-            color: #9ca3af;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 10px;
-        }
-
-        .page-number:after {
-            content: counter(page);
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 12px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1 class="header-title">Laboratory Management System</h1>
-        <p class="header-subtitle">Complete Inventory Stock Report &bull; Generated on
-            {{ \Carbon\Carbon::now()->format('M d, Y \a\t h:i A') }}
-        </p>
+    <table class="header-table">
+        <tr>
+            <td class="text-left" style="vertical-align: middle;">
+                <h1 class="brand-title">Laboratory Management System</h1>
+                <p class="brand-sub">Comprehensive Inventory Stock & Supplies Report</p>
+            </td>
+            <td class="text-right" style="vertical-align: middle;">
+                <div class="tracking-card">
+                    <div class="tracking-label">Report Date</div>
+                    <div class="tracking-val">{{ \Carbon\Carbon::now()->format('M d, Y') }}</div>
+                    <div style="font-size: 9px; font-weight: 500; color: #64748b; margin-top: 2px;">{{ \Carbon\Carbon::now()->format('h:i A') }}</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">Stock Summary & Overview</div>
+    <div class="patient-box">
+        <table class="patient-table">
+            <tr>
+                <td width="25%">
+                    <div class="field-label">Total Inventory Items</div>
+                    <div class="field-value">{{ $stock->count() }} Registered</div>
+                </td>
+                <td width="25%">
+                    <div class="field-label">Optimal Stock</div>
+                    <div class="field-value" style="color: #16a34a;">
+                        {{ $stock->whereNull('deleted_at')->filter(fn($i) => $i->current_stock > $i->alert)->count() }} Items
+                    </div>
+                </td>
+                <td width="25%">
+                    <div class="field-label">Low Stock Alerts</div>
+                    <div class="field-value" style="color: #dc2626;">
+                        {{ $stock->whereNull('deleted_at')->filter(fn($i) => $i->current_stock <= $i->alert)->count() }} Items
+                    </div>
+                </td>
+                <td width="25%">
+                    <div class="field-label">Trashed / Archived</div>
+                    <div class="field-value" style="color: #64748b;">
+                        {{ $stock->whereNotNull('deleted_at')->count() }} Items
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <table>
+    <div class="section-title">Stock Inventory Items</div>
+    <table class="items-table">
         <thead>
             <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 45%;">Item Name & Unit</th>
-                <th style="width: 25%;">Current Stock</th>
-                <th style="width: 25%; text-align: right;">Alert Limit</th>
+                <th class="text-left" style="width: 6%;">#</th>
+                <th class="text-left" style="width: 44%;">Item Description</th>
+                <th class="text-center" style="width: 18%;">Current Stock</th>
+                <th class="text-center" style="width: 16%;">Alert Limit</th>
+                <th class="text-right" style="width: 16%;">Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach($stock as $index => $item)
                 @php
-                    $isLow = $item->current_stock <= $item->alert;
-                    $isTrashed = $item->trashed(); // Check if the item is deleted
+                    $isTrashed = $item->trashed();
+                    $isLow = !$isTrashed && ($item->current_stock <= $item->alert);
                 @endphp
-                <tr style="{{ $isTrashed ? 'background-color: #f9fafb;' : '' }}">
-                    <td class="{{ $isTrashed ? 'text-gray-400' : '' }}">{{ $index + 1 }}</td>
+                <tr>
+                    <td class="text-left text-gray font-medium">{{ $index + 1 }}</td>
                     <td>
-                        <span class="font-bold {{ $isTrashed ? 'text-gray-400' : '' }}">{{ $item->name }}</span>
-                        <span class="text-sm">({{ $item->unit }})</span>
-
-                        @if($isTrashed)
-                            <span style="color: #ef4444; font-size: 10px; font-weight: bold; margin-left: 5px;">[TRASHED]</span>
-                        @endif
+                        <div class="item-name {{ $isTrashed ? 'text-gray' : '' }}">{{ $item->name }}</div>
+                        <div class="item-unit">Unit: {{ $item->unit ?: 'N/A' }}</div>
                     </td>
-                    <td>
-                        <span class="badge {{ $isTrashed ? 'badge-trashed' : ($isLow ? 'badge-low' : 'badge-optimal') }}">
-                            {{ $item->current_stock }}
+                    <td class="text-center">
+                        <span class="{{ $isTrashed ? 'badge-trashed' : ($isLow ? 'badge-low' : 'badge-optimal') }}">
+                            {{ number_format($item->current_stock) }} {{ $item->unit }}
                         </span>
-                        @if($isLow && !$isTrashed)
-                            <span style="color: #dc2626; font-size: 10px; margin-left: 5px;">(Low!)</span>
-                        @endif
                     </td>
-                    <td style="text-align: right; color: #6b7280;" class="{{ $isTrashed ? 'text-gray-400' : '' }}">
-                        {{ $item->alert }}
+                    <td class="text-center">
+                        <span class="dept-tag">
+                            {{ number_format($item->alert) }} {{ $item->unit }}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        @if($isTrashed)
+                            <span class="badge-trashed">[TRASHED]</span>
+                        @elseif($isLow)
+                            <span class="badge-low">LOW STOCK</span>
+                        @else
+                            <span class="badge-optimal">OPTIMAL</span>
+                        @endif
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
+    <div class="summary-wrapper clearfix">
+        <div class="notice-card">
+            <div class="notice-title">Notice & Inventory Policy</div>
+            <ul class="notice-list">
+                <li>Items marked with <strong>LOW STOCK</strong> have dropped below their minimum safety threshold and require immediate purchase requisition.</li>
+                <li>Items marked as <strong>[TRASHED]</strong> have been archived from the active catalog and are preserved for consumption audit trails.</li>
+                <li>This report is an official system-generated inventory document for internal audit and supply chain management.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        © {{ date('Y') }} Laboratory Management System (Computer-Generated Official Inventory Stock Report)
+    </div>
 
 </body>
 </html>

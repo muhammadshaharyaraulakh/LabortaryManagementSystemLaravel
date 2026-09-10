@@ -1,9 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
     let directoryTests = [];
     let testsLoaded = false;
+    let currentTestPage = 1;
+    let lastTestPage = 1;
+    let currentTestSearch = "";
+
     const testsListView = document.getElementById("tests-list-view");
     const testDirectoryTableBody = document.getElementById(
         "testDirectoryTableBody"
+    );
+    const testsPaginationContainer = document.getElementById(
+        "tests-pagination-container"
     );
     const searchTestsDir = document.getElementById("searchTestsDir");
     const testDetailsView = document.getElementById("test-details-view");
@@ -24,12 +31,95 @@ document.addEventListener("DOMContentLoaded", function () {
         btnBackToTests.addEventListener("click", showListView);
     }
 
-    async function fetchDirectoryTests() {
+    function getPaginationRange(current, last) {
+        if (last <= 7) {
+            return Array.from({ length: last }, (_, i) => i + 1);
+        }
+        const delta = 1;
+        const range = [];
+        for (
+            let i = Math.max(2, current - delta);
+            i <= Math.min(last - 1, current + delta);
+            i++
+        ) {
+            range.push(i);
+        }
+        if (current - delta > 2) range.unshift("...");
+        if (current + delta < last - 1) range.push("...");
+        range.unshift(1);
+        range.push(last);
+        return range;
+    }
+
+    function renderTestPagination(pagination) {
+        if (!testsPaginationContainer) return;
+        if (!pagination || pagination.total === 0) {
+            testsPaginationContainer.innerHTML = "";
+            return;
+        }
+
+        const { current_page, last_page, total, from, to } = pagination;
+
+        let pagesHtml = "";
+        const pages = getPaginationRange(current_page, last_page);
+        pages.forEach((p) => {
+            if (p === "...") {
+                pagesHtml += `<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs font-bold">...</span>`;
+            } else if (p === current_page) {
+                pagesHtml += `<button class="w-8 h-8 rounded-lg bg-purple-600 text-white text-xs sm:text-sm font-bold shadow-sm cursor-default" data-test-page="${p}">${p}</button>`;
+            } else {
+                pagesHtml += `<button class="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer" data-test-page="${p}">${p}</button>`;
+            }
+        });
+
+        testsPaginationContainer.innerHTML = `
+            <div>
+                <p class="text-xs sm:text-sm text-gray-500 font-medium">
+                    Showing <span class="font-bold text-gray-800">${from}</span> to <span class="font-bold text-gray-800">${to}</span> of <span class="font-bold text-gray-800">${total}</span> tests
+                </p>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+                <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs sm:text-sm font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center gap-1"
+                    ${current_page <= 1 ? "disabled" : ""} data-test-page="${current_page - 1}">
+                    <i class="ph-bold ph-caret-left"></i> Prev
+                </button>
+                ${pagesHtml}
+                <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs sm:text-sm font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center gap-1"
+                    ${current_page >= last_page ? "disabled" : ""} data-test-page="${current_page + 1}">
+                    Next <i class="ph-bold ph-caret-right"></i>
+                </button>
+            </div>
+        `;
+    }
+
+    testsPaginationContainer?.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-test-page]");
+        if (btn && !btn.disabled) {
+            const page = parseInt(btn.getAttribute("data-test-page"));
+            if (
+                !isNaN(page) &&
+                page >= 1 &&
+                page <= lastTestPage &&
+                page !== currentTestPage
+            ) {
+                fetchDirectoryTests(page, currentTestSearch);
+            }
+        }
+    });
+
+    async function fetchDirectoryTests(page = 1, search = "") {
         if (!testDirectoryTableBody) return;
+        currentTestPage = page;
+        currentTestSearch = search;
+
         testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center"><i class="ph-bold ph-spinner animate-spin text-2xl text-purple-600"></i><p class="text-sm text-gray-500 mt-2">Loading tests...</p></td></tr>`;
 
         try {
-            const response = await fetch("/tests", {
+            const params = new URLSearchParams();
+            params.append("page", page);
+            if (search) params.append("search", search);
+
+            const response = await fetch(`/tests?${params.toString()}`, {
                 headers:
                     typeof fetchHeaders !== "undefined"
                         ? fetchHeaders
@@ -38,15 +128,27 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await response.json();
 
             if (result.status === true) {
-                directoryTests = result.data;
+                directoryTests = result.data || [];
                 renderDirectoryTests(directoryTests);
+                if (result.pagination) {
+                    lastTestPage = result.pagination.last_page;
+                    renderTestPagination(result.pagination);
+                } else if (testsPaginationContainer) {
+                    testsPaginationContainer.innerHTML = "";
+                }
             } else {
                 testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">${
                     result.message || "No tests found."
                 }</td></tr>`;
+                if (testsPaginationContainer) {
+                    testsPaginationContainer.innerHTML = "";
+                }
             }
         } catch (error) {
             testDirectoryTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Failed to load tests.</td></tr>`;
+            if (testsPaginationContainer) {
+                testsPaginationContainer.innerHTML = "";
+            }
         }
     }
 
@@ -90,34 +192,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (searchTestsDir) {
+        let searchTimeout = null;
         searchTestsDir.addEventListener("input", (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const filtered = directoryTests.filter((test) => {
-                const code = (
-                    test.testCode ||
-                    test.test_code ||
-                    test.code ||
-                    ""
-                ).toLowerCase();
-                const name = (
-                    test.testName ||
-                    test.test_name ||
-                    test.name ||
-                    ""
-                ).toLowerCase();
-                const department = (
-                    test.department?.name ||
-                    test.department ||
-                    ""
-                ).toLowerCase();
-
-                return (
-                    name.includes(query) ||
-                    code.includes(query) ||
-                    department.includes(query)
-                );
-            });
-            renderDirectoryTests(filtered);
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            searchTimeout = setTimeout(() => {
+                fetchDirectoryTests(1, query);
+            }, 300);
         });
     }
 

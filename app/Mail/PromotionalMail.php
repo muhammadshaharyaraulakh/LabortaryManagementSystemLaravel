@@ -42,8 +42,9 @@ class PromotionalMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.promotional',
+            view: 'emails.promotional',
             with: [
+                'subjectLine' => $this->subjectLine,
                 'content' => $this->content,
             ],
         );

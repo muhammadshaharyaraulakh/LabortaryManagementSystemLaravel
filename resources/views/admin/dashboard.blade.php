@@ -113,10 +113,13 @@
                             </p>
                         </div>
                         <div class="py-2">
-                            <a href="#" data-target="section-dashboard" data-title="Dashboard"
-                                class="nav-link px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
-                                <i class="ph ph-user text-lg text-gray-400"></i>
-                                Profile
+                            <a href="/telescope" target="_blank"
+                                class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center justify-between cursor-pointer group">
+                                <div class="flex items-center gap-3">
+                                    <i class="ph ph-activity text-lg text-gray-400 group-hover:text-black"></i>
+                                    <span>Telescope</span>
+                                </div>
+                                <i class="ph ph-arrow-square-out text-xs text-gray-400 group-hover:text-black"></i>
                             </a>
                             <a href="#" data-target="section-settings" data-title="Settings"
                                 class="nav-link px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors flex items-center gap-3 cursor-pointer">
@@ -132,58 +135,59 @@
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
             <div id="section-dashboard" class="content-section block animate-fade-in w-full max-w-7xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full max-w-7xl mx-auto">
-                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-8 w-full max-w-7xl mx-auto">
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
                         <div
-                            class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-shopping-cart text-2xl"></i>
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="ph-duotone ph-shopping-cart text-xl sm:text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-orders-today">0</h3>
-                        <p class="text-gray-500 font-medium">Monthly Orders</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="stat-orders-today">0</h3>
+                        <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Monthly Orders</p>
                     </div>
 
-                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
                         <div
-                            class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-check-circle text-2xl"></i>
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="ph-duotone ph-check-circle text-xl sm:text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-completed-today">0</h3>
-                        <p class="text-gray-500 font-medium">Completed Tests</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="stat-completed-today">0</h3>
+                        <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Completed Tests</p>
                     </div>
 
-                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
                         <div
-                            class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-clock text-2xl"></i>
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="ph-duotone ph-clock text-xl sm:text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-pending-today">0</h3>
-                        <p class="text-gray-500 font-medium">Pending Tests</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="stat-pending-today">0</h3>
+                        <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Pending Tests</p>
                     </div>
 
-                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
                         <div
-                            class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-money text-2xl"></i>
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="ph-duotone ph-money text-xl sm:text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-money-today">Rs. 0</h3>
-                        <p class="text-gray-500 font-medium">Monthly Revenue</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="stat-money-today">Rs. 0</h3>
+                        <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Monthly Revenue</p>
                     </div>
 
-                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
                         <div
-                            class="w-12 h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-receipt text-2xl"></i>
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="ph-duotone ph-receipt text-xl sm:text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-tax-today">Rs. 0</h3>
-                        <p class="text-gray-500 font-medium">Total Tax</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="stat-tax-today">Rs. 0</h3>
+                        <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Total Tax</p>
                     </div>
 
-                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
-                        <div class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
-                            <i class="ph-duotone ph-trash text-2xl"></i>
+                    <div class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
+                        <div
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="ph-duotone ph-trash text-xl sm:text-2xl"></i>
                         </div>
-                        <h3 class="text-3xl font-extrabold text-black mb-1" id="stat-deleted-today">0</h3>
-                        <p class="text-gray-500 font-medium">Deleted Orders</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="stat-deleted-today">0</h3>
+                        <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Deleted Orders</p>
                     </div>
                 </div>
 
@@ -242,65 +246,65 @@
                         </div>
 
                         <div id="reportDataState" class="hidden animate-fade-in">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                                 <div
-                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 border border-gray-50">
                                     <div
-                                        class="w-12 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-4">
-                                        <i class="ph-duotone ph-shopping-cart text-2xl"></i>
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-3 sm:mb-4">
+                                        <i class="ph-duotone ph-shopping-cart text-xl sm:text-2xl"></i>
                                     </div>
-                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-orders">0</h3>
-                                    <p class="text-gray-500 font-medium">Orders</p>
+                                    <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="res-orders">0</h3>
+                                    <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Orders</p>
                                 </div>
 
                                 <div
-                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 border border-gray-50">
                                     <div
-                                        class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4">
-                                        <i class="ph-duotone ph-check-circle text-2xl"></i>
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-3 sm:mb-4">
+                                        <i class="ph-duotone ph-check-circle text-xl sm:text-2xl"></i>
                                     </div>
-                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-completed">0</h3>
-                                    <p class="text-gray-500 font-medium">Completed Test</p>
+                                    <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="res-completed">0</h3>
+                                    <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Completed Test</p>
                                 </div>
 
                                 <div
-                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 border border-gray-50">
                                     <div
-                                        class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-                                        <i class="ph-duotone ph-clock text-2xl"></i>
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-3 sm:mb-4">
+                                        <i class="ph-duotone ph-clock text-xl sm:text-2xl"></i>
                                     </div>
-                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-pending">0</h3>
-                                    <p class="text-gray-500 font-medium">Pending Test</p>
+                                    <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="res-pending">0</h3>
+                                    <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Pending Test</p>
                                 </div>
 
                                 <div
-                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 border border-gray-50">
                                     <div
-                                        class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4">
-                                        <i class="ph-duotone ph-money text-2xl"></i>
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mb-3 sm:mb-4">
+                                        <i class="ph-duotone ph-money text-xl sm:text-2xl"></i>
                                     </div>
-                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-money">Rs. 0</h3>
-                                    <p class="text-gray-500 font-medium">Revenue Generated</p>
+                                    <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="res-money">Rs. 0</h3>
+                                    <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Revenue Generated</p>
                                 </div>
 
                                 <div
-                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 border border-gray-50">
                                     <div
-                                        class="w-12 h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-4">
-                                        <i class="ph-duotone ph-receipt text-2xl"></i>
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-3 sm:mb-4">
+                                        <i class="ph-duotone ph-receipt text-xl sm:text-2xl"></i>
                                     </div>
-                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-tax">Rs. 0</h3>
-                                    <p class="text-gray-500 font-medium">Tax Paid</p>
+                                    <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="res-tax">Rs. 0</h3>
+                                    <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Tax Paid</p>
                                 </div>
 
                                 <div
-                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 border border-gray-50">
                                     <div
-                                        class="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4">
-                                        <i class="ph-duotone ph-trash text-2xl"></i>
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-3 sm:mb-4">
+                                        <i class="ph-duotone ph-trash text-xl sm:text-2xl"></i>
                                     </div>
-                                    <h3 class="text-3xl font-extrabold text-black mb-1" id="res-deleted">0</h3>
-                                    <p class="text-gray-500 font-medium">Orders Deleted</p>
+                                    <h3 class="text-2xl sm:text-3xl font-extrabold text-black mb-1" id="res-deleted">0</h3>
+                                    <p class="text-gray-500 font-medium text-xs sm:text-sm md:text-base">Orders Deleted</p>
                                 </div>
                             </div>
                         </div>
@@ -465,6 +469,9 @@
                 </div>
 
                 <div id="list-department" class="flex flex-col gap-3 w-full">
+                </div>
+
+                <div id="departments-pagination-container" class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
                 </div>
             </div>
 
@@ -639,10 +646,6 @@
                         <button id="BtnExportPdf"
                             class="bg-white border cursor-pointer border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
                             Export PDF
-                        </button>
-                        <button id="BtnGlobalHistory"
-                            class="bg-white border cursor-pointer border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
-                            History
                         </button>
                         <button id="BtnOpenAddInventory"
                             class="bg-gray-800 cursor-pointer hover:bg-gray-900 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
@@ -1079,6 +1082,44 @@
                 <button id="UpdateDepartmentBtn" type="button"
                     class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Update
                     Department</button>
+            </div>
+        </div>
+    </div>
+    <div id="DeleteDepartmentModalBackdrop"
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="DeleteDepartmentModal"
+            class="bg-white w-full max-w-md rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform scale-95 transition-all duration-300 flex flex-col overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+                        <i class="ph-duotone ph-warning text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-gray-800">Delete Department</h3>
+                </div>
+                <button id="CloseDeleteDepartmentX"
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="deleteDepartmentId">
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Are you sure you want to delete <span id="deleteDepartmentNameTarget" class="font-bold text-gray-900"></span>?
+                </p>
+                <div class="mt-3 p-3 bg-red-50/60 border border-red-100 rounded-xl flex items-start gap-2.5 text-xs text-red-600">
+                    <i class="ph-bold ph-info text-base shrink-0 mt-0.5"></i>
+                    <span>This department will be moved to trash. You can restore it anytime from the Deleted Departments section.</span>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end gap-3">
+                <button id="CloseDeleteDepartmentBtn" type="button"
+                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button id="ConfirmDeleteDepartmentBtn" type="button"
+                    class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer flex items-center gap-2">
+                    <i class="ph-bold ph-trash"></i> Delete
+                </button>
             </div>
         </div>
     </div>

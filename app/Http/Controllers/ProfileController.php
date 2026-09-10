@@ -217,10 +217,6 @@ class ProfileController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
-        if ($user->image && file_exists(public_path($user->image))) {
-            unlink(public_path($user->image));
-        }
-
         $user->delete();
 
         return response()->json([

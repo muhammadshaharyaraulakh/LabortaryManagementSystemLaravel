@@ -94,6 +94,8 @@ return [
 
     'middleware' => [
         'web',
+        'auth',
+        'check.role:admin',
         Authorize::class,
     ],
 

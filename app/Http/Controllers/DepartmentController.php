@@ -12,22 +12,33 @@ class DepartmentController extends Controller
     // =========================
     // GET ALL DEPARTMENTS
     // =========================
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::withCount(['tests', 'users'])->get();
+        $query = Department::withCount(['tests', 'users'])->latest('id');
 
-        if ($departments->isEmpty()) {
+        if ($request->has('all')) {
+            $departments = $query->get();
             return response()->json([
                 'success' => true,
-                'message' => 'No departments found',
-                'data' => []
+                'message' => 'Departments retrieved successfully',
+                'data' => $departments
             ], Response::HTTP_OK);
         }
+
+        $departments = $query->paginate(10);
 
         return response()->json([
             'success' => true,
             'message' => 'Departments retrieved successfully',
-            'data' => $departments
+            'data' => $departments->items(),
+            'pagination' => [
+                'current_page' => $departments->currentPage(),
+                'last_page' => $departments->lastPage(),
+                'per_page' => $departments->perPage(),
+                'total' => $departments->total(),
+                'from' => $departments->firstItem() ?? 0,
+                'to' => $departments->lastItem() ?? 0,
+            ]
         ], Response::HTTP_OK);
     }
 

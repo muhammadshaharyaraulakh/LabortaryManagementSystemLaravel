@@ -10,11 +10,34 @@ document.addEventListener("DOMContentLoaded", () => {
         "UpdateDepartmentModal"
     );
 
+    const deleteDepartmentBackdrop = document.getElementById(
+        "DeleteDepartmentModalBackdrop"
+    );
+    const deleteDepartmentModal = document.getElementById(
+        "DeleteDepartmentModal"
+    );
+    const deleteDepartmentIdInput = document.getElementById(
+        "deleteDepartmentId"
+    );
+    const deleteDepartmentNameTarget = document.getElementById(
+        "deleteDepartmentNameTarget"
+    );
+    const confirmDeleteDepartmentBtn = document.getElementById(
+        "ConfirmDeleteDepartmentBtn"
+    );
+
     const listContainer = document.getElementById("list-department");
+    const departmentsPaginationContainer = document.getElementById(
+        "departments-pagination-container"
+    );
     const deletedListContainer = document.getElementById(
         "list-deleted-department"
     );
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    let currentDeptPage = 1;
+    let lastDeptPage = 1;
+    let currentDeptCount = 0;
 
     const viewDeletedBtn = document.getElementById(
         "view-deleted-departments-btn"
@@ -150,6 +173,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 "UpdateDepartmentForm"
             )
         );
+    document
+        .getElementById("CloseDeleteDepartmentX")
+        ?.addEventListener("click", () =>
+            closeModal(deleteDepartmentBackdrop, deleteDepartmentModal)
+        );
+    document
+        .getElementById("CloseDeleteDepartmentBtn")
+        ?.addEventListener("click", () =>
+            closeModal(deleteDepartmentBackdrop, deleteDepartmentModal)
+        );
+    deleteDepartmentBackdrop?.addEventListener("click", (e) => {
+        if (e.target === deleteDepartmentBackdrop) {
+            closeModal(deleteDepartmentBackdrop, deleteDepartmentModal);
+        }
+    });
 
     const departmentNavLink = document.querySelector(
         '.nav-link[data-target="section-department"]'
@@ -218,11 +256,88 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 5. API FETCH FUNCTIONS
+    // 5. API FETCH & PAGINATION FUNCTIONS
     // ==========================================
-    async function fetchDepartments() {
+    function getPaginationRange(current, last) {
+        if (last <= 7) {
+            return Array.from({ length: last }, (_, i) => i + 1);
+        }
+        const delta = 1;
+        const range = [];
+        for (
+            let i = Math.max(2, current - delta);
+            i <= Math.min(last - 1, current + delta);
+            i++
+        ) {
+            range.push(i);
+        }
+        if (current - delta > 2) range.unshift("...");
+        if (current + delta < last - 1) range.push("...");
+        range.unshift(1);
+        range.push(last);
+        return range;
+    }
+
+    function renderDepartmentPagination(pagination) {
+        if (!departmentsPaginationContainer) return;
+        if (!pagination || pagination.total === 0) {
+            departmentsPaginationContainer.innerHTML = "";
+            return;
+        }
+
+        const { current_page, last_page, total, from, to } = pagination;
+
+        let pagesHtml = "";
+        const pages = getPaginationRange(current_page, last_page);
+        pages.forEach((p) => {
+            if (p === "...") {
+                pagesHtml += `<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs font-bold">...</span>`;
+            } else if (p === current_page) {
+                pagesHtml += `<button class="w-8 h-8 rounded-lg bg-orange-500 text-white text-xs sm:text-sm font-bold shadow-sm cursor-default" data-dept-page="${p}">${p}</button>`;
+            } else {
+                pagesHtml += `<button class="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer" data-dept-page="${p}">${p}</button>`;
+            }
+        });
+
+        departmentsPaginationContainer.innerHTML = `
+            <div>
+                <p class="text-xs sm:text-sm text-gray-500 font-medium">
+                    Showing <span class="font-bold text-gray-800">${from}</span> to <span class="font-bold text-gray-800">${to}</span> of <span class="font-bold text-gray-800">${total}</span> departments
+                </p>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+                <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs sm:text-sm font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center gap-1"
+                    ${current_page <= 1 ? "disabled" : ""} data-dept-page="${current_page - 1}">
+                    <i class="ph-bold ph-caret-left"></i> Prev
+                </button>
+                ${pagesHtml}
+                <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs sm:text-sm font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center gap-1"
+                    ${current_page >= last_page ? "disabled" : ""} data-dept-page="${current_page + 1}">
+                    Next <i class="ph-bold ph-caret-right"></i>
+                </button>
+            </div>
+        `;
+    }
+
+    departmentsPaginationContainer?.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-dept-page]");
+        if (btn && !btn.disabled) {
+            const page = parseInt(btn.getAttribute("data-dept-page"));
+            if (
+                !isNaN(page) &&
+                page >= 1 &&
+                page <= lastDeptPage &&
+                page !== currentDeptPage
+            ) {
+                fetchDepartments(page);
+            }
+        }
+    });
+
+    async function fetchDepartments(page = 1) {
+        currentDeptPage = page;
         try {
-            const response = await fetch("/departments", {
+            const response = await fetch(`/departments?page=${page}`, {
                 headers: { Accept: "application/json" },
             });
             const result = await response.json();
@@ -231,13 +346,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 const departmentsData = Array.isArray(result)
                     ? result
                     : result.data || [];
+                currentDeptCount = departmentsData.length;
                 renderDepartments(departmentsData);
+                if (result.pagination) {
+                    lastDeptPage = result.pagination.last_page;
+                    renderDepartmentPagination(result.pagination);
+                } else if (departmentsPaginationContainer) {
+                    departmentsPaginationContainer.innerHTML = "";
+                }
             } else {
                 listContainer.innerHTML = `<div class="w-full text-center text-gray-500 py-6 font-medium bg-white rounded-xl border border-gray-100">Failed to load departments.</div>`;
+                if (departmentsPaginationContainer) {
+                    departmentsPaginationContainer.innerHTML = "";
+                }
             }
         } catch (error) {
             console.error("Error fetching departments:", error);
             listContainer.innerHTML = `<div class="w-full text-center text-red-500 py-6 font-medium bg-white rounded-xl border border-gray-100">Error loading data.</div>`;
+            if (departmentsPaginationContainer) {
+                departmentsPaginationContainer.innerHTML = "";
+            }
         }
     }
 
@@ -317,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Edit
 </button>
 
-<button class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-bold transition-colors cursor-pointer" onclick="deleteDepartment(${dept.id})" title="Delete">
+<button class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-bold transition-colors cursor-pointer" onclick="deleteDepartment(${dept.id}, '${dept.name.replace(/'/g, "\\'")}')" title="Delete">
     Delete
 </button>
                     </div>
@@ -400,7 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         addDepartmentModal,
                         "AddDepartmentForm"
                     );
-                    fetchDepartments();
+                    fetchDepartments(1);
                 } else if (response.status === 422) {
                     showDepartmentErrors(result.errors, "add");
                 }
@@ -475,7 +603,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         updateDepartmentModal,
                         "UpdateDepartmentForm"
                     );
-                    fetchDepartments();
+                    fetchDepartments(currentDeptPage);
                 } else if (response.status === 422) {
                     showDepartmentErrors(result.errors, "update");
                 }
@@ -485,7 +613,27 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-    window.deleteDepartment = async function (id) {
+    window.openDeleteDepartmentModal = function (id, name) {
+        if (deleteDepartmentIdInput) deleteDepartmentIdInput.value = id;
+        if (deleteDepartmentNameTarget)
+            deleteDepartmentNameTarget.innerText = name || "this department";
+        openModal(deleteDepartmentBackdrop, deleteDepartmentModal);
+    };
+
+    window.deleteDepartment = function (id, name) {
+        openDeleteDepartmentModal(id, name);
+    };
+
+    confirmDeleteDepartmentBtn?.addEventListener("click", async () => {
+        const id = deleteDepartmentIdInput
+            ? deleteDepartmentIdInput.value
+            : null;
+        if (!id) return;
+
+        confirmDeleteDepartmentBtn.disabled = true;
+        const originalText = confirmDeleteDepartmentBtn.innerHTML;
+        confirmDeleteDepartmentBtn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Deleting...`;
+
         try {
             const response = await fetch(`/departments/${id}`, {
                 method: "DELETE",
@@ -496,15 +644,24 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (response.ok) {
-                fetchDepartments();
+                closeModal(deleteDepartmentBackdrop, deleteDepartmentModal);
+                const targetPage =
+                    currentDeptCount <= 1 && currentDeptPage > 1
+                        ? currentDeptPage - 1
+                        : currentDeptPage;
+                fetchDepartments(targetPage);
             } else {
-                alert("Failed to delete department.");
+                const err = await response.json();
+                alert(err.message || "Failed to delete department.");
             }
         } catch (error) {
             console.error("Error deleting department:", error);
             alert("An error occurred while deleting the department.");
+        } finally {
+            confirmDeleteDepartmentBtn.disabled = false;
+            confirmDeleteDepartmentBtn.innerHTML = originalText;
         }
-    };
+    });
 
     window.restoreDepartment = async function (id) {
         try {

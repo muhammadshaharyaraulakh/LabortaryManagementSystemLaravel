@@ -37,6 +37,9 @@
                     </tbody>
                 </table>
             </div>
+            <div id="tests-pagination-container"
+                class="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            </div>
         </div>
     </div>
     <div id="test-details-view" class="w-full hidden animate-fade-in">

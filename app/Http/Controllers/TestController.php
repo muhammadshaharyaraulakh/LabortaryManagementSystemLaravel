@@ -47,23 +47,46 @@ class TestController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $tests = Test::whereHas('department', function ($query) {
-            $query->where('is_active', true);
-        })->with('department')->where('isActive', true)->latest()->get();
+        $query = Test::whereHas('department', function ($q) {
+            $q->where('is_active', true);
+        })->with('department')->where('isActive', true)->latest();
 
-        if ($tests->isNotEmpty()) {
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%")
+                  ->orWhereHas('department', function ($dq) use ($search) {
+                      $dq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->has('all')) {
+            $tests = $query->get();
             return response()->json([
                 'status' => true,
                 'message' => 'Tests found',
                 'data' => $tests
             ], Response::HTTP_OK);
         }
+
+        $tests = $query->paginate(10);
+
         return response()->json([
             'status' => true,
-            'message' => 'Tests not found',
-            'data' => []
+            'message' => 'Tests found',
+            'data' => $tests->items(),
+            'pagination' => [
+                'current_page' => $tests->currentPage(),
+                'last_page' => $tests->lastPage(),
+                'per_page' => $tests->perPage(),
+                'total' => $tests->total(),
+                'from' => $tests->firstItem() ?? 0,
+                'to' => $tests->lastItem() ?? 0,
+            ]
         ], Response::HTTP_OK);
     }
     public function inventoryItems()

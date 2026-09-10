@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSelect.innerHTML = `<option value="" disabled selected>Loading departments...</option>`;
 
         try {
-            const response = await fetch("/departments", {
+            const response = await fetch("/departments?all=true", {
                 headers: { Accept: "application/json" },
             });
             const data = await response.json();

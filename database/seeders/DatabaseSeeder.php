@@ -13,8 +13,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        Department::create(['name' => 'Pathology', 'type' => 'sample_based', 'is_active' => true]);
-        Department::create(['name' => 'Radiology', 'type' => 'human_based', 'is_active' => true]);
+        Department::firstOrCreate(['name' => 'Pathology'], ['type' => 'sample_based', 'is_active' => true]);
+        Department::firstOrCreate(['name' => 'Radiology'], ['type' => 'human_based', 'is_active' => true]);
+        $this->call(DepartmentSeeder::class);
+        $this->call(DepartmentTestsSeeder::class);
 
         User::create([
             'name' => 'Admin User',

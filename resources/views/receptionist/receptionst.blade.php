@@ -573,10 +573,10 @@
                 try {
                     searchInput.placeholder = "Loading available tests...";
                     searchInput.disabled = true;
-                    const response = await fetch('/tests', { headers: fetchHeaders });
+                    const response = await fetch('/tests?all=true', { headers: fetchHeaders });
                     const result = await response.json();
                     if (result.status === true || result.status === 200) {
-                        allAvailableTests = result.data;
+                        allAvailableTests = Array.isArray(result.data) ? result.data : (result.data?.data || []);
                     }
                 } catch (error) {
                     searchInput.placeholder = "Failed to load tests. Refresh page.";
