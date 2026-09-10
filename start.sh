@@ -20,7 +20,14 @@ echo "==> Running database migrations..."
 php artisan migrate --force
 
 echo "==> Checking if initial database seeding is needed..."
-php artisan tinker --execute="if (App\Models\User::count() === 0) { echo 'Seeding initial database data...' . PHP_EOL; Artisan::call('db:seed', ['--force' => true]); echo 'Database seeded successfully!' . PHP_EOL; } else { echo 'Database already seeded. Skipping.' . PHP_EOL; }"
+USER_COUNT=$(php artisan tinker --execute="echo App\Models\User::count();")
+if [ "$USER_COUNT" = "0" ]; then
+    echo "Seeding initial database data..."
+    php artisan db:seed --force
+    echo "Database seeded successfully!"
+else
+    echo "Database already seeded. Skipping."
+fi
 
 echo "==> Starting application server on port ${PORT:-8080}..."
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"
