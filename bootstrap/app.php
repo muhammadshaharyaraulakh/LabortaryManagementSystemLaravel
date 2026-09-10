@@ -17,6 +17,31 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'check.role' => CheckRole::class,
         ]);
+        $middleware->redirectTo(
+            guests: '/login',
+            users: function () {
+                $user = auth()->user();
+                if (!$user) {
+                    return '/';
+                }
+                $role = strtolower(trim($user->role));
+                if ($role === 'technician') {
+                    if ($user->department && $user->department->type === 'human_based') {
+                        return route('HumanTechnicianDashboard');
+                    }
+                    return route('SampleBasedTechnician');
+                }
+                if ($role === 'pathologist' || $role === 'specialistdoctor') {
+                    return route('pathologist.dashboard');
+                }
+                $routeMap = [
+                    'admin' => 'admin.adminstrator',
+                    'receptionist' => 'receptionist',
+                    'samplecollector' => 'samplecollector.dashboard',
+                ];
+                return isset($routeMap[$role]) ? route($routeMap[$role]) : url('/');
+            }
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

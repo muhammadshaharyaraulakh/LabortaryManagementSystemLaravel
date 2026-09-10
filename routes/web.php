@@ -18,54 +18,45 @@ use App\Http\Controllers\AdminPromotionalEmailController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/login', function () {
-    return view('authentication.login');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', function () {
+        return view('authentication.login');
+    });
+    Route::post('/login', [loginController::class, 'login'])->name('login');
+
+    Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
+        ->name('google.redirect');
+    Route::get('/auth/google/callback', [SocialController::class, 'googleCallback'])
+        ->name('google.callback');
+    Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
+        ->name('github.redirect');
+    Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
+        ->name('github.callback');
+    Route::get('/api/auth/callback/google', [SocialController::class, 'googleCallback']);
+    Route::get('/api/auth/callback/github', [SocialController::class, 'githubCallback']);
+
+    Route::view('/VerifyCode', 'authentication.VerifyCode')->name('VerifyCode');
+    Route::post('/VerifyCode', [loginController::class, 'verifyCode'])->name('VerifyCode');
+    Route::post('/resetPassword', [loginController::class, 'resetPassword'])->name('resetPassword');
+    Route::post('/forgotpassword', [loginController::class, 'forgotPassword'])->name('forgotpassword');
+    Route::get('/forgetPassword', function () {
+        return view('authentication.forgetPassword');
+    })->name('forgetPassword');
+    Route::get('/resetPassword', function () {
+        return view('authentication.resetPassword');
+    })->name('resetPassword');
 });
 
-Route::get('/auth/google/redirect', [SocialController::class, 'googleRedirect'])
-    ->name('google.redirect');
-
-Route::get('/auth/google/callback', [SocialController::class, 'googleCallback'])
-    ->name('google.callback');
-
-Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
-    ->name('github.redirect');
-
-Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
-    ->name('github.callback');
-
-Route::get('/api/auth/callback/google', [SocialController::class, 'googleCallback']);
-Route::get('/api/auth/callback/github', [SocialController::class, 'githubCallback']);
-
-Route::post('login', [loginController::class, 'login'])->name('login');
 Route::get('/logout', [loginController::class, 'logout'])->name('logout');
 
-Route::post('/login', [loginController::class, 'login'])->name('login');
-
 Route::middleware('auth')->group(function () {
-
     Route::get('/tests', [TestController::class, 'index']);
     Route::get('/user/{id}/signature', [ProfileController::class, 'getSignature']);
     Route::post('/user/{id}/signature', [ProfileController::class, 'addSignature']);
     Route::delete('/user/{id}/signature', [ProfileController::class, 'deleteSignature']);
     Route::put('/user/{id}/email', [ProfileController::class, 'updateEmail']);
     Route::put('/user/{id}/password', [ProfileController::class, 'updatePassword']);
-
-
-
-
 });
-Route::view('/VerifyCode', 'authentication.VerifyCode')
-    ->name('VerifyCode');
-Route::post('/VerifyCode', [loginController::class, 'verifyCode'])->name('VerifyCode');
-Route::post('resetPassword', [loginController::class, 'resetPassword'])->name('resetPassword');
-Route::post('forgotpassword', [loginController::class, 'forgotPassword'])->name('forgotpassword');
-Route::get('/forgetPassword', function () {
-    return view('authentication.forgetPassword');
-})->name('forgetPassword');
-Route::get('/resetPassword', function () {
-    return view('authentication.resetPassword');
-})->name('resetPassword');
 
 
 
