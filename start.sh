@@ -7,7 +7,9 @@ mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p public/ProfileImages
 mkdir -p public/Signatures
-php artisan storage:link || true
+if [ ! -e public/storage ]; then
+    php artisan storage:link || true
+fi
 
 echo "==> Clearing cache..."
 php artisan config:clear
