@@ -30,6 +30,8 @@ RUN apk add --no-cache \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql zip mbstring bcmath gd intl
 
+ENV DB_CONNECTION=mysql
+
 WORKDIR /app
 
 # Copy application code
