@@ -1,16 +1,17 @@
 <x-header />
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer"></div>
+    <div id="sidebar-backdrop"
+        class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity min-[1049px]:hidden cursor-pointer"></div>
     <aside id="sidebar"
-        class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 md:relative transform -translate-x-full md:translate-x-0">
+        class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 min-[1049px]:relative transform -translate-x-full min-[1049px]:translate-x-0">
         <div class="h-20 flex items-center justify-between px-6 pt-2">
             <span id="brand-text" class="text-white text-xl font-bold whitespace-nowrap tracking-wide">Technician</span>
             <button id="toggle-desktop-sidebar"
-                class="text-gray-300 hover:text-white transition-colors hidden md:block cursor-pointer">
+                class="text-gray-300 hover:text-white transition-colors hidden min-[1049px]:block cursor-pointer">
                 <i class="ph ph-caret-double-left text-xl" id="desktop-toggle-icon"></i>
             </button>
             <button id="close-mobile-sidebar"
-                class="text-gray-300 hover:text-white transition-colors md:hidden text-2xl cursor-pointer">
+                class="text-gray-300 hover:text-white transition-colors min-[1049px]:hidden text-2xl cursor-pointer">
                 <i class="ph ph-x"></i>
             </button>
         </div>
@@ -59,30 +60,20 @@
         <header class="h-20 px-4 md:px-10 z-20 sticky top-0 bg-mainBg flex items-center justify-between">
             <div class="flex items-center">
                 <button id="open-mobile-sidebar"
-                    class="mr-4 text-gray-800 md:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer">
+                    class="mr-4 text-gray-800 min-[1049px]:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
                 <h1 id="header-title"
                     class="text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200">
                     Dashboard</h1>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="hidden md:flex flex-col items-end mr-4">
-                    <span class="text-sm font-bold text-gray-800">{{ auth()->user()->name }}</span>
-                    <span class="text-xs text-blue-500 font-bold">Technician</span>
-                </div>
-                <div
-                    class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-200 uppercase">
-                    {{ substr(auth()->user()->name, 0, 2) }}
-                </div>
-            </div>
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
             <div id="section-dashboard" class="content-section block animate-fade-in w-full max-w-7xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 w-full">
+                <div class="grid grid-cols-1 min-[576px]:grid-cols-2 md:grid-cols-3 min-[992px]:grid-cols-4 gap-6 mb-8 w-full">
                     <div
-                        class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
+                        class="bgNow its time to respive the -white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50">
                         <div
                             class="w-12 h-12 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
                             <i class="ph-duotone ph-barcode text-2xl"></i>
@@ -257,6 +248,22 @@
             </form>
         </div>
     </div>
+    <!-- Error Alert Modal Popup -->
+    <div id="ErrorAlertModalBackdrop"
+        class="fixed inset-0 bg-black/60 z-70 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="ErrorAlertModal"
+            class="bg-white w-full max-w-sm rounded-[1.25rem] shadow-2xl transform scale-95 transition-all duration-300 flex flex-col items-center p-6 text-center overflow-hidden">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-3xl mb-4 border border-red-100 shadow-sm">
+                <i class="ph-bold ph-warning-circle"></i>
+            </div>
+            <h3 id="errorModalTitle" class="text-lg font-black text-gray-900 mb-1.5">Action Failed</h3>
+            <p id="errorModalMessage" class="text-sm text-gray-600 font-medium mb-6 leading-relaxed max-w-xs"></p>
+            <button type="button" class="close-modal-btn w-full py-3 px-5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-red-200 cursor-pointer flex items-center justify-center gap-2"
+                data-modal="ErrorAlertModalBackdrop">
+                 OK
+            </button>
+        </div>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sections = document.querySelectorAll('.content-section');
@@ -302,21 +309,78 @@
                     if (target === 'section-worklist') fetchWorklist();
                     if (target === 'section-completed') fetchPendingVerifications();
 
-                    if (window.innerWidth < 768) toggleSidebar();
+                    if (window.innerWidth <= 1048) toggleSidebar();
                 });
             });
 
             const sidebar = document.getElementById('sidebar');
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+            const toggleDesktopBtn = document.getElementById('toggle-desktop-sidebar');
+            const desktopToggleIcon = document.getElementById('desktop-toggle-icon');
+            const brandText = document.getElementById('brand-text');
+            const navTexts = document.querySelectorAll('#sidebar .nav-text');
 
             function toggleSidebar() {
-                if (sidebar) sidebar.classList.toggle('-translate-x-full');
-                if (sidebarBackdrop) sidebarBackdrop.classList.toggle('hidden');
+                sidebar?.classList.toggle('-translate-x-full');
+                sidebarBackdrop?.classList.toggle('hidden');
             }
 
             document.getElementById('open-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             document.getElementById('close-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             sidebarBackdrop?.addEventListener('click', toggleSidebar);
+
+            let isCollapsed = false;
+            if (toggleDesktopBtn) {
+                toggleDesktopBtn.addEventListener('click', () => {
+                    isCollapsed = !isCollapsed;
+                    if (isCollapsed) {
+                        sidebar?.classList.remove('w-64');
+                        sidebar?.classList.add('w-20');
+                        brandText?.classList.add('hidden');
+                        navTexts.forEach(text => text.classList.add('hidden'));
+                        if (desktopToggleIcon) {
+                            desktopToggleIcon.classList.remove('ph-caret-double-left');
+                            desktopToggleIcon.classList.add('ph-caret-double-right');
+                        }
+                    } else {
+                        sidebar?.classList.remove('w-20');
+                        sidebar?.classList.add('w-64');
+                        setTimeout(() => {
+                            brandText?.classList.remove('hidden');
+                            navTexts.forEach(text => text.classList.remove('hidden'));
+                        }, 150);
+                        if (desktopToggleIcon) {
+                            desktopToggleIcon.classList.remove('ph-caret-double-right');
+                            desktopToggleIcon.classList.add('ph-caret-double-left');
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 1048) {
+                    sidebarBackdrop?.classList.add('hidden');
+                    sidebar?.classList.remove('-translate-x-full');
+                } else {
+                    if (sidebarBackdrop?.classList.contains('hidden')) {
+                        sidebar?.classList.add('-translate-x-full');
+                    }
+                }
+            });
+
+            function showErrorPopup(message, title = 'Error') {
+                const titleEl = document.getElementById('errorModalTitle');
+                const msgEl = document.getElementById('errorModalMessage');
+                if (titleEl) titleEl.innerText = title;
+                if (msgEl) msgEl.innerText = message;
+                openModal('ErrorAlertModalBackdrop');
+            }
+
+            document.getElementById('ErrorAlertModalBackdrop')?.addEventListener('click', (e) => {
+                if (e.target.id === 'ErrorAlertModalBackdrop') {
+                    closeModal('ErrorAlertModalBackdrop');
+                }
+            });
 
             function openModal(modalId) {
                 const backdrop = document.getElementById(modalId);
@@ -825,10 +889,10 @@
                                 setTimeout(() => msgEl.remove(), 300);
                             }, 3000);
                         } else {
-                            alert(resData.message || 'Failed to save results.');
+                            showErrorPopup(resData.message || 'Failed to save results.');
                         }
                     } catch (error) {
-                        alert('Network Error. Please try again.');
+                        showErrorPopup('Network Error. Please try again.');
                     } finally {
                         btn.innerHTML = originalHtml;
                         btn.disabled = false;
