@@ -25,6 +25,6 @@ class Result extends Model
 
     public function parameter()
     {
-        return $this->belongsTo(TestParameter::class, 'testParameterId');
+        return $this->belongsTo(TestParameter::class, 'testParameterId')->withTrashed();
     }
 }

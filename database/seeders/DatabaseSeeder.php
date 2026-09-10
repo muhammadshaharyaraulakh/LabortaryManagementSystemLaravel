@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
         Department::firstOrCreate(['name' => 'Pathology'], ['type' => 'sample_based', 'is_active' => true]);
         Department::firstOrCreate(['name' => 'Radiology'], ['type' => 'human_based', 'is_active' => true]);
         $this->call(DepartmentSeeder::class);
-        $this->call(DepartmentTestsSeeder::class);
 
         User::create([
             'name' => 'Admin User',
@@ -27,6 +26,8 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
 
         Inventory::factory(20)->create();
+
+        $this->call(DepartmentTestsSeeder::class);
         
         Test::factory(14)->create();
 

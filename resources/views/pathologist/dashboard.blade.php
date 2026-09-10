@@ -1008,59 +1008,41 @@
                 }
             });
 
-            let pendingTypeChange = null;
-
-            function applyParameterTypeChange(selectElement, container, val) {
+            function applyParameterTypeChange(selectElement, val) {
+                if (!selectElement) return;
                 selectElement.value = val;
                 selectElement.dataset.prev = val;
-                const allRows = container.querySelectorAll('.parameter-row');
-                for (let i = 1; i < allRows.length; i++) {
-                    allRows[i].remove();
-                }
 
                 const row = selectElement.closest('.parameter-row');
                 if (!row) return;
 
                 const numberFields = row.querySelectorAll('.param-number-fields');
-                const dropdownFields = row.querySelector('.param-dropdown-fields');
+                const dropdownFields = row.querySelectorAll('.param-dropdown-fields');
 
                 if (val === 'Quantitative') {
                     numberFields.forEach(f => f.classList.remove('hidden'));
-                    if (dropdownFields) dropdownFields.classList.add('hidden');
+                    dropdownFields.forEach(f => f.classList.add('hidden'));
                 } else if (val === 'Qualitative') {
                     numberFields.forEach(f => f.classList.add('hidden'));
-                    if (dropdownFields) dropdownFields.classList.remove('hidden');
+                    dropdownFields.forEach(f => f.classList.remove('hidden'));
                 } else if (val === 'Observational' || val === 'Image') {
                     numberFields.forEach(f => f.classList.add('hidden'));
-                    if (dropdownFields) dropdownFields.classList.add('hidden');
+                    dropdownFields.forEach(f => f.classList.add('hidden'));
                 }
             }
 
             document.getElementById('btnCancelChangeType')?.addEventListener('click', () => {
                 closeModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
-                if (pendingTypeChange && pendingTypeChange.selectElement) {
-                    pendingTypeChange.selectElement.value = pendingTypeChange.previousValue;
-                }
-                pendingTypeChange = null;
             });
 
             document.getElementById('ConfirmChangeTypeModalBackdrop')?.addEventListener('click', (e) => {
                 if (e.target.id === 'ConfirmChangeTypeModalBackdrop') {
                     closeModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
-                    if (pendingTypeChange && pendingTypeChange.selectElement) {
-                        pendingTypeChange.selectElement.value = pendingTypeChange.previousValue;
-                    }
-                    pendingTypeChange = null;
                 }
             });
 
             document.getElementById('btnConfirmChangeType')?.addEventListener('click', () => {
-                if (pendingTypeChange) {
-                    const { selectElement, container, targetValue } = pendingTypeChange;
-                    applyParameterTypeChange(selectElement, container, targetValue);
-                }
                 closeModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
-                pendingTypeChange = null;
             });
 
             function appendRequirementRow(containerId, item, quantity = 1, theme = 'purple') {
@@ -1490,32 +1472,24 @@
                 const inputs = document.querySelectorAll('#verifyResultsTbody .result-input[type="number"], #verifyResultsTbody .result-input[type="text"].quantitative-input');
                 inputs.forEach(input => {
                     input.addEventListener('input', function () {
-                        const tr = this.closest('tr');
                         const min = parseFloat(this.dataset.min);
                         const max = parseFloat(this.dataset.max);
-                        const flagCell = tr.querySelector('.flag-cell');
-                        if (!flagCell) return;
-
                         const val = parseFloat(this.value);
                         this.classList.remove('border-red-500', 'border-yellow-500', 'bg-red-50', 'bg-yellow-50');
 
                         if (isNaN(val)) {
                             this.dataset.flag = 'Normal';
-                            flagCell.innerHTML = '<span class="text-gray-300 text-xs font-bold">—</span>';
                             return;
                         }
 
-                        if (val < min) {
+                        if (!isNaN(min) && val < min) {
                             this.dataset.flag = 'Low';
                             this.classList.add('border-yellow-500', 'bg-yellow-50');
-                            flagCell.innerHTML = '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-black text-xs border border-yellow-200">L</span>';
-                        } else if (val > max) {
+                        } else if (!isNaN(max) && val > max) {
                             this.dataset.flag = 'High';
                             this.classList.add('border-red-500', 'bg-red-50');
-                            flagCell.innerHTML = '<span class="bg-red-100 text-red-700 px-2 py-1 rounded font-black text-xs border border-red-200">H</span>';
                         } else {
                             this.dataset.flag = 'Normal';
-                            flagCell.innerHTML = '<span class="text-green-500 text-xs font-bold"><i class="ph-bold ph-check"></i></span>';
                         }
                     });
                     // Trigger input to initial flag
@@ -1563,7 +1537,7 @@
                     const tbody = document.getElementById('verifyResultsTbody');
                     const thead = document.getElementById('verifyParametersTableHead');
 
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Loading results...</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Loading results...</td></tr>';
                     thead.innerHTML = '';
                     const verifyForm = document.getElementById('VerifyTestForm');
                     verifyForm.dataset.orderTestId = orderTestId;
@@ -1578,11 +1552,14 @@
                             tbody.innerHTML = '';
 
                             if (result.data.length > 0) {
-                                // Check if any parameter is quantitative to decide on the Flag column
-                                const hasQuantitative = result.data.some(item => {
-                                    const type = (item.parameter?.inputType || item.parameter?.type || '').toLowerCase().trim();
-                                    return type === 'quantitative' || type === ''; // Default is quantitative
+                                const types = result.data.map(item => {
+                                    return (item.parameter?.inputType || item.parameter?.type || (item.testParameterId ? 'quantitative' : 'observational')).toLowerCase().trim();
                                 });
+
+                                const hasQuantitative = types.some(t => t === 'quantitative' || t === '');
+                                const isPureQualitative = !hasQuantitative && types.every(t => t === 'qualitative');
+                                const isPureObservational = !hasQuantitative && types.every(t => t === 'observational');
+                                const isPureImage = !hasQuantitative && types.every(t => t === 'image');
 
                                 if (hasQuantitative) {
                                     thead.innerHTML = `
@@ -1591,30 +1568,44 @@
                                             <th class="px-4 py-3">Result Value</th>
                                             <th class="px-4 py-3">Unit</th>
                                             <th class="px-4 py-3">Normal Range</th>
-                                            <th class="px-4 py-3 text-center">Flag</th>
+                                        </tr>`;
+                                } else if (isPureQualitative) {
+                                    thead.innerHTML = `
+                                        <tr>
+                                            <th class="px-4 py-3 w-1/2">Parameter</th>
+                                            <th class="px-4 py-3 w-1/2">Result Value</th>
+                                        </tr>`;
+                                } else if (isPureObservational) {
+                                    thead.innerHTML = `
+                                        <tr>
+                                            <th class="px-4 py-3 w-1/3">Parameter</th>
+                                            <th class="px-4 py-3 w-2/3">Observation / Clinical Findings</th>
+                                        </tr>`;
+                                } else if (isPureImage) {
+                                    thead.innerHTML = `
+                                        <tr>
+                                            <th class="px-4 py-3 w-1/3">Parameter</th>
+                                            <th class="px-4 py-3 w-2/3">Diagnostic Images</th>
                                         </tr>`;
                                 } else {
                                     thead.innerHTML = `
                                         <tr>
-                                            <th class="px-4 py-3">Parameter</th>
-                                            <th class="px-4 py-3">Result Value</th>
-                                            <th class="px-4 py-3">Unit</th>
-                                            <th class="px-4 py-3">Normal Range</th>
+                                            <th class="px-4 py-3 w-1/3">Parameter</th>
+                                            <th class="px-4 py-3 w-2/3">Result Value</th>
                                         </tr>`;
                                 }
 
                                 result.data.forEach(item => {
-                                    const type = (item.parameter?.inputType || item.parameter?.type || 'quantitative').toLowerCase().trim();
-                                    const paramName = item.parameter?.parameterName || 'N/A';
+                                    const type = (item.parameter?.inputType || item.parameter?.type || (item.testParameterId ? 'quantitative' : 'observational')).toLowerCase().trim();
+                                    const paramName = item.parameter?.parameterName || (item.testParameterId ? 'Parameter' : (testName || 'Investigation'));
                                     const unit = item.parameter?.unit || '';
                                     const range = item.parameter?.normalRange || '';
                                     const val = item.resultValue || '';
                                     const currentFlag = item.statusFlag || 'Normal';
 
                                     let inputHtml = '';
-                                    let flagCellHtml = '';
 
-                                    if (type === 'quantitative') {
+                                    if (type === 'quantitative' || (hasQuantitative && type !== 'qualitative' && type !== 'observational' && type !== 'image')) {
                                         let min = null, max = null;
                                         if (range && range.includes('-')) {
                                             const parts = range.split('-');
@@ -1623,8 +1614,7 @@
                                         }
                                         inputHtml = `<input type="number" step="0.01" value="${val}" 
                                             data-min="${min}" data-max="${max}" data-flag="${currentFlag}"
-                                            class="result-input quantitative-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none font-bold">`;
-                                        flagCellHtml = `<td class="px-4 py-3 text-center flag-cell align-top pt-4"></td>`;
+                                            class="result-input quantitative-input w-28 border border-gray-200 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-100 outline-none font-bold">`;
 
                                     } else if (type === 'qualitative') {
                                         let optionsList = item.parameter?.options ? item.parameter.options : 'Positive,Negative';
@@ -1638,51 +1628,73 @@
                                                 optionsHtml += `<option value="${o}" ${selected}>${o}</option>`;
                                             }
                                         });
-                                        inputHtml = `<select class="result-input w-full border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white font-bold">${optionsHtml}</select>`;
+                                        inputHtml = `<select class="result-input w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white font-bold cursor-pointer">${optionsHtml}</select>`;
 
                                     } else if (type === 'observational') {
-                                        inputHtml = `<textarea class="result-input w-full border border-gray-200 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-100 outline-none custom-scrollbar font-bold" rows="2">${val}</textarea>`;
+                                        inputHtml = `<textarea class="result-input w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-100 outline-none custom-scrollbar font-medium bg-gray-50/50 focus:bg-white transition-all" rows="3" placeholder="Enter observational clinical findings...">${val}</textarea>`;
 
                                     } else if (type === 'image') {
                                         let imagesHtml = '';
                                         try {
-                                            const paths = typeof val === 'string' && val.startsWith('[') ? JSON.parse(val) : val;
-                                            if (Array.isArray(paths)) {
+                                            const paths = typeof val === 'string' && val.startsWith('[') ? JSON.parse(val) : (Array.isArray(val) ? val : (val ? [val] : []));
+                                            if (Array.isArray(paths) && paths.length > 0) {
                                                 paths.forEach(path => {
-                                                    imagesHtml += `<a href="/${path.replace(/^\//, '')}" target="_blank" class="bg-blue-50 text-blue-600 px-3 py-1 rounded-md text-xs font-bold border border-blue-200 hover:bg-blue-100 transition-colors inline-block mr-2 mt-1"><i class="ph-bold ph-image"></i> View Image</a>`;
+                                                    if (path) {
+                                                        const cleanP = '/' + path.toString().replace(/^\//, '');
+                                                        imagesHtml += `
+                                                            <div class="relative group inline-block border border-gray-200 rounded-lg p-1.5 bg-gray-50 hover:bg-white transition-all mr-2 mb-2">
+                                                                <img src="${cleanP}" class="h-20 w-auto rounded object-cover cursor-pointer hover:opacity-90 transition-opacity" onclick="window.open('${cleanP}', '_blank')" alt="Diagnostic Image" />
+                                                                <div class="mt-1 text-center">
+                                                                    <a href="${cleanP}" target="_blank" class="text-[11px] font-bold text-blue-600 hover:underline inline-flex items-center gap-1">
+                                                                        <i class="ph-bold ph-arrow-square-out"></i> Full Size
+                                                                    </a>
+                                                                </div>
+                                                            </div>`;
+                                                    }
                                                 });
+                                            } else {
+                                                imagesHtml = `<span class="text-xs text-gray-400 italic">No diagnostic images uploaded</span>`;
                                             }
                                         } catch (e) {
-                                            imagesHtml = `<span class="text-xs text-gray-400">No images attached</span>`;
+                                            imagesHtml = `<span class="text-xs text-gray-400 italic">No diagnostic images uploaded</span>`;
                                         }
 
                                         inputHtml = `
-                                            <div class="flex flex-wrap gap-2">${imagesHtml}</div>
-                                            <input type="hidden" value='${val}' class="result-input">`;
+                                            <div class="flex flex-wrap items-center">${imagesHtml}</div>
+                                            <input type="hidden" value='${val || "[]"}' class="result-input">`;
                                     } else {
-                                        inputHtml = `<input type="text" value="${val}" class="result-input w-24 border border-gray-200 rounded-md px-2 py-1 text-sm font-bold">`;
+                                        inputHtml = `<input type="text" value="${val}" class="result-input w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm font-bold">`;
                                     }
 
-                                    const row = `
-                                        <tr data-result-id="${item.id}">
-                                            <td class="px-4 py-3 font-bold align-top pt-4 text-gray-800">${paramName}</td>
-                                            <td class="px-4 py-3 align-top">${inputHtml}</td>
-                                            <td class="px-4 py-3 text-gray-500 align-top pt-4 font-medium">${unit}</td>
-                                            <td class="px-4 py-3 text-gray-500 align-top pt-4 font-medium">${range}</td>
-                                            ${flagCellHtml}
-                                        </tr>`;
+                                    let row = '';
+                                    if (hasQuantitative) {
+                                        row = `
+                                            <tr data-result-id="${item.id}">
+                                                <td class="px-4 py-3 font-bold align-top pt-3 text-gray-800">${paramName}</td>
+                                                <td class="px-4 py-3 align-top">${inputHtml}</td>
+                                                <td class="px-4 py-3 text-gray-500 align-top pt-3 font-medium">${unit || '—'}</td>
+                                                <td class="px-4 py-3 text-gray-500 align-top pt-3 font-medium">${range || '—'}</td>
+                                            </tr>`;
+                                    } else {
+                                        // Qualitative, Observational, Image: NO Unit, NO Normal Range, NO Flag!
+                                        row = `
+                                            <tr data-result-id="${item.id}">
+                                                <td class="px-4 py-3 font-bold align-top pt-3 text-gray-800">${paramName}</td>
+                                                <td class="px-4 py-3 align-top">${inputHtml}</td>
+                                            </tr>`;
+                                    }
                                     tbody.insertAdjacentHTML('beforeend', row);
                                 });
                                 attachVerifyValidationListeners();
                             } else {
-                                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500 font-bold">No results found for this test.</td></tr>';
+                                tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500 font-bold">No results found for this test.</td></tr>';
                             }
                         } else {
-                            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-red-500 font-bold">Failed to load results.</td></tr>';
+                            tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-red-500 font-bold">Failed to load results.</td></tr>';
                         }
                     } catch (err) {
                         console.error(err);
-                        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-red-500">Error loading results.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center text-red-500">Error loading results.</td></tr>';
                     }
                 }
             });
@@ -1780,34 +1792,32 @@
                 const focusColor = isUpdate ? 'teal' : 'purple';
 
                 addBtn.addEventListener('click', () => {
-                    const firstSelect = container.querySelector('.parameter-type-select');
-                    const currentType = firstSelect ? firstSelect.value : 'Quantitative';
-
-                    const numberHidden = currentType === 'Quantitative' ? '' : 'hidden';
-                    const dropdownHidden = currentType === 'Qualitative' ? '' : 'hidden';
+                    const defaultType = 'Quantitative';
 
                     const templateHTML = `
                     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
                         <div class="w-full sm:w-36">
                             <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
-                            <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed text-gray-500" disabled>
-                                <option value="${currentType}">${currentType}</option>
+                            <select name="parameter_type[]" class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white cursor-pointer" data-prev="${defaultType}">
+                                <option value="Quantitative">Quantitative</option>
+                                <option value="Qualitative">Qualitative</option>
+                                <option value="Observational">Observational</option>
+                                <option value="Image">Image</option>
                             </select>
-                            <input type="hidden" name="parameter_type[]" value="${currentType}">
                         </div>
                         <div class="w-full sm:flex-1">
                             <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
                             <input type="text" name="parameter_name[]" placeholder="e.g. Parameter" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
                         </div>
-                        <div class="w-full sm:w-24 param-number-fields ${numberHidden}">
+                        <div class="w-full sm:w-24 param-number-fields">
                             <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
                             <input type="text" name="parameter_unit[]" placeholder="unit" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
                         </div>
-                        <div class="w-full sm:flex-1 param-number-fields ${numberHidden}">
+                        <div class="w-full sm:flex-1 param-number-fields">
                             <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
                             <input type="text" name="parameter_range[]" placeholder="range" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
                         </div>
-                        <div class="w-full sm:flex-1 param-dropdown-fields ${dropdownHidden}">
+                        <div class="w-full sm:flex-1 param-dropdown-fields hidden">
                             <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma separated)</label>
                             <input type="text" placeholder="e.g. Positive, Negative" name="parameter_options[]"
                                 class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
@@ -1830,32 +1840,9 @@
                     }
                 });
 
-                container.addEventListener('focusin', (e) => {
-                    if (e.target.classList.contains('parameter-type-select')) {
-                        e.target.dataset.prev = e.target.value;
-                    }
-                });
-
                 container.addEventListener('change', (e) => {
                     if (e.target.classList.contains('parameter-type-select')) {
-                        const select = e.target;
-                        const newVal = select.value;
-                        const prevVal = select.dataset.prev || 'Quantitative';
-                        const allRows = container.querySelectorAll('.parameter-row');
-
-                        if (allRows.length > 1) {
-                            select.value = prevVal;
-                            pendingTypeChange = {
-                                selectElement: select,
-                                container: container,
-                                previousValue: prevVal,
-                                targetValue: newVal
-                            };
-                            openModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
-                            return;
-                        }
-
-                        applyParameterTypeChange(select, container, newVal);
+                        applyParameterTypeChange(e.target, e.target.value);
                     }
                 });
             }
@@ -1871,6 +1858,18 @@
                         clearValidationErrors(form);
                     }
                 });
+                const addParamContainer = document.getElementById('add-parameters-container');
+                if (addParamContainer) {
+                    const rows = addParamContainer.querySelectorAll('.parameter-row');
+                    for (let i = 1; i < rows.length; i++) rows[i].remove();
+                    if (rows[0]) {
+                        const sel = rows[0].querySelector('.parameter-type-select');
+                        if (sel) {
+                            sel.value = 'Quantitative';
+                            applyParameterTypeChange(sel, 'Quantitative');
+                        }
+                    }
+                }
                 const addReqContainer = document.getElementById('add-requirements-container');
                 if (addReqContainer) addReqContainer.innerHTML = '';
                 const addReqEmpty = document.getElementById('add-requirements-empty');
@@ -1994,17 +1993,15 @@
                                     const numberHidden = type === 'Quantitative' ? '' : 'hidden';
                                     const dropdownHidden = type === 'Qualitative' ? '' : 'hidden';
 
-                                    const typeSelectHTML = index === 0
-                                        ? `<select name="parameter_type[]" class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer" data-prev="${type}">
+                                    const optionsVal = Array.isArray(param.options) ? param.options.join(', ') : (param.options || '');
+
+                                    const typeSelectHTML = `
+                                        <select name="parameter_type[]" class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer" data-prev="${type}">
                                             <option value="Quantitative" ${type === 'Quantitative' ? 'selected' : ''}>Quantitative</option>
                                             <option value="Qualitative" ${type === 'Qualitative' ? 'selected' : ''}>Qualitative</option>
                                             <option value="Observational" ${type === 'Observational' ? 'selected' : ''}>Observational</option>
                                             <option value="Image" ${type === 'Image' ? 'selected' : ''}>Image</option>
-                                          </select>`
-                                        : `<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed text-gray-500" disabled>
-                                            <option value="${type}">${type}</option>
-                                          </select>
-                                          <input type="hidden" name="parameter_type[]" value="${type}">`;
+                                        </select>`;
 
                                     paramsContainer.insertAdjacentHTML('beforeend', `
                                     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
@@ -2024,9 +2021,9 @@
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
                                             <input type="text" name="parameter_range[]" value="${param.normalRange || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
                                         </div>
-                                        <div class="flex-1 param-dropdown-fields ${dropdownHidden}">
+                                        <div class="w-full sm:flex-1 param-dropdown-fields ${dropdownHidden}">
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma separated)</label>
-                                            <input type="text" name="parameter_options[]" value="${param.options || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
+                                            <input type="text" name="parameter_options[]" value="${optionsVal}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
                                         </div>
                                         <div class="w-full sm:w-auto flex justify-end sm:pt-6">
                                             ${index === 0 ? '' : '<button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row cursor-pointer"><i class="ph-bold ph-trash"></i></button>'}

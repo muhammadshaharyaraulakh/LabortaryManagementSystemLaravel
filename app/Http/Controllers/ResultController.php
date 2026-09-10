@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\User;
 use App\Models\Test;
+use App\Models\TestParameter;
 use App\Events\SampleRejected;
 
 
@@ -121,8 +122,22 @@ class ResultController extends Controller
     public function getResultsByOrderTestId($id)
     {
         $results = Result::where('orderTestId', $id)
-            ->with('parameter')
+            ->with(['parameter' => function ($query) {
+                $query->withTrashed();
+            }])
             ->get();
+
+        $orderTest = DB::table('order_test')->where('id', $id)->first();
+        if ($orderTest) {
+            $testParameters = TestParameter::withTrashed()->where('testId', $orderTest->testId)->get();
+            if ($testParameters->count() > 0) {
+                foreach ($results as $index => $res) {
+                    if (!$res->parameter && isset($testParameters[$index])) {
+                        $res->setRelation('parameter', $testParameters[$index]);
+                    }
+                }
+            }
+        }
 
         return response()->json([
             'status' => 200,

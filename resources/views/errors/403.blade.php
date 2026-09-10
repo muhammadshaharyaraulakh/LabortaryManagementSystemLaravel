@@ -20,8 +20,8 @@
                 $destinationName = 'Collector Dashboard';
                 break;
             case 'technician':
-                $redirectUrl = route('SampleBasedTechnician');
-                $destinationName = 'Technician Dashboard';
+                $redirectUrl = url('/logout');
+                $destinationName = 'logout';
                 break;
             case 'pathologist':
                 $redirectUrl = route('pathologist.dashboard');

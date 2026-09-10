@@ -1,3 +1,11 @@
+@php
+    $user = auth()->user();
+    $deptType = strtolower(str_replace(['_', '-', ' '], '', $user->department?->type ?? $user->department_type ?? ''));
+    if ($deptType === 'humanbased') {
+        redirect()->route('logout')->send();
+        exit();
+    }
+@endphp
 <x-header />
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
     <div id="sidebar-backdrop"
@@ -598,13 +606,18 @@
                             return;
                         }
 
+                        const hasQuant = parameters.some(p => ((p.inputType || p.type || '').toLowerCase().trim()) === 'quantitative');
+                        const isAllQual = !hasQuant && parameters.every(p => ((p.inputType || p.type || '').toLowerCase().trim()) === 'qualitative');
+                        const isAllObs = !hasQuant && parameters.every(p => ((p.inputType || p.type || '').toLowerCase().trim()) === 'observational');
+                        const isAllImg = !hasQuant && parameters.every(p => ((p.inputType || p.type || '').toLowerCase().trim()) === 'image');
+
                         const pType = (
                             parameters[0].inputType ||
                             parameters[0].type ||
                             parameters[0].test_type || ''
                         ).toLowerCase().trim();
 
-                        if (pType === 'quantitative') {
+                        if (hasQuant) {
                             paramTableHead.innerHTML = `<tr>
                                 <th class="px-4 py-3 w-2/5">Parameter</th>
                                 <th class="px-4 py-3 w-1/5">Result Value</th>
@@ -614,24 +627,30 @@
                             </tr>`;
                             if (hintEl) hintEl.classList.remove('hidden');
 
-                        } else if (pType === 'qualitative') {
+                        } else if (isAllQual) {
                             paramTableHead.innerHTML = `<tr>
                                 <th class="px-4 py-3 w-1/3">Parameter</th>
                                 <th class="px-4 py-3">Select Result</th>
                             </tr>`;
                             if (hintEl) hintEl.classList.add('hidden');
 
-                        } else if (pType === 'observational') {
+                        } else if (isAllObs) {
                             paramTableHead.innerHTML = `<tr>
                                 <th class="px-4 py-3 w-1/3">Parameter</th>
                                 <th class="px-4 py-3">Observation / Notes</th>
                             </tr>`;
                             if (hintEl) hintEl.classList.add('hidden');
 
-                        } else if (pType === 'image') {
+                        } else if (isAllImg) {
                             paramTableHead.innerHTML = `<tr>
                                 <th class="px-4 py-3 w-1/3">Parameter</th>
                                 <th class="px-4 py-3">Upload Images</th>
+                            </tr>`;
+                            if (hintEl) hintEl.classList.add('hidden');
+                        } else {
+                            paramTableHead.innerHTML = `<tr>
+                                <th class="px-4 py-3 w-1/3">Parameter</th>
+                                <th class="px-4 py-3">Result Value / Findings</th>
                             </tr>`;
                             if (hintEl) hintEl.classList.add('hidden');
                         }
@@ -641,7 +660,7 @@
                             const unit = param.unit || '';
 
                             let min = null, max = null;
-                            if (param.normalRange && param.normalRange.includes('-')) {
+                            if (param.normalRange && typeof param.normalRange === 'string' && param.normalRange.includes('-')) {
                                 const parts = param.normalRange.split('-');
                                 min = parseFloat(parts[0]);
                                 max = parseFloat(parts[1]);
@@ -650,7 +669,14 @@
                             const row = document.createElement('tr');
                             row.className = 'hover:bg-blue-50/30 transition-colors border-b border-gray-100';
 
-                            if (pType === 'quantitative') {
+                            const paramType = (
+                                param.inputType ||
+                                param.type ||
+                                pType ||
+                                'quantitative'
+                            ).toLowerCase().trim();
+
+                            if (paramType === 'quantitative') {
                                 row.innerHTML = `
                                     <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
                                     <td class="px-4 py-3 border-r border-gray-100">
@@ -668,35 +694,42 @@
                                         <span class="text-gray-300 text-xs font-bold">—</span>
                                     </td>`;
 
-
-                            } else if (pType === 'qualitative') {
-
+                            } else if (paramType === 'qualitative') {
                                 let optionsHtml = `<option value="">Select Results</option>`;
+                                let finalOptions = [];
 
-                                let optionsList = param.options;
-
-                                if (!Array.isArray(optionsList)) {
-                                    optionsList = (optionsList || 'Positive,Negative').split(',');
+                                if (Array.isArray(param.options)) {
+                                    finalOptions = param.options;
+                                } else if (typeof param.options === 'string') {
+                                    try {
+                                        const parsed = JSON.parse(param.options);
+                                        if (Array.isArray(parsed)) {
+                                            finalOptions = parsed;
+                                        } else {
+                                            finalOptions = param.options.split(',');
+                                        }
+                                    } catch (e) {
+                                        finalOptions = param.options.split(',');
+                                    }
+                                } else {
+                                    finalOptions = ['Positive', 'Negative'];
                                 }
 
-                                optionsList.forEach(opt => {
-                                    const o = opt.trim();
-                                    if (o) {
-                                        optionsHtml += `<option value="${o}">${o}</option>`;
-                                    }
+                                finalOptions.forEach(opt => {
+                                    const o = typeof opt === 'string' ? opt.trim() : (opt !== null && opt !== undefined ? String(opt).trim() : '');
+                                    if (o) optionsHtml += `<option value="${o}">${o}</option>`;
                                 });
 
                                 row.innerHTML = `
-        <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">
-            ${param.parameterName}
-        </td>
-        <td class="px-4 py-3">
-            <select required data-param-id="${param.id}" data-flag="Normal"
-                class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors">
-                ${optionsHtml}
-            </select>
-        </td>`;
-                            } else if (pType === 'observational') {
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3">
+                                        <select required data-param-id="${param.id}" data-flag="Normal"
+                                            class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors cursor-pointer">
+                                            ${optionsHtml}
+                                        </select>
+                                    </td>`;
+
+                            } else if (paramType === 'observational') {
                                 row.innerHTML = `
                                     <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
                                     <td class="px-4 py-3">
@@ -705,15 +738,22 @@
                                             placeholder="Enter observation details..." rows="3"></textarea>
                                     </td>`;
 
-
-                            } else if (pType === 'image') {
+                            } else if (paramType === 'image') {
                                 row.innerHTML = `
                                     <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
                                     <td class="px-4 py-3">
                                         <input type="file" multiple accept="image/*"
                                             class="param-image-upload w-full border border-gray-300 rounded-lg p-2 text-sm cursor-pointer bg-gray-50">
-                                        <input type="hidden" required data-param-id="${param.id}" data-flag="Normal" class="result-input">
+                                        <input type="hidden" data-param-id="${param.id}" data-flag="Normal" class="result-input param-image-hidden">
                                         <p class="param-upload-status text-xs text-blue-600 mt-1 font-semibold"></p>
+                                    </td>`;
+                            } else {
+                                row.innerHTML = `
+                                    <td class="px-4 py-4 font-bold text-gray-800 border-r border-gray-100">${param.parameterName}</td>
+                                    <td class="px-4 py-3">
+                                        <input type="text" data-param-id="${param.id}" data-flag="Normal"
+                                            class="result-input w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-gray-900 transition-colors"
+                                            placeholder="Enter result">
                                     </td>`;
                             }
 

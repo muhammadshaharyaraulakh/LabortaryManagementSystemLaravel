@@ -192,7 +192,4 @@ Route::get('/getCompletedReports', [ResultController::class, 'getCompletedReport
 
 Route::get('/orders/{trackingId}/test/{testId}/report', [OrderController::class, 'downloadReport']);
 Route::get('/public/track-report/{trackingId}', [OrderController::class, 'PublicTrackReport']);
-
-Route::get('/whoami', fn() => auth()->user());
-
 Route::get('/getOrderTestParameters/{id}', [TechnicianController::class, 'getOrderTestParameters']);

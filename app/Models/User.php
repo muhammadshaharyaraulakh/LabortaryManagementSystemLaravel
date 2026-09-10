@@ -34,6 +34,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Department::class);
     }
+    public function getDepartmentTypeAttribute(): ?string
+    {
+        return $this->department?->type;
+    }
     public function orders()
     {
         return $this->hasMany(Order::class);
