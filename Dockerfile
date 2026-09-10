@@ -2,13 +2,14 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
+RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
 
 # Stage 2: Frontend assets
 FROM node:20-alpine AS frontend
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+ENV NODE_OPTIONS="--max-old-space-size=1024"
+RUN npm ci --prefer-offline --no-audit || npm install --no-audit
 COPY . .
 RUN npm run build
 
