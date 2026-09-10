@@ -224,6 +224,8 @@ class OrderController extends Controller
 
     public function PublicTrackReport($trackingId)
     {
+        $trackingId = ltrim(trim($trackingId), '#');
+
         if (empty($trackingId)) {
             return response()->json([
                 'status' => false,
@@ -261,17 +263,20 @@ class OrderController extends Controller
     }
     public function downloadReceiptPdf($trackingId)
     {
+        $trackingId = ltrim(trim($trackingId), '#');
         $order = Order::with('tests')->where('trackingId', $trackingId)->firstOrFail();
         foreach ($order->tests as $test) {
             $barcodeString = $test->pivot->vialBarcode;
             $test->backend_barcode = \DNS1D::getBarcodePNG($barcodeString, 'C128', 1, 25, [0, 0, 0]);
         }
         $pdf = Pdf::loadView('ReceiptPdf', compact('order'));
+        
         return $pdf->download("Receipt-{$trackingId}.pdf");
     }
 
     public function downloadReport($trackingId, $testId)
     {
+        $trackingId = ltrim(trim($trackingId), '#');
         $order = Order::with([
             'tests' => function ($query) use ($testId) {
                 $query->where('tests.id', $testId);
@@ -284,11 +289,12 @@ class OrderController extends Controller
             abort(404, 'Report not ready or not found.');
         }
 
+        $barcodeString = $test->pivot->vialBarcode ?: 'N/A';
+        $test->backend_barcode = \DNS1D::getBarcodePNG($barcodeString, 'C128', 1, 25, [0, 0, 0]);
+
         $results = Result::where('orderTestId', $test->pivot->id)
             ->with('parameter')
             ->get();
-
-
 
         $pdf = Pdf::loadView('TestReport', compact('order', 'test', 'results'));
 

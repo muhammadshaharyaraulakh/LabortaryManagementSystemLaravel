@@ -2,18 +2,18 @@
 
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
     <div id="sidebar-backdrop"
-        class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer"></div>
+        class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity min-[1049px]:hidden cursor-pointer"></div>
     <aside id="sidebar"
-        class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 md:relative transform -translate-x-full md:translate-x-0">
+        class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 min-[1049px]:relative transform -translate-x-full min-[1049px]:translate-x-0">
         <div class="h-20 flex items-center justify-between px-6 pt-2">
             <span id="brand-text"
                 class="text-white text-xl font-bold whitespace-nowrap tracking-wide">Pathologist</span>
             <button id="toggle-desktop-sidebar"
-                class="text-gray-300 hover:text-white transition-colors hidden md:block cursor-pointer">
+                class="text-gray-300 hover:text-white transition-colors hidden min-[1049px]:block cursor-pointer">
                 <i class="ph ph-caret-double-left text-xl" id="desktop-toggle-icon"></i>
             </button>
             <button id="close-mobile-sidebar"
-                class="text-gray-300 hover:text-white transition-colors md:hidden text-2xl cursor-pointer">
+                class="text-gray-300 hover:text-white transition-colors min-[1049px]:hidden text-2xl cursor-pointer">
                 <i class="ph ph-x"></i>
             </button>
         </div>
@@ -80,21 +80,21 @@
         </nav>
     </aside>
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header class="h-20 px-4 md:px-10 flex items-center justify-between z-20 sticky top-0 bg-mainBg">
-            <div class="flex items-center">
+        <header class="h-20 px-3 sm:px-4 md:px-10 flex items-center justify-between z-20 sticky top-0 bg-mainBg">
+            <div class="flex items-center min-w-0">
                 <button id="open-mobile-sidebar"
-                    class="mr-4 text-gray-800 md:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer">
+                    class="mr-3 sm:mr-4 text-gray-800 min-[1049px]:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer shrink-0">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
                 <h1 id="header-title"
-                    class="text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200">
+                    class="text-xl sm:text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200 truncate">
                     Dashboard {{ auth()->user()->department->name }}
                 </h1>
             </div>
 
         </header>
 
-        <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
+        <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-10 pt-2 relative">
             <div id="globalNotification"
                 class="fixed top-24 right-10 z-70 hidden p-4 rounded-xl shadow-lg border animate-fade-in max-w-sm pointer-events-none">
             </div>
@@ -182,7 +182,7 @@
                         </div>
                     </div>
                     <button id="btn-go-to-add-test"
-                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        class="bg-sidebarBg hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm w-full sm:w-auto">
                         <i class="ph ph-plus font-bold text-lg"></i> Add New Test
                     </button>
                 </div>
@@ -229,13 +229,13 @@
                         </div>
                     </div>
                     <button id="btn-back-to-tests-from-add"
-                        class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm w-full sm:w-auto">
                         <i class="ph ph-arrow-left font-bold text-lg"></i> Back to List
                     </button>
                 </div>
 
                 <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full p-6 md:p-8 mb-8">
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full p-4 sm:p-6 md:p-8 mb-8">
                     <form id="AddTestFormSection" class="space-y-6">
                         <div
                             class="form-general-error hidden bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 mb-6 font-bold text-sm">
@@ -324,10 +324,10 @@
 
                         <div id="add-parameters-container" class="space-y-4">
                             <div
-                                class="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row">
-                                <div class="w-36">
+                                class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100 parameter-row">
+                                <div class="w-full sm:w-36">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
-                                    <select name="parameter_type[]"
+                                    <select name="parameter_type[]" data-prev="Quantitative"
                                         class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white cursor-pointer">
                                         <option value="Quantitative">Quantitative </option>
                                         <option value="Qualitative">Qualitative</option>
@@ -336,32 +336,32 @@
                                     </select>
                                 </div>
 
-                                <div class="flex-1">
+                                <div class="w-full sm:flex-1">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
                                     <input type="text" placeholder="e.g. Hemoglobin or Result" name="parameter_name[]"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
 
-                                <div class="w-24 param-number-fields">
+                                <div class="w-full sm:w-24 param-number-fields">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
                                     <input type="text" placeholder="g/dL" name="parameter_unit[]"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
 
-                                <div class="flex-1 param-number-fields">
+                                <div class="w-full sm:flex-1 param-number-fields">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
                                     <input type="text" placeholder="13.8 - 17.2" name="parameter_range[]"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
 
-                                <div class="flex-1 param-dropdown-fields hidden">
+                                <div class="w-full sm:flex-1 param-dropdown-fields hidden">
                                     <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma
                                         separated)</label>
                                     <input type="text" placeholder="e.g. Positive, Negative" name="parameter_options[]"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
                                 </div>
 
-                                <div class="pt-6">
+                                <div class="w-full sm:w-auto flex justify-end sm:pt-6">
 
                                 </div>
                             </div>
@@ -372,46 +372,39 @@
                                 <h3 class="text-lg font-bold text-gray-800"><i
                                         class="ph-duotone ph-package text-purple-500 mr-2"></i>3. Inventory Requirements
                                 </h3>
-                                <button type="button" id="btn-add-item"
-                                    class="text-sm font-bold text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1 cursor-pointer">
-                                    <i class="ph-bold ph-plus"></i> Add Item
-                                </button>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1">Select items to be deducted from stock when this test
+                            <p class="text-xs text-gray-500 mt-1">Search and select items to be deducted from stock when this test
                                 is performed.</p>
                         </div>
 
                         <div class="inventory-error-summary"></div>
 
-                        <div id="add-requirements-container" class="space-y-4">
-                            <div
-                                class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row">
-                                <div class="flex-1">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
-                                    <select name="inventory_item[]"
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white cursor-pointer">
-                                        <option disabled selected>Select an item</option>
-                                        <option>5cc Syringe</option>
-                                        <option>EDTA Tube</option>
-                                        <option>CBC Reagent (ml)</option>
-                                    </select>
+                        <!-- Live Search for Inventory Item -->
+                        <div class="relative mb-4">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Search Item to Add</label>
+                            <div class="relative">
+                                <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                                <input type="text" id="add-inventory-search" placeholder="Type item name (e.g. Syringe, Tube, Reagent)" autocomplete="off"
+                                    class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-100 bg-gray-50/50 focus:bg-white text-sm font-medium transition-colors">
+                                <div id="add-inventory-spinner" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-purple-500">
+                                    <i class="ph ph-spinner animate-spin text-lg"></i>
                                 </div>
-                                <div class="w-32">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
-                                    <input type="number" value="1" name='inventory_quantity[]'
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white">
-                                </div>
-                                <div>
-
-                                </div>
+                            </div>
+                            <div id="add-inventory-results" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto custom-scrollbar">
                             </div>
                         </div>
 
-                        <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+                        <div id="add-requirements-container" class="space-y-3">
+                        </div>
+                        <div id="add-requirements-empty" class="text-center py-6 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-xs font-medium">
+                            No inventory items added yet. Search above to add items required for this test.
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
                             <button id="btn-cancel-add-test-bottom" type="button"
-                                class="px-6 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">Cancel</button>
+                                class="w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">Cancel</button>
                             <button type="button"
-                                class="bg-sidebarBg hover:bg-gray-800 text-white px-8 py-3 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Save
+                                class="w-full sm:w-auto bg-sidebarBg hover:bg-gray-800 text-white px-8 py-3 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">Save
                                 Complete Test</button>
                         </div>
                     </form>
@@ -430,13 +423,13 @@
                         </div>
                     </div>
                     <button id="btn-back-to-tests-from-update"
-                        class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                        class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm w-full sm:w-auto">
                         <i class="ph ph-arrow-left font-bold text-lg"></i> Back to List
                     </button>
                 </div>
 
                 <div
-                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full p-6 md:p-8 mb-8">
+                    class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden w-full p-4 sm:p-6 md:p-8 mb-8">
                     <form id="UpdateTestFormSection" class="space-y-6">
                         <div
                             class="form-general-error hidden bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 mb-6 font-bold text-sm">
@@ -534,30 +527,44 @@
                                 <h3 class="text-lg font-bold text-gray-800">
                                     <i class="ph-duotone ph-package text-teal-600 mr-2"></i>3. Inventory Requirements
                                 </h3>
-                                <button type="button" id="btn-update-add-item"
-                                    class="text-sm font-bold text-teal-600 hover:text-teal-800 transition-colors flex items-center gap-1 cursor-pointer">
-                                    <i class="ph-bold ph-plus"></i> Add Item
-                                </button>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1">Select items to be deducted from stock when this test
+                            <p class="text-xs text-gray-500 mt-1">Search and select items to be deducted from stock when this test
                                 is performed.</p>
                         </div>
 
                         <div class="inventory-error-summary"></div>
 
-                        <div id="update-requirements-container" class="space-y-4">
+                        <!-- Live Search for Inventory Item in Update -->
+                        <div class="relative mb-4">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Search Item to Add</label>
+                            <div class="relative">
+                                <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                                <input type="text" id="update-inventory-search" placeholder="Type item name (e.g. Syringe, Tube, Reagent)" autocomplete="off"
+                                    class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-100 bg-gray-50/50 focus:bg-white text-sm font-medium transition-colors">
+                                <div id="update-inventory-spinner" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-teal-600">
+                                    <i class="ph ph-spinner animate-spin text-lg"></i>
+                                </div>
+                            </div>
+                            <div id="update-inventory-results" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto custom-scrollbar">
+                            </div>
+                        </div>
 
+                        <div id="update-requirements-container" class="space-y-3">
+
+                        </div>
+                        <div id="update-requirements-empty" class="text-center py-6 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-xs font-medium">
+                            No inventory items added yet. Search above to add items required for this test.
                         </div>
 
 
-                        <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+                        <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
                             <button id="btn-cancel-update-test-bottom" type="button"
-                                class="px-6 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
+                                class="w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
                                 Cancel
                             </button>
 
                             <button type="button"
-                                class="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                                class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">
                                 Update Test
                             </button>
                         </div>
@@ -607,7 +614,7 @@
 
 
                 <div id="section-settings"
-                    class="content-section hidden animate-fade-in w-full max-w-2xl mx-auto px-4 py-6">
+                    class="content-section hidden animate-fade-in w-full max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
                     <div class="flex items-center gap-3 mb-10">
                         <div
                             class="w-12 h-12 shrink-0 rounded-xl bg-gray-200 text-gray-700 flex items-center justify-center">
@@ -639,7 +646,7 @@
                                         </div>
                                     </div>
                                     <button type="submit" id="btnSaveEmail"
-                                        class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
+                                        class="w-full sm:w-auto sm:self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
                                         Save Email
                                     </button>
                                 </form>
@@ -671,7 +678,7 @@
                                         </div>
                                     </div>
                                     <button type="submit" id="btnSavePassword"
-                                        class="self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
+                                        class="w-full sm:w-auto sm:self-start cursor-pointer bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm mt-2">
                                         Update Password
                                     </button>
                                 </form>
@@ -709,13 +716,13 @@
                                         <span
                                             class="text-xs text-gray-800 font-bold mt-2">{{ auth()->user()->name ?? 'Dr. Smith' }}</span>
                                     </div>
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full max-w-[250px]">
                                         <button type="button" id="btnChangeSig"
-                                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
+                                            class="w-full sm:flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
                                             Change
                                         </button>
                                         <button type="button" id="btnDeleteSig"
-                                            class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
+                                            class="w-full sm:flex-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer">
                                             Delete
                                         </button>
                                     </div>
@@ -731,30 +738,30 @@
         </main>
     </div>
     <div id="VerifyTestModalBackdrop"
-        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        class="fixed inset-0 bg-black/50 z-60 hidden items-center justify-center p-3 sm:p-4 opacity-0 transition-opacity duration-300">
         <div id="VerifyTestModal"
             class="bg-white w-full max-w-2xl rounded-[1.25rem] shadow-xl transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
             <div
-                class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50 rounded-t-[1.25rem]">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100 bg-gray-50/50 rounded-t-[1.25rem]">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                         <i class="ph-duotone ph-microscope text-xl"></i>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-extrabold text-gray-800">Verify Test Results</h3>
-                        <p class="text-xs text-gray-500 font-medium" id="verifyModalSubtitle">Patient: Ali Khan | Test:
+                    <div class="min-w-0">
+                        <h3 class="text-base sm:text-lg font-extrabold text-gray-800 truncate">Verify Test Results</h3>
+                        <p class="text-xs text-gray-500 font-medium truncate" id="verifyModalSubtitle">Patient: Ali Khan | Test:
                             CBC</p>
                     </div>
                 </div>
                 <button id="CloseVerifyTestX"
-                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1"><i
+                    class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer p-1 shrink-0"><i
                         class="ph ph-x text-xl"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
+            <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar">
                 <div id="verifyNotification" class="hidden mb-4 p-4 rounded-xl text-sm font-bold animate-fade-in"></div>
                 <form id="VerifyTestForm" class="space-y-6">
-                    <div class="border border-gray-200 rounded-xl overflow-hidden">
-                        <table class="w-full text-sm text-left">
+                    <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm text-left min-w-[360px]">
                             <thead id="verifyParametersTableHead"
                                 class="bg-gray-50 border-b border-gray-200 text-xs text-gray-700 font-bold">
                             </thead>
@@ -778,7 +785,7 @@
                     </div>
                     <div class="flex items-center gap-3 bg-red-50 p-4 rounded-xl border border-red-100">
                         <input type="checkbox" id="criticalFlag"
-                            class="w-5 h-5 text-red-600 rounded border-red-300 focus:ring-red-500 cursor-pointer">
+                            class="w-5 h-5 text-red-600 rounded border-red-300 focus:ring-red-500 cursor-pointer shrink-0">
                         <div>
                             <label for="criticalFlag" class="text-sm font-bold text-red-700 cursor-pointer">Flag as
                                 Critical / Urgent</label>
@@ -789,15 +796,82 @@
                 </form>
             </div>
             <div
-                class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end">
-                <div class="flex gap-3">
+                class="px-4 sm:px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-[1.25rem] flex items-center justify-end">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                     <button id="CloseVerifyTestBtn" type="button"
-                        class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancel</button>
+                        class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer">Cancel</button>
                     <button id="BtnVerifyAndSign" type="button"
-                        class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                        class="w-full sm:w-auto bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer">
                         <i class="ph-bold ph-check-circle"></i> Verify & Sign
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Test Confirmation Modal -->
+    <div id="DeleteTestModalBackdrop"
+        class="fixed inset-0 bg-black/60 z-70 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="DeleteTestModal"
+            class="bg-white w-full max-w-sm rounded-[1.25rem] shadow-2xl transform scale-95 transition-all duration-300 flex flex-col items-center p-6 text-center overflow-hidden">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-3xl mb-4 border border-red-100 shadow-sm">
+                <i class="ph-bold ph-trash"></i>
+            </div>
+            <h3 class="text-lg font-black text-gray-900 mb-1.5">Delete Test</h3>
+            <p id="deleteTestModalMessage" class="text-sm text-gray-600 font-medium mb-6 leading-relaxed max-w-xs">
+                Are you sure you want to delete this test? It will be moved to archived tests.
+            </p>
+            <div class="flex items-center gap-3 w-full">
+                <button type="button" id="btnCancelDeleteTest"
+                    class="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-xl transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button type="button" id="btnConfirmDeleteTest"
+                    class="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-red-200 cursor-pointer">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Alert Modal Popup -->
+    <div id="ErrorAlertModalBackdrop"
+        class="fixed inset-0 bg-black/60 z-70 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="ErrorAlertModal"
+            class="bg-white w-full max-w-sm rounded-[1.25rem] shadow-2xl transform scale-95 transition-all duration-300 flex flex-col items-center p-6 text-center overflow-hidden">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-3xl mb-4 border border-red-100 shadow-sm">
+                <i class="ph-bold ph-warning-circle"></i>
+            </div>
+            <h3 id="errorModalTitle" class="text-lg font-black text-gray-900 mb-1.5">Action Failed</h3>
+            <p id="errorModalMessage" class="text-sm text-gray-600 font-medium mb-6 leading-relaxed max-w-xs"></p>
+            <button type="button" id="btnCloseErrorModal"
+                class="w-full py-3 px-5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-red-200 cursor-pointer flex items-center justify-center gap-2">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirm Change Test Type Modal Popup -->
+    <div id="ConfirmChangeTypeModalBackdrop"
+        class="fixed inset-0 bg-black/60 z-70 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="ConfirmChangeTypeModal"
+            class="bg-white w-full max-w-sm rounded-[1.25rem] shadow-2xl transform scale-95 transition-all duration-300 flex flex-col items-center p-6 text-center overflow-hidden">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-3xl mb-4 border border-amber-100 shadow-sm">
+                <i class="ph-bold ph-warning"></i>
+            </div>
+            <h3 class="text-lg font-black text-gray-900 mb-1.5">Change Test Type?</h3>
+            <p class="text-sm text-gray-600 font-medium mb-6 leading-relaxed max-w-xs">
+                Changing the Test Type will delete all other parameters. Continue?
+            </p>
+            <div class="flex items-center gap-3 w-full">
+                <button type="button" id="btnCancelChangeType"
+                    class="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-xl transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button type="button" id="btnConfirmChangeType"
+                    class="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-amber-200 cursor-pointer">
+                    Continue
+                </button>
             </div>
         </div>
     </div>
@@ -810,7 +884,324 @@
                 'X-CSRF-TOKEN': csrfToken
             };
 
-            let inventoryItemsList = [];
+            const sidebar = document.getElementById('sidebar');
+            const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+            const toggleDesktopBtn = document.getElementById('toggle-desktop-sidebar');
+            const desktopToggleIcon = document.getElementById('desktop-toggle-icon');
+            const brandText = document.getElementById('brand-text');
+            const navTexts = document.querySelectorAll('#sidebar .nav-text');
+
+            function toggleSidebar() {
+                sidebar?.classList.toggle('-translate-x-full');
+                sidebarBackdrop?.classList.toggle('hidden');
+            }
+
+            document.getElementById('open-mobile-sidebar')?.addEventListener('click', toggleSidebar);
+            document.getElementById('close-mobile-sidebar')?.addEventListener('click', toggleSidebar);
+            sidebarBackdrop?.addEventListener('click', toggleSidebar);
+
+            let isCollapsed = false;
+            if (toggleDesktopBtn) {
+                toggleDesktopBtn.addEventListener('click', () => {
+                    isCollapsed = !isCollapsed;
+                    if (isCollapsed) {
+                        sidebar?.classList.remove('w-64');
+                        sidebar?.classList.add('w-20');
+                        brandText?.classList.add('hidden');
+                        navTexts.forEach(text => text.classList.add('hidden'));
+                        if (desktopToggleIcon) {
+                            desktopToggleIcon.classList.remove('ph-caret-double-left');
+                            desktopToggleIcon.classList.add('ph-caret-double-right');
+                        }
+                    } else {
+                        sidebar?.classList.remove('w-20');
+                        sidebar?.classList.add('w-64');
+                        setTimeout(() => {
+                            brandText?.classList.remove('hidden');
+                            navTexts.forEach(text => text.classList.remove('hidden'));
+                        }, 150);
+                        if (desktopToggleIcon) {
+                            desktopToggleIcon.classList.remove('ph-caret-double-right');
+                            desktopToggleIcon.classList.add('ph-caret-double-left');
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 1048) {
+                    sidebarBackdrop?.classList.add('hidden');
+                    sidebar?.classList.remove('-translate-x-full');
+                } else {
+                    if (sidebarBackdrop?.classList.contains('hidden')) {
+                        sidebar?.classList.add('-translate-x-full');
+                    }
+                }
+            });
+
+            function showErrorPopup(message, title = 'Error') {
+                const titleEl = document.getElementById('errorModalTitle');
+                const msgEl = document.getElementById('errorModalMessage');
+                if (titleEl) titleEl.innerText = title;
+                if (msgEl) msgEl.innerText = message;
+                openModal('ErrorAlertModalBackdrop', 'ErrorAlertModal');
+            }
+
+            window.alert = function (message) {
+                showErrorPopup(message, 'Notice');
+            };
+
+            document.getElementById('btnCloseErrorModal')?.addEventListener('click', () => {
+                closeModal('ErrorAlertModalBackdrop', 'ErrorAlertModal');
+            });
+            document.getElementById('ErrorAlertModalBackdrop')?.addEventListener('click', (e) => {
+                if (e.target.id === 'ErrorAlertModalBackdrop') {
+                    closeModal('ErrorAlertModalBackdrop', 'ErrorAlertModal');
+                }
+            });
+
+            let pendingDeleteTestId = null;
+            let pendingDeleteRow = null;
+
+            document.getElementById('btnCancelDeleteTest')?.addEventListener('click', () => {
+                closeModal('DeleteTestModalBackdrop', 'DeleteTestModal');
+                pendingDeleteTestId = null;
+                pendingDeleteRow = null;
+            });
+            document.getElementById('DeleteTestModalBackdrop')?.addEventListener('click', (e) => {
+                if (e.target.id === 'DeleteTestModalBackdrop') {
+                    closeModal('DeleteTestModalBackdrop', 'DeleteTestModal');
+                    pendingDeleteTestId = null;
+                    pendingDeleteRow = null;
+                }
+            });
+            document.getElementById('btnConfirmDeleteTest')?.addEventListener('click', async () => {
+                if (!pendingDeleteTestId) return;
+                const btn = document.getElementById('btnConfirmDeleteTest');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Deleting...';
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch(`/tests/${pendingDeleteTestId}`, { method: 'DELETE', headers: fetchHeaders });
+                    const result = await response.json();
+                    if (result.status === true) {
+                        allTests = allTests.filter(t => t.id != pendingDeleteTestId);
+                        if (pendingDeleteRow) {
+                            pendingDeleteRow.remove();
+                            
+                        }
+                        closeModal('DeleteTestModalBackdrop', 'DeleteTestModal');
+                    } else {
+                        closeModal('DeleteTestModalBackdrop', 'DeleteTestModal');
+                        showErrorPopup(result.message || 'Failed to delete test.', 'Delete Failed');
+                    }
+                } catch (error) {
+                    console.error('Error deleting test:', error);
+                    closeModal('DeleteTestModalBackdrop', 'DeleteTestModal');
+                    showErrorPopup('A network error occurred while deleting the test.', 'Network Error');
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    pendingDeleteTestId = null;
+                    pendingDeleteRow = null;
+                }
+            });
+
+            let pendingTypeChange = null;
+
+            function applyParameterTypeChange(selectElement, container, val) {
+                selectElement.value = val;
+                selectElement.dataset.prev = val;
+                const allRows = container.querySelectorAll('.parameter-row');
+                for (let i = 1; i < allRows.length; i++) {
+                    allRows[i].remove();
+                }
+
+                const row = selectElement.closest('.parameter-row');
+                if (!row) return;
+
+                const numberFields = row.querySelectorAll('.param-number-fields');
+                const dropdownFields = row.querySelector('.param-dropdown-fields');
+
+                if (val === 'Quantitative') {
+                    numberFields.forEach(f => f.classList.remove('hidden'));
+                    if (dropdownFields) dropdownFields.classList.add('hidden');
+                } else if (val === 'Qualitative') {
+                    numberFields.forEach(f => f.classList.add('hidden'));
+                    if (dropdownFields) dropdownFields.classList.remove('hidden');
+                } else if (val === 'Observational' || val === 'Image') {
+                    numberFields.forEach(f => f.classList.add('hidden'));
+                    if (dropdownFields) dropdownFields.classList.add('hidden');
+                }
+            }
+
+            document.getElementById('btnCancelChangeType')?.addEventListener('click', () => {
+                closeModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
+                if (pendingTypeChange && pendingTypeChange.selectElement) {
+                    pendingTypeChange.selectElement.value = pendingTypeChange.previousValue;
+                }
+                pendingTypeChange = null;
+            });
+
+            document.getElementById('ConfirmChangeTypeModalBackdrop')?.addEventListener('click', (e) => {
+                if (e.target.id === 'ConfirmChangeTypeModalBackdrop') {
+                    closeModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
+                    if (pendingTypeChange && pendingTypeChange.selectElement) {
+                        pendingTypeChange.selectElement.value = pendingTypeChange.previousValue;
+                    }
+                    pendingTypeChange = null;
+                }
+            });
+
+            document.getElementById('btnConfirmChangeType')?.addEventListener('click', () => {
+                if (pendingTypeChange) {
+                    const { selectElement, container, targetValue } = pendingTypeChange;
+                    applyParameterTypeChange(selectElement, container, targetValue);
+                }
+                closeModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
+                pendingTypeChange = null;
+            });
+
+            function appendRequirementRow(containerId, item, quantity = 1, theme = 'purple') {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const existing = container.querySelector(`[data-item-id="${item.id}"]`);
+                if (existing) {
+                    const qtyInput = existing.querySelector('input[name="inventory_quantity[]"]');
+                    if (qtyInput) {
+                        qtyInput.value = parseInt(qtyInput.value || 1) + parseInt(quantity || 1);
+                        existing.classList.add('ring-2', `ring-${theme}-400`);
+                        setTimeout(() => existing.classList.remove('ring-2', `ring-${theme}-400`), 800);
+                    }
+                    return;
+                }
+
+                const emptyNoticeId = containerId === 'add-requirements-container' ? 'add-requirements-empty' : 'update-requirements-empty';
+                const emptyNotice = document.getElementById(emptyNoticeId);
+                if (emptyNotice) emptyNotice.classList.add('hidden');
+
+                const rowHTML = `
+                <div class="flex flex-col sm:flex-row gap-3 sm:items-center bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100 requirement-row animate-fade-in" data-item-id="${item.id}">
+                    <div class="flex-1 flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg bg-${theme}-100 text-${theme}-600 flex items-center justify-center shrink-0 font-bold text-sm">
+                            <i class="ph-bold ph-package"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-bold text-gray-800 truncate">${item.name}</p>
+                            <p class="text-xs text-gray-500">${item.unit ? 'Unit: ' + item.unit : 'Stock item'}</p>
+                        </div>
+                        <input type="hidden" name="inventory_item[]" value="${item.id}">
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200/60">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-gray-600">Qty:</label>
+                            <input type="number" name="inventory_quantity[]" value="${quantity}" min="1" step="1"
+                                class="w-20 sm:w-24 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-${theme}-100 outline-none bg-white font-bold text-center">
+                        </div>
+                        <button type="button" class="btn-remove-requirement text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors cursor-pointer shrink-0" title="Remove item">
+                            <i class="ph-bold ph-trash text-base"></i>
+                        </button>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', rowHTML);
+            }
+
+            function setupInventorySearch(inputId, resultsId, spinnerId, containerId, theme = 'purple') {
+                const searchInput = document.getElementById(inputId);
+                const resultsBox = document.getElementById(resultsId);
+                const spinner = document.getElementById(spinnerId);
+                const container = document.getElementById(containerId);
+                if (!searchInput || !resultsBox) return;
+
+                let debounceTimer = null;
+
+                searchInput.addEventListener('input', (e) => {
+                    const term = e.target.value.trim();
+                    clearTimeout(debounceTimer);
+
+                    if (!term) {
+                        resultsBox.classList.add('hidden');
+                        resultsBox.innerHTML = '';
+                        if (spinner) spinner.classList.add('hidden');
+                        return;
+                    }
+
+                    if (spinner) spinner.classList.remove('hidden');
+
+                    debounceTimer = setTimeout(async () => {
+                        try {
+                            const res = await fetch(`/InventoryItems?search=${encodeURIComponent(term)}`, { headers: fetchHeaders });
+                            const result = await res.json();
+                            if (spinner) spinner.classList.add('hidden');
+
+                            if (result.success && Array.isArray(result.data)) {
+                                if (result.data.length === 0) {
+                                    resultsBox.innerHTML = `<div class="p-4 text-xs text-gray-500 text-center font-medium">No inventory items found matching "${term}"</div>`;
+                                } else {
+                                    resultsBox.innerHTML = '';
+                                    result.data.forEach(item => {
+                                        const itemName = item.name || item.item_name || 'Unnamed Item';
+                                        const itemUnit = item.unit || '';
+                                        const div = document.createElement('div');
+                                        div.className = 'px-4 py-2.5 hover:bg-gray-50 flex items-center justify-between cursor-pointer border-b border-gray-50 last:border-0 transition-colors';
+                                        div.innerHTML = `
+                                            <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                                                <div class="w-7 h-7 rounded-md bg-gray-100 text-gray-600 flex items-center justify-center shrink-0 text-xs font-bold">
+                                                    <i class="ph-bold ph-package"></i>
+                                                </div>
+                                                <div class="truncate">
+                                                    <span class="text-sm font-bold text-gray-800 truncate block">${itemName}</span>
+                                                    ${itemUnit ? `<span class="text-xs text-gray-400">Unit: ${itemUnit}</span>` : ''}
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-bold text-${theme}-600 shrink-0 bg-${theme}-50 px-2.5 py-1 rounded-md border border-${theme}-100">
+                                                + Add
+                                            </span>`;
+                                        div.addEventListener('click', () => {
+                                            appendRequirementRow(containerId, { id: item.id, name: itemName, unit: itemUnit }, 1, theme);
+                                            searchInput.value = '';
+                                            resultsBox.classList.add('hidden');
+                                            resultsBox.innerHTML = '';
+                                        });
+                                        resultsBox.appendChild(div);
+                                    });
+                                }
+                                resultsBox.classList.remove('hidden');
+                            }
+                        } catch (err) {
+                            console.error('Inventory search error:', err);
+                            if (spinner) spinner.classList.add('hidden');
+                        }
+                    }, 250);
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) {
+                        resultsBox.classList.add('hidden');
+                    }
+                });
+
+                container?.addEventListener('click', (e) => {
+                    const removeBtn = e.target.closest('.btn-remove-requirement');
+                    if (removeBtn) {
+                        const row = removeBtn.closest('.requirement-row');
+                        if (row) {
+                            row.remove();
+                            const emptyNoticeId = containerId === 'add-requirements-container' ? 'add-requirements-empty' : 'update-requirements-empty';
+                            const emptyNotice = document.getElementById(emptyNoticeId);
+                            if (container.querySelectorAll('.requirement-row').length === 0 && emptyNotice) {
+                                emptyNotice.classList.remove('hidden');
+                            }
+                        }
+                    }
+                });
+            }
+
+            setupInventorySearch('add-inventory-search', 'add-inventory-results', 'add-inventory-spinner', 'add-requirements-container', 'purple');
+            setupInventorySearch('update-inventory-search', 'update-inventory-results', 'update-inventory-spinner', 'update-requirements-container', 'teal');
+
             let allTests = [];
             let hasSignature = false;
             function clearValidationErrors(form) {
@@ -916,40 +1307,7 @@
                     formAlert.innerHTML = generalMessages.map(msg => `• ${msg}`).join('<br>');
                 }
             }
-            function getInventoryOptionsHTML() {
-                if (inventoryItemsList.length === 0) {
-                    return '<option value="" disabled selected>No inventory items found...</option>';
-                }
 
-                let html = '<option value="" disabled selected>Select an item...</option>';
-                inventoryItemsList.forEach(item => {
-                    const itemName = item.name || item.item_name || item.itemName || 'Unnamed Item';
-                    html += `<option value="${item.id}">${itemName}</option>`;
-                });
-                return html;
-            }
-
-            async function loadInventoryItems() {
-                if (inventoryItemsList.length > 0) return;
-
-                try {
-                    const response = await fetch('/InventoryItems', { headers: fetchHeaders });
-                    const result = await response.json();
-
-                    if (result.success === true) {
-                        inventoryItemsList = result.data || [];
-                        const html = getInventoryOptionsHTML();
-
-                        document.querySelectorAll('select[name="inventory_item[]"]').forEach(select => {
-                            const currentVal = select.value;
-                            select.innerHTML = html;
-                            if (currentVal && currentVal !== '') select.value = currentVal;
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error loading inventory:', error);
-                }
-            }
             async function fetchTests() {
                 try {
                     const response = await fetch('/deprtmentTests', { headers: fetchHeaders });
@@ -1070,38 +1428,45 @@
                         fetchArchivedTests();
 
                     } else if (targetId === 'section-add-test') {
-                        loadInventoryItems();
                     } else if (targetId === 'section-settings') {
                         loadSignature();
                     }
 
-                    if (window.innerWidth < 768) toggleSidebar();
+                    if (window.innerWidth <= 1048) toggleSidebar();
                 });
             });
-            function openModal(backdropId, modalId) {
+            function openModal(backdropId, modalId = null) {
                 const backdrop = document.getElementById(backdropId);
-                const modal = document.getElementById(modalId);
-                if (!backdrop || !modal) return;
-                backdrop.classList.remove('hidden');
+                const modal = modalId ? document.getElementById(modalId) : backdrop?.firstElementChild;
+                if (!backdrop) return;
+                backdrop.style.display = 'flex';
+                backdrop.style.pointerEvents = 'auto';
+                backdrop.classList.remove('hidden', 'pointer-events-none');
                 backdrop.classList.add('flex');
                 requestAnimationFrame(() => {
                     backdrop.classList.remove('opacity-0');
-                    modal.classList.remove('scale-95');
-                    modal.classList.add('scale-100');
+                    if (modal) {
+                        modal.classList.remove('scale-95');
+                        modal.classList.add('scale-100');
+                    }
                 });
             }
 
-            function closeModal(backdropId, modalId) {
+            function closeModal(backdropId, modalId = null) {
                 const backdrop = document.getElementById(backdropId);
-                const modal = document.getElementById(modalId);
-                if (!backdrop || !modal) return;
-                backdrop.classList.add('opacity-0');
-                modal.classList.remove('scale-100');
-                modal.classList.add('scale-95');
+                const modal = modalId ? document.getElementById(modalId) : backdrop?.firstElementChild;
+                if (!backdrop) return;
+                backdrop.style.pointerEvents = 'none';
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+                if (modal) {
+                    modal.classList.remove('scale-100');
+                    modal.classList.add('scale-95');
+                }
                 setTimeout(() => {
                     backdrop.classList.remove('flex');
                     backdrop.classList.add('hidden');
-                }, 300);
+                    backdrop.style.display = 'none';
+                }, 200);
             }
 
             function showVerifyNotification(message, type = 'success') {
@@ -1155,6 +1520,17 @@
                     });
                     // Trigger input to initial flag
                     input.dispatchEvent(new Event('input'));
+                });
+
+                // Clear red error highlight on any input when user interacts with it
+                document.querySelectorAll('#verifyResultsTbody .result-input').forEach(inp => {
+                    const clearErr = () => {
+                        if (inp.value && inp.value.toString().trim() !== '') {
+                            inp.classList.remove('border-red-500', 'bg-red-50');
+                        }
+                    };
+                    inp.addEventListener('input', clearErr);
+                    inp.addEventListener('change', clearErr);
                 });
             }
 
@@ -1321,15 +1697,33 @@
                 const orderId = form.dataset.orderId;
                 const rows = document.querySelectorAll('#verifyResultsTbody tr[data-result-id]');
                 const results = [];
+                let hasEmptyResult = false;
+                let firstEmptyInput = null;
 
                 rows.forEach(row => {
                     const input = row.querySelector('.result-input');
+                    const val = input ? input.value : '';
+                    if (val === null || val === undefined || val.toString().trim() === '') {
+                        hasEmptyResult = true;
+                        if (input) {
+                            input.classList.add('border-red-500', 'bg-red-50');
+                            if (!firstEmptyInput) firstEmptyInput = input;
+                        }
+                    } else {
+                        if (input) input.classList.remove('border-red-500', 'bg-red-50');
+                    }
                     results.push({
                         id: row.dataset.resultId,
-                        resultValue: input ? input.value : null,
+                        resultValue: val,
                         statusFlag: input ? (input.dataset.flag || 'Normal') : 'Normal'
                     });
                 });
+
+                if (hasEmptyResult) {
+                    if (firstEmptyInput) firstEmptyInput.focus();
+                    showErrorPopup('Test results cannot be empty. Please ensure all parameters have valid results entered before verifying.', 'Validation Error');
+                    return;
+                }
 
                 const payload = {
                     orderTestId: orderTestId,
@@ -1362,11 +1756,11 @@
                             fetchCompletedReports();
                         }, 1000);
                     } else {
-                        showVerifyNotification(res.message || 'Verification failed', 'error');
+                        showErrorPopup(res.message || 'Verification failed. Please check your entries.', 'Verification Failed');
                     }
                 } catch (err) {
                     console.error(err);
-                    showVerifyNotification('An error occurred during verification.', 'error');
+                    showErrorPopup('An error occurred during verification. Please try again.', 'Error');
                 } finally {
                     this.innerText = originalText;
                     this.disabled = false;
@@ -1384,73 +1778,55 @@
                 if (!container || !addBtn) return;
 
                 const focusColor = isUpdate ? 'teal' : 'purple';
-                const isParameter = containerId.includes('parameters');
 
                 addBtn.addEventListener('click', () => {
-                    if (isParameter) {
-                        const firstSelect = container.querySelector('.parameter-type-select');
-                        const currentType = firstSelect ? firstSelect.value : 'Quantitative';
+                    const firstSelect = container.querySelector('.parameter-type-select');
+                    const currentType = firstSelect ? firstSelect.value : 'Quantitative';
 
-                        const numberHidden = currentType === 'Quantitative' ? '' : 'hidden';
-                        const dropdownHidden = currentType === 'Qualitative' ? '' : 'hidden';
+                    const numberHidden = currentType === 'Quantitative' ? '' : 'hidden';
+                    const dropdownHidden = currentType === 'Qualitative' ? '' : 'hidden';
 
-                        const templateHTML = `
-                        <div class="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
-                            <div class="w-36">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
-                                <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed text-gray-500" disabled>
-                                    <option value="${currentType}">${currentType}</option>
-                                </select>
-                                <input type="hidden" name="parameter_type[]" value="${currentType}">
-                            </div>
-                            <div class="flex-1">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
-                                <input type="text" name="parameter_name[]" placeholder="e.g. Parameter" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                            </div>
-                            <div class="w-24 param-number-fields ${numberHidden}">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
-                                <input type="text" name="parameter_unit[]" placeholder="unit" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                            </div>
-                            <div class="flex-1 param-number-fields ${numberHidden}">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
-                                <input type="text" name="parameter_range[]" placeholder="range" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                            </div>
-                            <div class="flex-1 param-dropdown-fields ${dropdownHidden}">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma separated)</label>
-                                <input type="text" placeholder="e.g. Positive, Negative" name="parameter_options[]"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                            </div>
-                            <div class="pt-6">
-                                <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
-                            </div>
-                        </div>`;
-                        container.insertAdjacentHTML('beforeend', templateHTML);
-                    } else {
-                        const templateHTML = `
-                        <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row animate-fade-in">
-                            <div class="flex-1">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
-                                <select name="inventory_item[]" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white cursor-pointer">
-                                    ${getInventoryOptionsHTML()} 
-                                </select>
-                            </div>
-                            <div class="w-32">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
-                                <input type="number" name="inventory_quantity[]" value="1" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
-                            </div>
-                            <div>
-                                <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
-                            </div>
-                        </div>`;
-                        container.insertAdjacentHTML('beforeend', templateHTML);
-                    }
+                    const templateHTML = `
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
+                        <div class="w-full sm:w-36">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
+                            <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed text-gray-500" disabled>
+                                <option value="${currentType}">${currentType}</option>
+                            </select>
+                            <input type="hidden" name="parameter_type[]" value="${currentType}">
+                        </div>
+                        <div class="w-full sm:flex-1">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
+                            <input type="text" name="parameter_name[]" placeholder="e.g. Parameter" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                        </div>
+                        <div class="w-full sm:w-24 param-number-fields ${numberHidden}">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
+                            <input type="text" name="parameter_unit[]" placeholder="unit" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                        </div>
+                        <div class="w-full sm:flex-1 param-number-fields ${numberHidden}">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
+                            <input type="text" name="parameter_range[]" placeholder="range" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                        </div>
+                        <div class="w-full sm:flex-1 param-dropdown-fields ${dropdownHidden}">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma separated)</label>
+                            <input type="text" placeholder="e.g. Positive, Negative" name="parameter_options[]"
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-${focusColor}-100 outline-none bg-white">
+                        </div>
+                        <div class="w-full sm:w-auto flex justify-end sm:pt-6">
+                            <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row cursor-pointer"><i class="ph-bold ph-trash"></i></button>
+                        </div>
+                    </div>`;
+                    container.insertAdjacentHTML('beforeend', templateHTML);
                 });
 
                 container.addEventListener('click', (e) => {
                     const removeBtn = e.target.closest('.btn-remove-row');
                     if (removeBtn) {
-                        const row = removeBtn.closest('.parameter-row, .requirement-row');
-                        if (row) row.remove();
+                        const row = removeBtn.closest('.parameter-row');
+                        const allRows = container.querySelectorAll('.parameter-row');
+                        if (row && row !== allRows[0]) {
+                            row.remove();
+                        }
                     }
                 });
 
@@ -1462,43 +1838,30 @@
 
                 container.addEventListener('change', (e) => {
                     if (e.target.classList.contains('parameter-type-select')) {
+                        const select = e.target;
+                        const newVal = select.value;
+                        const prevVal = select.dataset.prev || 'Quantitative';
                         const allRows = container.querySelectorAll('.parameter-row');
 
                         if (allRows.length > 1) {
-                            if (!confirm('Changing the Test Type will delete all other parameters. Continue?')) {
-                                e.target.value = e.target.dataset.prev;
-                                return;
-                            }
-                            for (let i = 1; i < allRows.length; i++) {
-                                allRows[i].remove();
-                            }
+                            select.value = prevVal;
+                            pendingTypeChange = {
+                                selectElement: select,
+                                container: container,
+                                previousValue: prevVal,
+                                targetValue: newVal
+                            };
+                            openModal('ConfirmChangeTypeModalBackdrop', 'ConfirmChangeTypeModal');
+                            return;
                         }
 
-                        e.target.dataset.prev = e.target.value;
-                        const row = e.target.closest('.parameter-row');
-                        const val = e.target.value;
-
-                        const numberFields = row.querySelectorAll('.param-number-fields');
-                        const dropdownFields = row.querySelector('.param-dropdown-fields');
-
-                        if (val === 'Quantitative') {
-                            numberFields.forEach(f => f.classList.remove('hidden'));
-                            if (dropdownFields) dropdownFields.classList.add('hidden');
-                        } else if (val === 'Qualitative') {
-                            numberFields.forEach(f => f.classList.add('hidden'));
-                            if (dropdownFields) dropdownFields.classList.remove('hidden');
-                        } else if (val === 'Observational' || val === 'Image') {
-                            numberFields.forEach(f => f.classList.add('hidden'));
-                            if (dropdownFields) dropdownFields.classList.add('hidden');
-                        }
+                        applyParameterTypeChange(select, container, newVal);
                     }
                 });
             }
 
             setupDynamicFields('add-parameters-container', 'btn-add-parameter', false);
-            setupDynamicFields('add-requirements-container', 'btn-add-item', false);
             setupDynamicFields('update-parameters-container', 'btn-update-add-parameter', true);
-            setupDynamicFields('update-requirements-container', 'btn-update-add-item', true);
             const backToTestsList = () => {
                 switchSection('section-manage-tests', 'Manage Tests');
                 ['AddTestFormSection', 'UpdateTestFormSection'].forEach(id => {
@@ -1508,6 +1871,15 @@
                         clearValidationErrors(form);
                     }
                 });
+                const addReqContainer = document.getElementById('add-requirements-container');
+                if (addReqContainer) addReqContainer.innerHTML = '';
+                const addReqEmpty = document.getElementById('add-requirements-empty');
+                if (addReqEmpty) addReqEmpty.classList.remove('hidden');
+
+                const updateReqContainer = document.getElementById('update-requirements-container');
+                if (updateReqContainer) updateReqContainer.innerHTML = '';
+                const updateReqEmpty = document.getElementById('update-requirements-empty');
+                if (updateReqEmpty) updateReqEmpty.classList.remove('hidden');
             };
 
             document.getElementById('btn-go-to-add-test')?.addEventListener('click', () => switchSection('section-add-test', 'Add New Test'));
@@ -1540,13 +1912,13 @@
                     }
 
                     if (invRows.length === 0) {
-                        validationErrors['inventory_general'] = ['At least one inventory item is required.'];
+                        validationErrors['inventory_general'] = ['At least one inventory item is required. Search and add an item above.'];
                     } else {
                         invRows.forEach((row, i) => {
-                            const itemSelect = row.querySelector('select[name="inventory_item[]"]');
+                            const itemInput = row.querySelector('input[name="inventory_item[]"], select[name="inventory_item[]"]');
                             const qtyInput = row.querySelector('input[name="inventory_quantity[]"]');
-                            if (!itemSelect.value || !qtyInput.value || qtyInput.value <= 0) {
-                                validationErrors[`inventory_row.${i}`] = ['Please select an item and enter a valid quantity.'];
+                            if (!itemInput || !itemInput.value || !qtyInput || !qtyInput.value || qtyInput.value <= 0) {
+                                validationErrors[`inventory_row.${i}`] = ['Please provide a valid quantity for all selected items.'];
                             }
                         });
                     }
@@ -1598,8 +1970,6 @@
                     form.dataset.testId = testId;
                     clearValidationErrors(form);
 
-                    await loadInventoryItems();
-
                     try {
                         const response = await fetch(`/tests/${testId}`, { headers: fetchHeaders });
                         const result = await response.json();
@@ -1625,7 +1995,7 @@
                                     const dropdownHidden = type === 'Qualitative' ? '' : 'hidden';
 
                                     const typeSelectHTML = index === 0
-                                        ? `<select name="parameter_type[]" class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer">
+                                        ? `<select name="parameter_type[]" class="parameter-type-select w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer" data-prev="${type}">
                                             <option value="Quantitative" ${type === 'Quantitative' ? 'selected' : ''}>Quantitative</option>
                                             <option value="Qualitative" ${type === 'Qualitative' ? 'selected' : ''}>Qualitative</option>
                                             <option value="Observational" ${type === 'Observational' ? 'selected' : ''}>Observational</option>
@@ -1637,20 +2007,20 @@
                                           <input type="hidden" name="parameter_type[]" value="${type}">`;
 
                                     paramsContainer.insertAdjacentHTML('beforeend', `
-                                    <div class="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
-                                        <div class="w-36">
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100 parameter-row animate-fade-in">
+                                        <div class="w-full sm:w-36">
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Test Type *</label>
                                             ${typeSelectHTML}
                                         </div>
-                                        <div class="flex-1">
+                                        <div class="w-full sm:flex-1">
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Parameter Name *</label>
                                             <input type="text" name="parameter_name[]" value="${param.parameterName}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
                                         </div>
-                                        <div class="w-24 param-number-fields ${numberHidden}">
+                                        <div class="w-full sm:w-24 param-number-fields ${numberHidden}">
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Unit</label>
                                             <input type="text" name="parameter_unit[]" value="${param.unit || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
                                         </div>
-                                        <div class="flex-1 param-number-fields ${numberHidden}">
+                                        <div class="w-full sm:flex-1 param-number-fields ${numberHidden}">
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Normal Range</label>
                                             <input type="text" name="parameter_range[]" value="${param.normalRange || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
                                         </div>
@@ -1658,63 +2028,53 @@
                                             <label class="block text-xs font-bold text-gray-600 mb-1">Options (Comma separated)</label>
                                             <input type="text" name="parameter_options[]" value="${param.options || ''}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
                                         </div>
-                                        <div class="pt-6">
-                                            <button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button>
+                                        <div class="w-full sm:w-auto flex justify-end sm:pt-6">
+                                            ${index === 0 ? '' : '<button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row cursor-pointer"><i class="ph-bold ph-trash"></i></button>'}
                                         </div>
                                     </div>`);
                                 });
                             }
 
                             const reqContainer = document.getElementById('update-requirements-container');
+                            const reqEmpty = document.getElementById('update-requirements-empty');
                             reqContainer.innerHTML = '';
                             if (test.requirements?.length) {
+                                if (reqEmpty) reqEmpty.classList.add('hidden');
                                 test.requirements.forEach(req => {
                                     const cleanQty = Math.round(parseFloat(req.quantityUsed)) || 1;
-
-                                    reqContainer.insertAdjacentHTML('beforeend', `
-                                    <div class="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 requirement-row animate-fade-in">
-                                        <div class="flex-1">
-                                            <label class="block text-xs font-bold text-gray-600 mb-1">Inventory Item *</label>
-                                            <select name="inventory_item[]" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white cursor-pointer" data-selected="${req.inventoryId}">
-                                                ${getInventoryOptionsHTML()}
-                                            </select>
-                                        </div>
-                                        <div class="w-32">
-                                            <label class="block text-xs font-bold text-gray-600 mb-1">Qty Used *</label>
-                                            <input type="number" name="inventory_quantity[]" value="${cleanQty}" min="1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-100 outline-none bg-white">
-                                        </div>
-                                        <div><button type="button" class="text-red-400 hover:text-red-600 p-2 btn-remove-row"><i class="ph-bold ph-trash"></i></button></div>
-                                    </div>`);
+                                    const item = req.inventory_item || req.inventoryItem || { id: req.inventoryId, name: req.itemName || `Item #${req.inventoryId}` };
+                                    appendRequirementRow('update-requirements-container', {
+                                        id: req.inventoryId,
+                                        name: item.name || `Item #${req.inventoryId}`,
+                                        unit: item.unit || ''
+                                    }, cleanQty, 'teal');
                                 });
-                                reqContainer.querySelectorAll('select').forEach(select => {
-                                    if (select.dataset.selected) select.value = select.dataset.selected;
-                                });
+                            } else {
+                                if (reqEmpty) reqEmpty.classList.remove('hidden');
                             }
                             switchSection('section-update-test', 'Update Test');
                         } else {
                             console.error('Fetch Error:', result.message);
+                            showErrorPopup(result.message || 'Failed to load test details.', 'Error');
                         }
                     } catch (error) {
                         console.error('Error fetching test:', error);
+                        showErrorPopup('A network error occurred while loading the test.', 'Network Error');
                     }
                 }
 
                 if (e.target.closest('.btn-delete-test')) {
                     const btn = e.target.closest('.btn-delete-test');
-                    const testId = btn.dataset.id;
-                    const row = btn.closest('tr');
+                    pendingDeleteTestId = btn.dataset.id;
+                    pendingDeleteRow = btn.closest('tr');
 
-                    try {
-                        const response = await fetch(`/tests/${testId}`, { method: 'DELETE', headers: fetchHeaders });
-                        const result = await response.json();
-                        if (result.status === true) {
-                            allTests = allTests.filter(t => t.id != testId);
-                            row.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
-                            setTimeout(() => row.remove(), 300);
-                        }
-                    } catch (error) {
-                        console.error('Error deleting test:', error);
+                    const testObj = allTests.find(t => t.id == pendingDeleteTestId);
+                    const testName = testObj ? testObj.name : 'this test';
+                    const msgEl = document.getElementById('deleteTestModalMessage');
+                    if (msgEl) {
+                        msgEl.innerText = `Are you sure you want to delete "${testName}"? It will be moved to archived tests.`;
                     }
+                    openModal('DeleteTestModalBackdrop', 'DeleteTestModal');
                 }
             });
             const btnUpdateSubmit = document.querySelector('#UpdateTestFormSection button.bg-teal-600');
@@ -1743,13 +2103,13 @@
                     }
 
                     if (invRows.length === 0) {
-                        validationErrors['inventory_general'] = ['At least one inventory item is required.'];
+                        validationErrors['inventory_general'] = ['At least one inventory item is required. Search and add an item above.'];
                     } else {
                         invRows.forEach((row, i) => {
-                            const itemSelect = row.querySelector('select[name="inventory_item[]"]');
+                            const itemInput = row.querySelector('input[name="inventory_item[]"], select[name="inventory_item[]"]');
                             const qtyInput = row.querySelector('input[name="inventory_quantity[]"]');
-                            if (!itemSelect.value || !qtyInput.value || qtyInput.value <= 0) {
-                                validationErrors[`inventory_row.${i}`] = ['Please select an item and enter a valid quantity.'];
+                            if (!itemInput || !itemInput.value || !qtyInput || !qtyInput.value || qtyInput.value <= 0) {
+                                validationErrors[`inventory_row.${i}`] = ['Please provide a valid quantity for all selected items.'];
                             }
                         });
                     }
@@ -1786,7 +2146,7 @@
                         }
                     } catch (error) {
                         console.error('Error updating test:', error);
-                        displayValidationErrors(form, { general: ['A network error occurred. Please check your connection.'] });
+                        showErrorPopup('A network error occurred while updating the test.', 'Network Error');
                     } finally {
                         btnUpdateSubmit.innerText = originalText;
                         btnUpdateSubmit.disabled = false;
@@ -2101,12 +2461,13 @@
 
                             fetchTests();
                         } else {
-                            showGlobalNotification(result.message || 'Failed to restore test.', 'error');
+                            showErrorPopup(result.message || 'Failed to restore test.', 'Restore Failed');
                             btn.innerHTML = originalText;
                             btn.disabled = false;
                         }
                     } catch (error) {
                         console.error('Error restoring test:', error);
+                        showErrorPopup('A network error occurred while restoring the test.', 'Restore Error');
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     }

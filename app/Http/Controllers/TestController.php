@@ -89,9 +89,15 @@ class TestController extends Controller
             ]
         ], Response::HTTP_OK);
     }
-    public function inventoryItems()
+    public function inventoryItems(Request $request)
     {
-        $stock = Inventory::get();
+        $query = Inventory::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $stock = $query->limit(50)->get();
 
         if ($stock->isEmpty()) {
             return response()->json([
@@ -390,7 +396,7 @@ class TestController extends Controller
 
     public function show($id)
     {
-        $test = Test::with(['parameters', 'requirements', 'department'])->where('isActive', true)->where('id', $id)->firstOrFail();
+        $test = Test::with(['parameters', 'requirements.inventoryItem', 'department'])->where('id', $id)->firstOrFail();
 
         return response()->json([
             'status' => true,

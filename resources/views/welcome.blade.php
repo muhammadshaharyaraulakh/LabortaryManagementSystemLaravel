@@ -57,7 +57,8 @@
 
             trackingForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const trackingId = trackingInput.value.trim();
+                const rawInput = trackingInput.value.trim();
+                const trackingId = rawInput.replace(/^[#\s]+/, '');
 
                 if (!trackingId) {
                     resultsContainer.innerHTML = `
@@ -77,7 +78,7 @@
                 resultsContainer.classList.add('hidden');
 
                 try {
-                    const response = await fetch(`/public/track-report/${trackingId}`);
+                    const response = await fetch(`/public/track-report/${encodeURIComponent(trackingId)}`);
                     const result = await response.json();
 
                     if (response.ok && result.status === 200) {

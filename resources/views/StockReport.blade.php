@@ -363,7 +363,7 @@
     </div>
 
     <div class="footer">
-        © {{ date('Y') }} Laboratory Management System (Computer-Generated Official Inventory Stock Report)
+        © {{ date('Y') }} Laboratory Management System (Computer Generated Official Inventory Stock Report)
     </div>
 
 </body>
