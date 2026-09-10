@@ -25,11 +25,11 @@
                 <table class="w-full text-left text-sm">
                     <thead class="text-xs text-gray-700 font-bold bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-4">Test Code</th>
+                            <th class="px-6 py-4 hidden md:table-cell">Test Code</th>
                             <th class="px-6 py-4">Test Name</th>
-                            <th class="px-6 py-4">Department</th>
-                            <th class="px-6 py-4">Price</th>
-                            <th class="px-6 py-4">Time Required</th>
+                            <th class="px-6 py-4 hidden md:table-cell">Department</th>
+                            <th class="px-6 py-4 hidden md:table-cell">Price</th>
+                            <th class="px-6 py-4 hidden md:table-cell">Time Required</th>
                             <th class="px-6 py-4 text-right">Action</th>
                         </tr>
                     </thead>

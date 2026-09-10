@@ -1,7 +1,7 @@
 <x-header />
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex min-h-screen">
     <div class="hidden lg:flex lg:w-1/2 relative bg-sidebarBg items-center justify-center overflow-hidden">
-        <img src="{{ asset('images/login.avif') }}" alt="Lab Background"
+        <img src="{{ asset('images/login.webp') }}" alt="Lab Background"
             class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay">
         <div class="relative z-10 px-12 text-center">
             <h1 class="text-white text-5xl font-extrabold tracking-tight mb-6">Laboratory Management System</h1>
@@ -72,18 +72,18 @@
                 <div class="border-t border-gray-300 grow"></div>
             </div>
 
-            <div class="mt-6 grid grid-cols-3 gap-4">
+            <div class="mt-6 grid grid-cols-2 gap-4">
 
                 <a href="{{ route('google.redirect') }}"
-                    class="cursor-pointer flex justify-center items-center py-2.5 border border-gray-300 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-colors">
-
-                    <img src="{{ asset('images/google.png') }}" alt="Google" class="w-6 h-6">
+                    class="cursor-pointer flex justify-center items-center py-2.5 border border-gray-300 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-colors shadow-sm"
+                    title="Login with Google">
+                    <img src="{{ asset('images/google.webp') }}" alt="Google" class="w-6 h-6">
                 </a>
 
                 <a href="{{ route('github.redirect') }}"
-                    class="cursor-pointer flex justify-center items-center py-2.5 border border-gray-300 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-colors text-black">
-
-                    <img src="{{ asset('images/github.png') }}" alt="Github" class="w-6 h-6">
+                    class="cursor-pointer flex justify-center items-center py-2.5 border border-gray-300 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-colors text-black shadow-sm"
+                    title="Login with GitHub">
+                    <img src="{{ asset('images/github.webp') }}" alt="Github" class="w-6 h-6">
                 </a>
 
             </div>

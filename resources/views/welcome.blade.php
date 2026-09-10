@@ -4,29 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laboratory Managemnet System</title>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        .neo-shadow {
-            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
-        }
-        .neo-shadow-sm {
-            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
-        }
-        .neo-hover:hover {
-            transform: translate(4px, 4px);
-            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
-        }
-        .neo-active:active {
-            transform: translate(8px, 8px);
-            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1) !important;
-        }
-    </style>
 </head>
 <body class="font-sans antialiased bg-nbg text-black min-h-screen flex flex-col p-4 md:p-8">
 
-    <!-- Header -->
     <header class="w-full max-w-5xl mx-auto flex justify-between items-center bg-white border-4 border-black neo-shadow p-4 mb-12">
         <div class="flex items-center gap-3">
             <span class="text-3xl font-black uppercase tracking-tighter">Laboratory Management System</span>
@@ -36,7 +17,6 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-1 w-full max-w-3xl mx-auto flex flex-col items-center justify-center">
         
         <div class="w-full bg-white border-4 border-black neo-shadow p-8 md:p-12 text-center mb-12">
@@ -57,14 +37,11 @@
             </form>
         </div>
 
-        <!-- Results Container -->
         <div id="tracking-results-container" class="w-full max-w-4xl mx-auto hidden flex-col gap-8 mb-12">
-            <!-- Results injected here via JS -->
         </div>
 
     </main>
 
-    <!-- Footer -->
     <footer class="w-full max-w-5xl mx-auto bg-white border-4 border-black p-6 mt-auto neo-shadow text-center font-bold uppercase text-lg">
         © 2026 LABORATORY MANAGEMENT SYSTEM.
     </footer>
@@ -95,7 +72,7 @@
                 }
 
                 trackBtn.disabled = true;
-                btnText.textContent = 'SEARCHING...';
+                btnText.textContent = 'SEARCHING';
                 btnSpinner.classList.remove('hidden');
                 resultsContainer.classList.add('hidden');
 

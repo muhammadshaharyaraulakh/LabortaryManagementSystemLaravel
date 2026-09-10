@@ -34,6 +34,9 @@ Route::get('/auth/github/redirect', [SocialController::class, 'githubRedirect'])
 Route::get('/auth/github/callback', [SocialController::class, 'githubCallback'])
     ->name('github.callback');
 
+Route::get('/api/auth/callback/google', [SocialController::class, 'googleCallback']);
+Route::get('/api/auth/callback/github', [SocialController::class, 'githubCallback']);
+
 Route::post('login', [loginController::class, 'login'])->name('login');
 Route::get('/logout', [loginController::class, 'logout'])->name('logout');
 

@@ -16,9 +16,9 @@
                 class="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <i class="ph-duotone ph-shield-check text-3xl"></i>
             </div>
-            <h2 class="text-3xl font-extrabold text-black tracking-tight mb-2">Two-Step Verification</h2>
+            <h2 class="text-3xl font-extrabold text-black tracking-tight mb-2">Two Step Verification</h2>
             <p class="text-gray-500 font-medium text-sm px-4">
-                We've sent an 8-digit security code to your email. Please enter it below to securely log in.
+                We've sent an 8 digits security code to your email. Please enter it below to securely log in.
             </p>
         </div>
 
@@ -45,7 +45,7 @@
         <div class="mt-8 text-center">
             <p class="text-sm text-gray-500 font-medium">
                 Didn't receive the code?
-                <a href="route{{ 'login' }}"
+                <a href="{{ Route('login') }}"
                     class="text-black font-bold hover:underline transition-all cursor-pointer decoration-0">Go back to
                     Login</a>
             </p>

@@ -1,4 +1,16 @@
 @import "tailwindcss";
+@import "@fontsource/space-grotesk/300.css";
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+
+@import "@phosphor-icons/web/regular";
+@import "@phosphor-icons/web/bold";
+@import "@phosphor-icons/web/duotone";
+@import "@phosphor-icons/web/fill";
+
+@import "flatpickr/dist/flatpickr.min.css";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -7,6 +19,7 @@
 
 @theme {
     --font-sans: "Space Grotesk", "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+    --breakpoint-xs: 576px;
     --color-sidebarBg: #1b2033;
     --color-mainBg: #f4f6f9;
     --color-inputBg: #f3f4f6;
@@ -57,6 +70,24 @@
 
     .animate-toast-slide-in {
         animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .neo-shadow {
+        box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+    }
+
+    .neo-shadow-sm {
+        box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    }
+
+    .neo-hover:hover {
+        transform: translate(4px, 4px);
+        box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    }
+
+    .neo-active:active {
+        transform: translate(8px, 8px);
+        box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1) !important;
     }
 }
 

@@ -45,7 +45,7 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full py-3.5 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 focus:ring-4 focus:ring-gray-200 transition-all flex justify-center items-center gap-2">
+                    class="cursor-pointer w-full py-3.5 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 focus:ring-4 focus:ring-gray-200 transition-all flex justify-center items-center gap-2">
                     Send Verfication Code
 
                 </button>

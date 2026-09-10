@@ -1,3 +1,5 @@
+import flatpickr from "flatpickr";
+
 document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("sidebar");
     const toggleDesktopBtn = document.getElementById("toggle-desktop-sidebar");

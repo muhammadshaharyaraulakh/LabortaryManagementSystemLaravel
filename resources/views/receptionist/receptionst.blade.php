@@ -1,18 +1,18 @@
 <x-header />
 <body class="font-sans antialiased bg-mainBg text-gray-800 flex h-screen overflow-hidden">
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity md:hidden cursor-pointer">
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity min-[1049px]:hidden cursor-pointer">
     </div>
     <aside id="sidebar"
-        class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 md:relative transform -translate-x-full md:translate-x-0">
+        class="bg-sidebarBg text-white w-64 shrink-0 transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 min-[1049px]:relative transform -translate-x-full min-[1049px]:translate-x-0">
         <div class="h-20 flex items-center justify-between px-6 pt-2">
             <span id="brand-text"
                 class="text-white text-xl font-bold whitespace-nowrap tracking-wide">Receptionist</span>
             <button id="toggle-desktop-sidebar"
-                class="text-gray-300 hover:text-white transition-colors hidden md:block cursor-pointer">
+                class="text-gray-300 hover:text-white transition-colors hidden min-[1049px]:block cursor-pointer">
                 <i class="ph ph-caret-double-left text-xl" id="desktop-toggle-icon"></i>
             </button>
             <button id="close-mobile-sidebar"
-                class="text-gray-300 hover:text-white transition-colors md:hidden text-2xl cursor-pointer">
+                class="text-gray-300 hover:text-white transition-colors min-[1049px]:hidden text-2xl cursor-pointer">
                 <i class="ph ph-x"></i>
             </button>
         </div>
@@ -70,21 +70,21 @@
         </nav>
     </aside>
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header class="h-20 px-4 md:px-10 z-20 sticky top-0 bg-mainBg">
+        <header class="h-20 px-3 sm:px-4 md:px-10 z-20 sticky top-0 bg-mainBg">
             <div class="flex items-center">
                 <button id="open-mobile-sidebar"
-                    class="mr-4 text-gray-800 md:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer">
+                    class="mr-4 text-gray-800 min-[1049px]:hidden p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
                 <h1 id="header-title"
-                    class="text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200">
+                    class="text-xl sm:text-2xl md:text-4xl font-extrabold text-black tracking-tight transition-all duration-200">
                     Dashboard
                 </h1>
             </div>
 
         </header>
 
-        <main class="flex-1 overflow-y-auto p-4 md:p-10 pt-2 relative">
+        <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-10 pt-2 relative">
 
             <div id="section-dashboard" class="content-section block animate-fade-in w-full max-w-7xl mx-auto">
                 <div class="flex items-center gap-3 mb-6">
@@ -97,7 +97,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full">
+                <div class="grid grid-cols-1 xs:grid-cols-2 min-[576px]:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 w-full">
                     <div
                         class="bg-white rounded-[1.25rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 border border-gray-50 relative overflow-hidden">
                         <div
@@ -175,7 +175,7 @@
                             <p class="text-gray-500 font-medium">Calculating Statistics</p>
                         </div>
 
-                        <div id="reportDataState" class="hidden grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in">
+                        <div id="reportDataState" class="hidden grid-cols-1 xs:grid-cols-2 min-[576px]:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
                             <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 text-center">
                                 <p class="text-sm font-bold text-gray-500 mb-1">Orders Created</p>
                                 <h4 class="text-2xl font-black text-blue-600" id="res-orders">0</h4>
@@ -380,26 +380,29 @@
                 </div>
             </div>
             <div id="section-order-preview" class="content-section hidden animate-fade-in w-full max-w-5xl mx-auto">
-                <div class="flex items-center gap-4 mb-6">
-                    <button id="btn-back-to-orders"
-                        class="flex items-center justify-center w-11 h-11 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-purple-600 transition-colors shadow-sm cursor-pointer">
-                        <i class="ph-bold ph-arrow-left text-xl"></i>
-                    </button>
-                    <div>
-                        <h2 class="text-2xl font-extrabold text-gray-800">Order Preview</h2>
-                        <p class="text-sm text-gray-500 font-medium">Review order details and print receipt</p>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <button id="btn-back-to-orders"
+                            class="shrink-0 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-purple-600 transition-colors shadow-sm cursor-pointer" title="Back to Orders">
+                            <i class="ph-bold ph-arrow-left text-xl"></i>
+                        </button>
+                        <div class="min-w-0">
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-gray-800 truncate">Order Preview</h2>
+                            <p class="text-xs sm:text-sm text-gray-500 font-medium">Review order details and print receipt</p>
+                        </div>
                     </div>
-                    <div class="ml-auto">
+                    <div class="w-full sm:w-auto">
                         <button id="btn-print-preview"
-                            class="bg-sidebarBg hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
-                            Print Receipt
+                            class="w-full sm:w-auto justify-center bg-sidebarBg hover:bg-gray-800 text-white px-5 sm:px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
+                            <i class="ph ph-printer text-lg"></i>
+                            <span>Print Receipt</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-gray-50 p-6 md:p-10 rounded-[1.25rem] border border-gray-100 flex justify-center w-full">
+                <div class="bg-gray-50 p-2.5 sm:p-6 md:p-10 rounded-2xl sm:rounded-[1.25rem] border border-gray-100 flex justify-center w-full">
                     <div id="order-preview-content"
-                        class="bg-white shadow-sm border border-gray-200 w-full max-w-2xl p-8 rounded-sm text-sm min-h-[500px]">
+                        class="bg-white shadow-sm border border-gray-200 w-full max-w-2xl p-3 sm:p-6 md:p-8 rounded-xl sm:rounded-sm text-sm min-h-[450px] overflow-hidden">
                     </div>
                 </div>
             </div>
@@ -500,12 +503,17 @@
                     const activeIcon = link.querySelector('.nav-icon');
                     if (activeIcon) activeIcon.classList.replace('text-gray-400', 'text-white');
                     switchSection(link.getAttribute('data-target'), link.getAttribute('data-title'));
-                    if (window.innerWidth < 768) toggleSidebar();
+                    if (window.innerWidth <= 1048) toggleSidebar();
                 });
             });
 
             const sidebar = document.getElementById('sidebar');
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+            const toggleDesktopBtn = document.getElementById('toggle-desktop-sidebar');
+            const desktopToggleIcon = document.getElementById('desktop-toggle-icon');
+            const brandText = document.getElementById('brand-text');
+            const navTexts = document.querySelectorAll('#sidebar .nav-text');
+
             function toggleSidebar() {
                 sidebar?.classList.toggle('-translate-x-full');
                 sidebarBackdrop?.classList.toggle('hidden');
@@ -513,6 +521,45 @@
             document.getElementById('open-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             document.getElementById('close-mobile-sidebar')?.addEventListener('click', toggleSidebar);
             sidebarBackdrop?.addEventListener('click', toggleSidebar);
+
+            let isCollapsed = false;
+            if (toggleDesktopBtn) {
+                toggleDesktopBtn.addEventListener('click', () => {
+                    isCollapsed = !isCollapsed;
+                    if (isCollapsed) {
+                        sidebar?.classList.remove('w-64');
+                        sidebar?.classList.add('w-20');
+                        brandText?.classList.add('hidden');
+                        navTexts.forEach(text => text.classList.add('hidden'));
+                        if (desktopToggleIcon) {
+                            desktopToggleIcon.classList.remove('ph-caret-double-left');
+                            desktopToggleIcon.classList.add('ph-caret-double-right');
+                        }
+                    } else {
+                        sidebar?.classList.remove('w-20');
+                        sidebar?.classList.add('w-64');
+                        setTimeout(() => {
+                            brandText?.classList.remove('hidden');
+                            navTexts.forEach(text => text.classList.remove('hidden'));
+                        }, 150);
+                        if (desktopToggleIcon) {
+                            desktopToggleIcon.classList.remove('ph-caret-double-right');
+                            desktopToggleIcon.classList.add('ph-caret-double-left');
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 1048) {
+                    sidebarBackdrop?.classList.add('hidden');
+                    sidebar?.classList.remove('-translate-x-full');
+                } else {
+                    if (sidebarBackdrop?.classList.contains('hidden')) {
+                        sidebar?.classList.add('-translate-x-full');
+                    }
+                }
+            });
 
             let allAvailableTests = [];
             let orderCart = [];
@@ -778,69 +825,72 @@
                             const testName = test.name || test.testName || 'Lab Test';
                             testsHtml += `
                         <tr class="border-b border-gray-100">
-                            <td class="py-3">${testName}</td>
-                            <td class="py-3 text-right">Rs. ${test.pivot.priceAtOrder || test.price}</td>
+                            <td class="py-2.5 px-2 text-xs sm:text-sm font-medium text-gray-800 break-words">${testName}</td>
+                            <td class="py-2.5 px-2 text-right text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Rs. ${test.pivot.priceAtOrder || test.price}</td>
                         </tr>
                     `;
                             barcodesHtml += `
-                        <div class="text-center border border-gray-200 p-4 rounded-xl break-inside-avoid w-full max-w-md mx-auto">
-                            <p class="font-bold text-xs mb-3 text-gray-800 uppercase tracking-wide truncate">${testName}</p>
-                            <div class="flex flex-col items-center justify-center [&>svg]:h-12 [&>svg]:w-auto [&>svg]:max-w-full">
+                        <div class="text-center border border-gray-200 p-3 sm:p-4 rounded-xl break-inside-avoid w-full max-w-md mx-auto overflow-hidden">
+                            <p class="font-bold text-xs mb-2 sm:mb-3 text-gray-800 uppercase tracking-wide truncate">${testName}</p>
+                            <div class="flex flex-col items-center justify-center w-full overflow-x-auto py-1 [&>svg]:h-10 sm:[&>svg]:h-12 [&>svg]:w-auto [&>svg]:max-w-full">
                                 ${test.backend_barcode}
                             </div>
                         </div>
                     `;
                         });
                         orderPreviewContent.innerHTML = `
-                    <div class="text-center mb-6 pb-6 border-b-2 border-gray-800">
-                        <h1 class="text-2xl font-black ">Laboratory Management System Receipt</h1>
-                        <p class="text-gray-500 font-bold">Tracking ID:${order.trackingId}</p>
+                    <div class="text-center mb-5 sm:mb-6 pb-4 sm:pb-6 border-b-2 border-gray-800">
+                        <h1 class="text-base sm:text-2xl font-black text-gray-900 break-words">Laboratory Management System Receipt</h1>
+                        <p class="text-gray-500 font-bold text-xs sm:text-sm mt-1 break-all">Tracking ID: <span class="text-gray-800">${order.trackingId}</span></p>
                     </div>
                     
-                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-xl">
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Patient Name</p>
-                            <p class="text-sm font-bold text-gray-900">${order.name}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100">
+                        <div class="min-w-0">
+                            <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Patient Name</p>
+                            <p class="text-xs sm:text-sm font-bold text-gray-900 break-words">${order.name}</p>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Age / Gender</p>
-                            <p class="text-sm font-bold text-gray-900">${order.age} yrs / ${order.gender}</p>
+                        <div class="min-w-0">
+                            <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Age / Gender</p>
+                            <p class="text-xs sm:text-sm font-bold text-gray-900">${order.age} yrs / ${order.gender}</p>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Phone</p>
-                            <p class="text-sm font-bold text-gray-900">${order.phone}</p>
+                        <div class="min-w-0">
+                            <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Phone</p>
+                            <p class="text-xs sm:text-sm font-bold text-gray-900 break-all">${order.phone}</p>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Email</p>
-                            <p class="text-sm font-bold text-gray-900 truncate" title="${order.email}">${order.email || 'N/A'}</p>
+                        <div class="min-w-0">
+                            <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Email</p>
+                            <p class="text-xs sm:text-sm font-bold text-gray-900 break-all" title="${order.email}">${order.email || 'N/A'}</p>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Date</p>
-                            <p class="text-sm font-bold text-gray-900">${orderDate}</p>
+                        <div class="min-w-0 sm:col-span-2">
+                            <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Date</p>
+                            <p class="text-xs sm:text-sm font-bold text-gray-900">${orderDate}</p>
                         </div>
                     </div>
 
-                    <table class="w-full text-left border-collapse mb-6">
-                        <thead>
-                            <tr class="border-b border-gray-300 text-xs uppercase tracking-wider text-gray-500 bg-gray-50">
-                                <th class="py-3 px-2">Description</th>
-                                <th class="py-3 px-2 text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>${testsHtml}</tbody>
-                    </table>
-                    <div class="flex flex-col items-end gap-2 text-right">
-                        <div class="w-64 flex justify-between text-gray-600 font-bold"><span>Subtotal:</span> <span>Rs. ${order.subtotal}</span></div>
-                        <div class="w-64 flex justify-between text-gray-600 font-bold"><span>Discount:</span> <span>- Rs. ${order.discount}</span></div>
-                        <div class="w-64 flex justify-between text-gray-600 font-bold"><span>Gov Tax (5%):</span> <span>Rs. ${order.tax}</span></div>
-                        <div class="w-64 flex justify-between font-black text-xl border-t border-gray-300 pt-3 mt-3 text-gray-900">
-                            <span>Total:</span> <span>Rs. ${order.grandTotal}</span>
+                    <div class="overflow-x-auto w-full mb-6 border border-gray-200 rounded-lg sm:border-0 sm:rounded-none">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300 text-[11px] sm:text-xs uppercase tracking-wider text-gray-500 bg-gray-50">
+                                    <th class="py-2.5 px-2 font-bold">Description</th>
+                                    <th class="py-2.5 px-2 text-right font-bold whitespace-nowrap">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">${testsHtml}</tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-1.5 sm:gap-2 text-right w-full">
+                        <div class="w-full max-w-[16rem] flex justify-between text-xs sm:text-sm text-gray-600 font-bold"><span>Subtotal:</span> <span>Rs. ${order.subtotal}</span></div>
+                        <div class="w-full max-w-[16rem] flex justify-between text-xs sm:text-sm text-gray-600 font-bold"><span>Discount:</span> <span>- Rs. ${order.discount}</span></div>
+                        <div class="w-full max-w-[16rem] flex justify-between text-xs sm:text-sm text-gray-600 font-bold"><span>Gov Tax (5%):</span> <span>Rs. ${order.tax}</span></div>
+                        <div class="w-full max-w-[16rem] flex justify-between font-black text-sm sm:text-xl border-t border-gray-300 pt-2.5 sm:pt-3 mt-2 sm:mt-3 text-gray-900">
+                            <span>Total:</span> <span class="text-green-600">Rs. ${order.grandTotal}</span>
                         </div>
                     </div>
-                    <div class="mt-12 pt-6 border-t-2 border-gray-800 border-dashed">
-                        <h3 class="text-center font-black text-gray-900 mb-6 uppercase tracking-widest text-sm bg-gray-100 py-2 rounded-lg"> For Laboratory Use Only</h3>
-                        <div class="flex flex-col items-center justify-center gap-6">
-                            <div class="grid grid-cols-1 gap-4 items-center justify-center">${barcodesHtml}</div>
+                    <div class="mt-8 sm:mt-12 pt-5 sm:pt-6 border-t-2 border-gray-800 border-dashed">
+                        <h3 class="text-center font-black text-gray-900 mb-4 sm:mb-6 uppercase tracking-wider sm:tracking-widest text-xs sm:text-sm bg-gray-100 py-2 px-3 rounded-lg"> For Laboratory Use Only</h3>
+                        <div class="flex flex-col items-center justify-center gap-4 sm:gap-6 w-full">
+                            <div class="grid grid-cols-1 gap-4 items-center justify-center w-full">${barcodesHtml}</div>
                         </div>
                     </div>
                 `;

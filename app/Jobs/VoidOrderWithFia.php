@@ -37,14 +37,12 @@ class VoidOrderWithFia implements ShouldQueue
         }
 
         try {
-            if (app()->environment('local')) {
-                Http::fake([
-                    'api.fia.gov.pk/*' => Http::response([
-                        'status' => 'success',
-                        'message' => 'Receipt voided successfully'
-                    ], 200)
-                ]);
-            }
+            Http::fake([
+                'api.fia.gov.pk/*' => Http::response([
+                    'status' => 'success',
+                    'message' => 'Receipt voided successfully'
+                ], 200)
+            ]);
 
             $response = Http::timeout(10)->post('https://api.fia.gov.pk/tax/void', [
                 'tracking_id' => $this->trackingId,

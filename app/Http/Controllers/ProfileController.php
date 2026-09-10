@@ -304,6 +304,7 @@ class ProfileController extends Controller
 
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
+                'status' => 400,
                 'success' => false,
                 'message' => 'Current password does not match',
                 'data' => null
@@ -315,6 +316,7 @@ class ProfileController extends Controller
         ]);
 
         return response()->json([
+            'status' => 200,
             'success' => true,
             'message' => 'Password updated successfully',
             'data' => $user
@@ -382,6 +384,7 @@ class ProfileController extends Controller
         $user->update($validation);
 
         return response()->json([
+            'status' => 200,
             'success' => true,
             'message' => 'Email updated successfully',
             'data' => $user

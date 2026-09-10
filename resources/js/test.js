@@ -72,13 +72,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             testDirectoryTableBody.innerHTML += `
             <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors text-gray-800 font-medium animate-fade-in">
-                <td class="px-6 py-4 text-gray-500">${code}</td>
+                <td class="px-6 py-4 text-gray-500 hidden md:table-cell">${code}</td>
                 <td class="px-6 py-4">${name}</td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 hidden md:table-cell">
                     <span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md text-xs font-bold">${department}</span>
                 </td>
-                <td class="px-6 py-4">Rs. ${price}</td>
-                <td class="px-6 py-4">${time}</td>
+                <td class="px-6 py-4 hidden md:table-cell">Rs. ${price}</td>
+                <td class="px-6 py-4 hidden md:table-cell">${time}</td>
                 <td class="px-6 py-4 text-right">
                     <button data-id="${test.id}" class="btn-view-test text-purple-600 hover:text-purple-800 font-bold px-3 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-50 transition-colors cursor-pointer">
                          Details

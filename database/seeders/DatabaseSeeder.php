@@ -27,5 +27,7 @@ class DatabaseSeeder extends Seeder
         Inventory::factory(20)->create();
         
         Test::factory(14)->create();
+
+        $this->call(OrderWorkflowSeeder::class);
     }
 }

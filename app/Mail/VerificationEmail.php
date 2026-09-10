@@ -32,7 +32,7 @@ class VerificationEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Verification Code - ' . config('app.name'),
+            subject: 'Verification Code ' . config('app.name'),
         );
     }
 
@@ -42,7 +42,7 @@ class VerificationEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.verification',
+            view: 'emails.verification',
         );
     }
 

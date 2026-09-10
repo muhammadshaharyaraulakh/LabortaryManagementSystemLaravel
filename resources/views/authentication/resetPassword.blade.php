@@ -40,9 +40,9 @@
                             placeholder="Must be at least 8 characters">
 
                         <button type="button"
-                            class="toggle-password absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                            class="cursor-pointer btn-toggle-password absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
                             data-target="password">
-                            <i class="ph-duotone ph-eye text-xl"></i>
+                            <i class="ph-duotone ph-eye text-xl pointer-events-none"></i>
                         </button>
                     </div>
                     <p class="text-red-500 text-xs font-semibold mt-1 hidden" id="error-password">
@@ -61,15 +61,15 @@
                             placeholder="Both passwords must match">
 
                         <button type="button"
-                            class="toggle-password absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                            class="cursor-pointer btn-toggle-password absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
                             data-target="password_confirmation">
-                            <i class="ph-duotone ph-eye text-xl"></i>
+                            <i class="ph-duotone ph-eye text-xl pointer-events-none"></i>
                         </button>
                     </div>
                 </div>
 
                 <button type="submit"
-                    class="w-full py-3.5 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 focus:ring-4 focus:ring-gray-200 transition-all flex justify-center items-center gap-2">
+                    class="cursor-pointer w-full py-3.5 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 focus:ring-4 focus:ring-gray-200 transition-all flex justify-center items-center gap-2">
                     Reset Password
 
                 </button>
@@ -81,19 +81,29 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- Password Visibility Toggle Logic ---
-            const toggleButtons = document.querySelectorAll('.toggle-password');
+            const toggleButtons = document.querySelectorAll('.btn-toggle-password');
 
             toggleButtons.forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const targetId = this.getAttribute('data-target');
                     const passwordInput = document.getElementById(targetId);
+                    if (!passwordInput) return;
 
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
+                    const isCurrentlyPassword = passwordInput.type === 'password';
+                    passwordInput.type = isCurrentlyPassword ? 'text' : 'password';
 
                     const icon = this.querySelector('i');
-                    icon.classList.toggle('ph-eye');
-                    icon.classList.toggle('ph-eye-slash');
+                    if (icon) {
+                        if (isCurrentlyPassword) {
+                            icon.classList.remove('ph-eye');
+                            icon.classList.add('ph-eye-slash');
+                        } else {
+                            icon.classList.remove('ph-eye-slash');
+                            icon.classList.add('ph-eye');
+                        }
+                    }
                 });
             });
 

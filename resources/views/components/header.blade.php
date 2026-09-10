@@ -1,10 +1,11 @@
+@props(['title' => 'Laboratory Management System'])
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratory Management System</title>
+    <title>{{ $title }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @auth
         <meta name="user-id" content="{{ auth()->id() }}">
@@ -22,9 +23,6 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
 
     <style>
         .flatpickr-calendar {

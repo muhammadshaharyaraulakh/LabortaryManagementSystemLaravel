@@ -31,14 +31,12 @@ class SyncOrderWithFia implements ShouldQueue
     public function handle(): void
     {
         try {
-            if (app()->environment('local')) {
-                Http::fake([
-                    'api.fia.gov.pk/*' => Http::response([
-                        'status' => 'success',
-                        'receipt_number' => 'FIA-TEST-' . uniqid() . rand(100000, 999999)
-                    ], 200)
-                ]);
-            }
+            Http::fake([
+                'api.fia.gov.pk/*' => Http::response([
+                    'status' => 'success',
+                    'receipt_number' => 'FIA-TEST-' . uniqid() . rand(100000, 999999)
+                ], 200)
+            ]);
 
             $response = Http::timeout(10)->post('https://api.fia.gov.pk/tax/sync', [
                 'tracking_id' => $this->order->trackingId,
