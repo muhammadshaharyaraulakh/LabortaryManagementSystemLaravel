@@ -29,5 +29,7 @@ else
     echo "Database already seeded. Skipping."
 fi
 
+php artisan queue:work --sleep=3 --tries=3 --timeout=90 &
+
 echo "==> Starting application server on port ${PORT:-8080}..."
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"
