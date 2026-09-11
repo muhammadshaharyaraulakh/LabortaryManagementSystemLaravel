@@ -14,6 +14,7 @@
         "laravel/telescope": "^5.20",
         "laravel/tinker": "^3.0",
         "milon/barcode": "^13.1",
+        "resend/resend-php": "^1.13",
         "socialiteproviders/github": "^4.1"
     },
     "require-dev": {
